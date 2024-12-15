@@ -170,5 +170,12 @@
 				"date": "2024-12-10",
 				"drawing": { "mode": "Diagram", "scale": 0 },
 				"sampleRate": 44100
+			},
+			{
+				"name": "MY BOOK! from cat simulator kitty craft",
+				"file": "GFLJS2100 - MY BOOK! from cat simulator kitty craft.js",
+				"date": "2024-12-15",
+				"fileOriginal": true,
+				"sampleRate": 8000
 			}
 ]
