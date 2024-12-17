@@ -220,7 +220,7 @@ class audioProcessor extends AudioWorkletProcessor {
 
 			case 'Doublebeat':
 				this.getValues = (funcValue, ch) => {
-					const outValue = Math.max(((Math.min(Math.max(Math.min((funcValue), 255), -255)) & 255) / 128 - 1, 1), -1);
+					const outValue = Math.max((((Math.min(Math.max(Math.min((funcValue), 255), -255)) & 255) / 128 - 1), 1), -1);
 					this.lastByteValue[ch] = Math.round((outValue + 1) * 127.5);
 					return outValue;
 				};
