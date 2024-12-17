@@ -210,6 +210,13 @@ class audioProcessor extends AudioWorkletProcessor {
 			case 'PWMBeat2':
 				this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = (((funcValue)/2&127) + (t >> 8&127) & 128) + 64 & 255) / 127.5 - 1;
 				break;
+			case 'No Limit':
+				this.getValues = (funcValue, ch) => {
+					const outValue = Math.max(Math.min((funcValue) / 128 - 1, 1), -1);
+					this.lastByteValue[ch] = Math.round((outValue + 1) * 127.5);
+					return outValue;
+				};
+				break;
 			default: this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = NaN);
 			}
 		}
