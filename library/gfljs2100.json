@@ -199,5 +199,13 @@
 				"sampleRate": 31000,
 				"mode": "Doublebeat",
 				"stereo": true
-			}
+			},
+			{
+				"name": "Converted doublebeat to funcbeat and added more things",
+				"file": "GFLJS2100 - Converted doublebeat to funcbeat and added more things.js",
+				"date": "2024-12-18",
+				"fileOriginal": true,
+				"sampleRate": 48000,
+				"mode": "Funcbeat"
+			},
 ]
