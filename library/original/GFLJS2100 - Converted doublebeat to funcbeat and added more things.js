@@ -1,4 +1,4 @@
-return time=>{
+return function (time,samplerate) {
 
 const t = time * 31000;
 
