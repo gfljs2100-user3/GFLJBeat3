@@ -602,6 +602,9 @@ globalThis.bytebeat = new class {
 		}
 		this.setThemeStyle();
 		await this.initAudioContext();
+		if(!window.location.hostname.includes(encodeURI('gfljbeat3'))) {
+			return;
+		}
 		if(document.readyState === 'loading') {
 			document.addEventListener('DOMContentLoaded', () => this.initAfterDom());
 			return;
