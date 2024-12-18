@@ -868,6 +868,7 @@ globalThis.bytebeat = new class {
 		const multiplierElem = buttonElem.firstElementChild;
 		const speed = speedIncrement ? +multiplierElem.textContent : 1;
 		multiplierElem.classList.toggle('control-fast-multiplier-large', speed >= 8);
+		multiplierElem.classList.toggle('control-fast-multiplier-very-large', speed >= 64);
 		const nextSpeed = speed === 512 ? 0 : speed * 2;
 		this.setPlayButton(this.controlPlayBackward, isPlaying && isReverse ? nextSpeed : 1);
 		this.setPlayButton(this.controlPlayForward, isPlaying && !isReverse ? nextSpeed : 1);
