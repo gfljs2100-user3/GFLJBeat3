@@ -846,11 +846,11 @@ button[name="close"] {
 }
 
 #control-play-backward > .control-fast-multiplier {
-	right: 3px;
+	right: 5px;
 }
 
 #control-play-backward > .control-fast-multiplier-large {
-	right: 2px;
+	right: 4px;
 	letter-spacing: -2px;
 }
 
@@ -859,7 +859,7 @@ button[name="close"] {
 }
 
 #control-play-forward > .control-fast-multiplier {
-	left: 3px;
+	left: 5px;
 }
 
 #control-play-forward > .control-fast-multiplier-large {
