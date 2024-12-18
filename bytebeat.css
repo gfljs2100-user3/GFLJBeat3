@@ -850,7 +850,7 @@ button[name="close"] {
 }
 
 #control-play-backward > .control-fast-multiplier-large {
-	right: 6px;
+	right: 5px;
 	letter-spacing: -2px;
 }
 
