@@ -854,6 +854,11 @@ button[name="close"] {
 	letter-spacing: -2px;
 }
 
+#control-play-backward > .control-fast-multiplier-large {
+	right: 2px;
+	letter-spacing: -2px;
+}
+
 #control-play-backward > svg {
 	transform: scaleX(-1);
 }
@@ -864,6 +869,11 @@ button[name="close"] {
 
 #control-play-forward > .control-fast-multiplier-large {
 	left: 2px;
+	letter-spacing: -2px;
+}
+
+#control-play-forward > .control-fast-multiplier-large {
+	left: 0px;
 	letter-spacing: -2px;
 }
 
