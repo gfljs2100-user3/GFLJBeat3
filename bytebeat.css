@@ -850,12 +850,14 @@ button[name="close"] {
 }
 
 #control-play-backward > .control-fast-multiplier-large {
-	right: 4px;
+	right: 5px;
 	letter-spacing: -2px;
 }
 
-#control-play-backward > .control-fast-multiplier-large {
+#control-play-backward > .control-fast-multiplier-very-large {
 	right: 2px;
+	font-size: 2px;
+	font-size: 2px;
 	letter-spacing: -2px;
 }
 
@@ -872,8 +874,9 @@ button[name="close"] {
 	letter-spacing: -2px;
 }
 
-#control-play-forward > .control-fast-multiplier-large {
+#control-play-forward > .control-fast-multiplier-very-large {
 	left: 0px;
+	font-size: 2px;
 	letter-spacing: -2px;
 }
 
