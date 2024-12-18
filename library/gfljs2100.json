@@ -206,6 +206,7 @@
 				"date": "2024-12-18",
 				"fileOriginal": true,
 				"sampleRate": 48000,
-				"mode": "Funcbeat"
+				"mode": "Funcbeat",
+				"stereo": true
 			}
 ]
