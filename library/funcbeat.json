@@ -198,19 +198,33 @@
 		}]
 	}, {
 		"author": "PortablePorcelain",
-		"name": "2,753c dance",
-		"description": "Shows status bars in error console.",
-		"url": "https://www.reddit.com/r/bytebeat/comments/1bqxp3r/2753c_dance_funcbeat/",
-		"remix": {
-			"author": "raphaelgoulart",
-			"name": "1k dance",
-			"url": "https://battleofthebits.com/arena/Entry/1k+dance/31132/"
-		},
-		"date": "2024-03-29",
-		"mode": "Funcbeat",
-		"sampleRate": 48000,
-		"file": "PortablePorcelain - 2,753c dance.js",
-		"fileOriginal": true,
-		"starred": 1
+		"children": [{
+			"name": "2,753c dance",
+			"url": "https://www.reddit.com/r/bytebeat/comments/1bqxp3r/2753c_dance_funcbeat/",
+			"remix": {
+				"author": "raphaelgoulart",
+				"name": "1k dance",
+				"url": "https://battleofthebits.com/arena/Entry/1k+dance/31132/"
+			},
+			"date": "2024-03-29",
+			"mode": "Funcbeat",
+			"sampleRate": 48000,
+			"file": "PortablePorcelain - 2,753c dance.js"
+			"fileOriginal": true,
+			"starred": 1
+		}, {
+			"name": "2,753c dance",
+			"url": "https://www.reddit.com/r/bytebeat/comments/1glouor/doubled_dubstep/",
+			"remix": {
+				"author": "Gabriel Miceli",
+				"name": "Crude Sinewave Dubstep",
+				"url": "https://www.youtube.com/watch?v=V4GfkFbDojc"
+			},
+			"date": "2024-11-07",
+			"mode": "Funcbeat",
+			"sampleRate": 48000,
+			"file": "PortablePorcelain - Doubled Dubstep.js"
+			"fileOriginal": true,
+		}]
 	}
 ]
