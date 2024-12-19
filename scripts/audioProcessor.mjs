@@ -180,8 +180,9 @@ class audioProcessor extends AudioWorkletProcessor {
             const previousSampleRate = this.sampleRate;
             this.sampleRate = data.sampleRate;
             if(this.mode === 'Funcbeat') {
-                // Adjust time to maintain playback position
-                this.byteSample = (this.byteSample * previousSampleRate) / this.sampleRate;
+                // Adjust time to maintain playback position in seconds
+                this.byteSample = this.byteSample * (previousSampleRate / this.sampleRate);
+                this.audioSample = this.byteSample / this.sampleRate;
             }
         }
         if(data.sampleRatio !== undefined) {
