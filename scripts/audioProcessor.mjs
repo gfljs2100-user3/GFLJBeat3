@@ -23,12 +23,10 @@ class audioProcessor extends AudioWorkletProcessor {
         this.port.start();
     }
     static deleteGlobals() {
-        // Delete single letter variables to prevent persistent variable errors (covers a good enough range)
         for(let i = 0; i < 26; ++i) {
             delete globalThis[String.fromCharCode(65 + i)];
             delete globalThis[String.fromCharCode(97 + i)];
         }
-        // Delete global variables
         for(const name in globalThis) {
             if(Object.prototype.hasOwnProperty.call(globalThis, name)) {
                 delete globalThis[name];
@@ -180,6 +178,9 @@ class audioProcessor extends AudioWorkletProcessor {
         }
         if(data.sampleRate !== undefined) {
             this.sampleRate = data.sampleRate;
+            if(this.mode === 'Funcbeat') {
+                this.byteSample = this.audioSample / this.sampleRate;
+            }
         }
         if(data.sampleRatio !== undefined) {
             this.setSampleRatio(data.sampleRatio);
@@ -262,20 +263,17 @@ class audioProcessor extends AudioWorkletProcessor {
         this.outValue = [0, 0];
     }
     setFunction(codeText) {
-        // Create shortened Math functions
         const params = Object.getOwnPropertyNames(Math);
         const values = params.map(k => Math[k]);
         params.push('int', 'window');
         values.push(Math.floor, globalThis);
         audioProcessor.deleteGlobals();
-        // Bytebeat code testing
         let isCompiled = false;
         const oldFunc = this.func;
         try {
             if(this.mode === 'Funcbeat') {
                 this.func = new Function(...params, codeText).bind(globalThis, ...values);
             } else {
-                // Optimize code like eval(unescape(escape`XXXX`.replace(/u(..)/g,"$1%")))
                 codeText = codeText.trim().replace(
                     /^eval\(unescape\(escape(?:`|\('|\("|\(`)(.*?)(?:`|'\)|"\)|`\)).replace\(\/u\(\.\.\)\/g,["'`]\$1%["'`]\)\)\)$/,
                     (match, m1) => unescape(escape(m1).replace(/u(..)/g, '$1%')));
