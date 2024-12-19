@@ -181,6 +181,7 @@ class audioProcessor extends AudioWorkletProcessor {
             this.sampleRate = data.sampleRate;
             if(this.mode === 'Funcbeat') {
                 this.byteSample = (this.byteSample * previousSampleRate) / this.sampleRate;
+                this.audioSample = Math.floor(this.byteSample * this.sampleRate);
             }
         }
         if(data.sampleRatio !== undefined) {
