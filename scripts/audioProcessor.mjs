@@ -167,66 +167,7 @@ class audioProcessor extends AudioWorkletProcessor {
         }
         if(data.mode !== undefined) {
             this.mode = data.mode;
-            switch(data.mode) {
-            case 'Bytebeat':
-                this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = funcValue & 255) / 127.5 - 1;
-                break;
-            case 'Signed Bytebeat':
-                this.getValues = (funcValue, ch) =>
-                    (this.lastByteValue[ch] = (funcValue + 128) & 255) / 127.5 - 1;
-                break;
-            case 'Floatbeat':
-            case 'Funcbeat':
-                this.getValues = (funcValue, ch) => {
-                    const outValue = Math.max(Math.min(funcValue, 1), -1);
-                    this.lastByteValue[ch] = Math.round((outValue + 1) * 127.5);
-                    return outValue;
-                };
-                break;
-            case 'Logmode':
-                this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = (Math.log2(funcValue) * 32) & 255) / 127.5 - 1;
-                break;
-            case 'Bitbeat':
-                this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = (funcValue & 1) * 127 + 64) / 127.5 - 1;
-                break;
-            case '2048':
-                this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = Math.floor(funcValue / 8 & 255)) / 127.5 - 1;
-                break;
-            case 'LogHack':
-                this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = (Math.log2(Math.abs(funcValue)) * (((funcValue) < 0) ? -32 : 32)) & 255) / 127.5 - 1;
-                break;
-            case 'LogHack2':
-                this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = funcValue == 0 ? 128 : (((Math.log2(Math.abs(funcValue)) * (funcValue < 0 ? -16 : 16)) + (funcValue < 0 ? -127 : 128)) & 255)) / 127.5 - 1;
-                break;
-            case 'Cbrtmode':
-                this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = (Math.cbrt(funcValue)) & 255) / 127.5 - 1;
-                break;
-            case 'Log10mode':
-                this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = (Math.log10(funcValue) * 32) & 255) / 127.5 - 1;
-                break;
-            case 'PWMBeat':
-                this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = ((-(funcValue)/2&127) + (-t >> 8&127) & 128) + 64 & 255) / 127.5 - 1;
-                break;
-            case 'PWMBeat2':
-                this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = (((funcValue)/2&127) + (t >> 8&127) & 128) + 64 & 255) / 127.5 - 1;
-                break;
-            case 'No Limit':
-                this.getValues = (funcValue, ch) => {
-                    const outValue = Math.max(Math.min((funcValue) / 128 - 1, 1), -1);
-                    this.lastByteValue[ch] = Math.round((outValue + 1) * 127.5);
-                    return outValue;
-                };
-                break;
-
-            case 'Doublebeat':
-                this.getValues = (funcValue, ch) => {
-                    const outValue = Math.min(Math.max(((Math.min(Math.max(funcValue, -255), 255) * 127 + 127) & 255) / 128 - 1, -1), 1)
-                    this.lastByteValue[ch] = Math.round((outValue + 1) * 127.5);
-                    return outValue;
-                };
-                break;
-            default: this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = NaN);
-            }
+            this.resetFunction();
         }
         if(data.drawMode !== undefined) {
             this.drawMode = data.drawMode;
@@ -242,6 +183,68 @@ class audioProcessor extends AudioWorkletProcessor {
         }
         if(data.sampleRatio !== undefined) {
             this.setSampleRatio(data.sampleRatio);
+        }
+    }
+    resetFunction() {
+        switch(this.mode) {
+        case 'Bytebeat':
+            this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = funcValue & 255) / 127.5 - 1;
+            break;
+        case 'Signed Bytebeat':
+            this.getValues = (funcValue, ch) =>
+                (this.lastByteValue[ch] = (funcValue + 128) & 255) / 127.5 - 1;
+            break;
+        case 'Floatbeat':
+        case 'Funcbeat':
+            this.getValues = (funcValue, ch) => {
+                const outValue = Math.max(Math.min(funcValue, 1), -1);
+                this.lastByteValue[ch] = Math.round((outValue + 1) * 127.5);
+                return outValue;
+            };
+            break;
+        case 'Logmode':
+            this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = (Math.log2(funcValue) * 32) & 255) / 127.5 - 1;
+            break;
+        case 'Bitbeat':
+            this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = (funcValue & 1) * 127 + 64) / 127.5 - 1;
+            break;
+        case '2048':
+            this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = Math.floor(funcValue / 8 & 255)) / 127.5 - 1;
+            break;
+        case 'LogHack':
+            this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = (Math.log2(Math.abs(funcValue)) * (((funcValue) < 0) ? -32 : 32)) & 255) / 127.5 - 1;
+            break;
+        case 'LogHack2':
+            this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = funcValue == 0 ? 128 : (((Math.log2(Math.abs(funcValue)) * (funcValue < 0 ? -16 : 16)) + (funcValue < 0 ? -127 : 128)) & 255)) / 127.5 - 1;
+            break;
+        case 'Cbrtmode':
+            this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = (Math.cbrt(funcValue)) & 255) / 127.5 - 1;
+            break;
+        case 'Log10mode':
+            this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = (Math.log10(funcValue) * 32) & 255) / 127.5 - 1;
+            break;
+        case 'PWMBeat':
+            this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = ((-(funcValue)/2&127) + (-t >> 8&127) & 128) + 64 & 255) / 127.5 - 1;
+            break;
+        case 'PWMBeat2':
+            this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = (((funcValue)/2&127) + (t >> 8&127) & 128) + 64 & 255) / 127.5 - 1;
+            break;
+        case 'No Limit':
+            this.getValues = (funcValue, ch) => {
+                const outValue = Math.max(Math.min((funcValue) / 128 - 1, 1), -1);
+                this.lastByteValue[ch] = Math.round((outValue + 1) * 127.5);
+                return outValue;
+            };
+            break;
+        case 'Doublebeat':
+            this.getValues = (funcValue, ch) => {
+                const outValue = Math.min(Math.max(((Math.min(Math.max(funcValue, -255), 255) * 127 + 127) & 255) / 128 - 1, -1), 1)
+                this.lastByteValue[ch] = Math.round((outValue + 1) * 127.5);
+                return outValue;
+            };
+            break;
+        default:
+            this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = NaN);
         }
     }
     sendData(data) {
