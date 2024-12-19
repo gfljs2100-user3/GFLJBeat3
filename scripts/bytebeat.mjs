@@ -420,25 +420,23 @@ globalThis.bytebeat = new class {
 			entry += ` <span class="code-length" title="Size in characters">${ this.formatBytes(codeOriginal.length) }</span>`;
 		}
 		if(file) {
-			let codeBtn = '';
-			if(fileFormatted) {
-				codeBtn += `<button class="code-button code-load code-load-formatted" data-songdata='${
-					songData }' data-code-file="${ file
-				}" title="Click to load and play the formatted code">format ${this.formatBytes(file.length) }</button>`;
-			}
-			if(fileOriginal) {
-				codeBtn += `<button class="code-button code-load code-load-original" data-songdata='${
-					songData }' data-code-file="${ file
-				}" title="Click to load and play the original code">orig ${this.formatBytes(file.length) }</button>`;
-			}
-			if(fileMinified) {
-				codeBtn += `<button class="code-button code-load code-load-minified" data-songdata='${
-					songData }' data-code-file="${ file
-				}" title="Click to load and play the minified code">min ${this.formatBytes(file.length) }</button>`;
-			}
-			if(codeBtn) {
-				entry += `<div class="code-buttons-container">${ codeBtn }</div>`;
-			}
+ 		   let codeBtn = '';
+		    const fileResponse = await fetch(file);
+ 	 	    const fileBlob = await fileResponse.blob();
+ 		    const fileBytes = await fileBlob.arrayBuffer();
+
+    		if(fileFormatted) {
+        		codeBtn += `<button class="code-button code-load code-load-formatted" data-songdata='${songData}' data-code-file="${file}" title="Click to load and play the formatted code">format ${this.formatBytes(fileBytes.byteLength)}</button>`;
+    		}
+    		if(fileOriginal) {
+        		codeBtn += `<button class="code-button code-load code-load-original" data-songdata='${songData}' data-code-file="${file}" title="Click to load and play the original code">orig ${this.formatBytes(fileBytes.byteLength)}</button>`;
+    		}
+    		if(fileMinified) {
+        		codeBtn += `<button class="code-button code-load code-load-minified" data-songdata='${songData}' data-code-file="${file}" title="Click to load and play the minified code">min ${this.formatBytes(fileBytes.byteLength)}</button>`;
+    		}
+    		if(codeBtn) {
+        		entry += `<div class="code-buttons-container">${codeBtn}</div>`;
+    		}
 		}
 		if(description) {
 			entry += (entry ? '<br>' : '') + description;
