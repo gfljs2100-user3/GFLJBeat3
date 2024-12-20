@@ -58,97 +58,96 @@ class audioProcessor extends AudioWorkletProcessor {
 			typeof lineNumber === 'number' && typeof columnNumber === 'number' ?
 				` (at line ${ lineNumber - 3 }, character ${ +columnNumber })` : '' }`;
 	}
-process(inputs, [chData]) {
-    const chDataLen = chData[0].length;
-    if(!chDataLen || !this.isPlaying) {
-        return true;
-    }
-    let time = this.sampleRatio * this.audioSample;
-    let { byteSample } = this;
-    const drawBuffer = [];
-    const isDiagram = this.drawMode === 'Combined' || this.drawMode === 'Diagram';
-    for(let i = 0; i < chDataLen; ++i) {
-        time += this.sampleRatio;
-        const currentTime = Math.floor(time);
-        if(this.lastTime !== currentTime) {
-            let funcValue;
-            const currentSample = Math.floor(byteSample);
-            try {
-                if(this.mode === 'Funcbeat') {
-                    funcValue = this.func(currentSample / this.sampleRate, this.sampleRate);
-                } else {
-                    funcValue = this.func(currentSample);
-                }
-            } catch(err) {
-                if(this.errorDisplayed) {
-                    this.errorDisplayed = false;
-                    this.sendData({
-                        error: {
-                            message: audioProcessor.getErrorMessage(err, currentSample),
-                            isRuntime: true
-                        }
-                    });
-                }
-                funcValue = NaN;
-            }
-            funcValue = Array.isArray(funcValue) ? [funcValue[0], funcValue[1]] : [funcValue, funcValue];
-            let hasValue = false;
-            let ch = 2;
-            while(ch--) {
-                try {
-                    funcValue[ch] = +funcValue[ch];
-                } catch(err) {
-                    funcValue[ch] = NaN;
-                }
-                if(isDiagram) {
-                    if(!isNaN(funcValue[ch])) {
-                        this.outValue[ch] = this.getValues(funcValue[ch], ch);
-                    } else {
-                        this.lastByteValue[ch] = NaN;
-                    }
-                    hasValue = true;
-                    continue;
-                }
-                if(funcValue[ch] === this.lastFuncValue[ch]) {
-                    continue;
-                } else if(!isNaN(funcValue[ch])) {
-                    this.outValue[ch] = this.getValues(funcValue[ch], ch);
-                    hasValue = true;
-                } else if(!isNaN(this.lastFuncValue[ch])) {
-                    this.lastByteValue[ch] = NaN;
-                    hasValue = true;
-                }
-            }
-            if(hasValue) {
-                drawBuffer.push({ t: currentSample, value: [...this.lastByteValue] });
-            }
-            byteSample += currentTime - this.lastTime;
-            this.lastFuncValue = funcValue;
-            this.lastTime = currentTime;
-        }
-        chData[0][i] = this.outValue[0];
-        chData[1][i] = this.outValue[1];
-    }
-    if(Math.abs(byteSample) > Number.MAX_SAFE_INTEGER) {
-        this.resetTime();
-        return true;
-    }
-    this.audioSample += chDataLen;
-    let isSend = false;
-    const data = {};
-    if(byteSample !== this.byteSample) {
-        isSend = true;
-        data.byteSample = this.byteSample = byteSample;
-    }
-    if(drawBuffer.length) {
-        isSend = true;
-        data.drawBuffer = drawBuffer;
-    }
-    if(isSend) {
-        this.sendData(data);
-    }
-    return true;
-}
+	process(inputs, [chData]) {
+		const chDataLen = chData[0].length;
+		if(!chDataLen || !this.isPlaying) {
+			return true;
+		}
+		let time = this.sampleRatio * this.audioSample;
+		let { byteSample } = this;
+		const drawBuffer = [];
+		const isDiagram = this.drawMode === 'Combined' || this.drawMode === 'Diagram';
+		for(let i = 0; i < chDataLen; ++i) {
+			time += this.sampleRatio;
+			const currentTime = Math.floor(time);
+			if(this.lastTime !== currentTime) {
+				let funcValue;
+				const currentSample = Math.floor(byteSample);
+				try {
+					if(this.mode === 'Funcbeat') {
+						funcValue = this.func(currentSample / this.sampleRate, this.sampleRate);
+					} else {
+						funcValue = this.func(currentSample);
+					}
+				} catch(err) {
+					if(this.errorDisplayed) {
+						this.errorDisplayed = false;
+						this.sendData({
+							error: {
+								message: audioProcessor.getErrorMessage(err, currentSample),
+								isRuntime: true
+							}
+						});
+					}
+					funcValue = NaN;
+				}
+				funcValue = Array.isArray(funcValue) ? [funcValue[0], funcValue[1]] : [funcValue, funcValue];
+				let hasValue = false;
+				let ch = 2;
+				while(ch--) {
+					try {
+						funcValue[ch] = +funcValue[ch];
+					} catch(err) {
+						funcValue[ch] = NaN;
+					}
+					if(isDiagram) {
+						if(!isNaN(funcValue[ch])) {
+							this.outValue[ch] = this.getValues(funcValue[ch], ch);
+						} else {
+							this.lastByteValue[ch] = NaN;
+						}
+						hasValue = true;
+						continue;
+					}
+					if(funcValue[ch] === this.lastFuncValue[ch]) {
+						continue;
+					} else if(!isNaN(funcValue[ch])) {
+						this.outValue[ch] = this.getValues(funcValue[ch], ch);
+						hasValue = true;
+					} else if(!isNaN(this.lastFuncValue[ch])) {
+						this.lastByteValue[ch] = NaN;
+						hasValue = true;
+					}
+				}
+				if(hasValue) {
+					drawBuffer.push({ t: currentSample, value: [...this.lastByteValue] });
+				}
+				byteSample += currentTime - this.lastTime;
+				this.lastFuncValue = funcValue;
+				this.lastTime = currentTime;
+			}
+			chData[0][i] = this.outValue[0];
+			chData[1][i] = this.outValue[1];
+		}
+		if(Math.abs(byteSample) > Number.MAX_SAFE_INTEGER) {
+			this.resetTime();
+			return true;
+		}
+		this.audioSample += chDataLen;
+		let isSend = false;
+		const data = {};
+		if(byteSample !== this.byteSample) {
+			isSend = true;
+			data.byteSample = this.byteSample = byteSample;
+		}
+		if(drawBuffer.length) {
+			isSend = true;
+			data.drawBuffer = drawBuffer;
+		}
+		if(isSend) {
+			this.sendData(data);
+		}
+		return true;
 	}
 	receiveData(data) {
 		if(data.byteSample !== undefined) {
