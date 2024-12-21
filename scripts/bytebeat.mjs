@@ -1204,17 +1204,20 @@ globalThis.bytebeat = new class {
 	toggleTimeCursor() {
 		this.canvasTimeCursor.classList.toggle('hidden', !this.timeCursorEnabled);
 	}
-	updateUrl() {
-		const code = this.editorValue;
-		const songData = { code };
-		if(this.songData.sampleRate !== 8000) {
-			songData.sampleRate = this.songData.sampleRate;
-		}
-		if(this.songData.mode !== 'Bytebeat') {
-			songData.mode = this.songData.mode;
-		}
-		this.setCodeSize(code);
-		window.location.hash = `#GFLJBeat3-${ btoa(String.fromCharCode.apply(undefined,
-			deflateRaw(JSON.stringify(songData)))).replaceAll('=', '') }`;
-	}
+updateUrl() {
+    const code = this.editorValue;
+    const songData = { code };
+    if (this.songData.sampleRate !== 8000) {
+        songData.sampleRate = this.songData.sampleRate;
+    }
+    if (this.songData.mode !== 'Bytebeat') {
+        songData.mode = this.songData.mode;
+    }
+    this.setCodeSize(code);
+    const newHash = `#GFLJBeat3-${btoa(String.fromCharCode.apply(undefined, deflateRaw(JSON.stringify(songData)))).replaceAll('=', '')}`;
+    if (window.location.hash !== newHash) {
+        window.location.hash = newHash;
+        window.location.reload();
+    }
+}
 }();
