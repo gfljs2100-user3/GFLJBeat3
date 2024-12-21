@@ -204,11 +204,11 @@ class audioProcessor extends AudioWorkletProcessor {
 			case 'Log10mode':
 				this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = (Math.log10(funcValue) * 32) & 255) / 127.5 - 1;
 				break;
-			case 'PWMBeat':
-				this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = ((-(funcValue)/2&127) + (-t >> 8&127) & 128) + 64 & 255) / 127.5 - 1;
+			case 'Sinmode':
+				this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = ((Math.sin(funcValue)) * 127 + 127) & 255) / 127.5 - 1;
 				break;
-			case 'PWMBeat2':
-				this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = (((funcValue)/2&127) + (t >> 8&127) & 128) + 64 & 255) / 127.5 - 1;
+			case 'Sinfmode':
+				this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = ((Math.sin((funcValue) * Math.PI / 128)) * 127 + 127) & 255) / 127.5 - 1;
 				break;
 			case 'No Limit':
 				this.getValues = (funcValue, ch) => {
