@@ -133,6 +133,7 @@ drawGraphics(endTime) {
     const height = this.canvasHeight;
     const scale = this.settings.drawScale;
     const isReverse = this.playbackSpeed < 0;
+    const sampleRate = this.songData.sampleRate;
     let startTime = buffer[0].t;
     let startX = this.mod(this.getX(startTime), width);
     let endX = Math.floor(startX + this.getX(endTime - startTime));
