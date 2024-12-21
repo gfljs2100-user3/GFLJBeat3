@@ -1220,6 +1220,9 @@ updateUrl() {
         const encodedData = btoa(String.fromCharCode.apply(undefined, deflateRaw(JSON.stringify(songData)))).replaceAll('=', '');
         const newHash = `#GFLJBeat3-${encodedData}`;
         history.replaceState(undefined, undefined, newHash);
+        
+        // Reload the page to reflect the new URL
+        window.location.reload();
     } catch (err) {
         console.error('Error updating URL:', err);
     }
