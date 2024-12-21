@@ -1214,10 +1214,8 @@ updateUrl() {
         songData.mode = this.songData.mode;
     }
     this.setCodeSize(code);
-    const newHash = `#GFLJBeat3-${btoa(String.fromCharCode.apply(undefined, deflateRaw(JSON.stringify(songData)))).replaceAll('=', '')}`;
-    if (window.location.hash !== newHash) {
-        window.location.hash = newHash;
-        window.location.reload();
-    }
+    const newHash = `#GFLJBeat3-${btoa(String.fromCharCode.apply(undefined,
+        deflateRaw(JSON.stringify(songData)))).replaceAll('=', '')}`;
+    history.replaceState(undefined, undefined, newHash);
 }
 }();
