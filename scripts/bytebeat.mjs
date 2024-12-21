@@ -750,7 +750,7 @@ globalThis.bytebeat = new class {
 			buttonElem.classList.contains('code-load-formatted') ? 'formatted' :
 			buttonElem.classList.contains('code-load-minified') ? 'minified' :
 			buttonElem.classList.contains('code-load-original') ? 'original' : ''
-		}/${ buttonElem.dataset.codeFile }`, { cache: 'force-cache' });
+		}/${ buttonElem.dataset.codeFile }`, { cache: 'no-cache' });
 		this.loadCode(Object.assign(JSON.parse(buttonElem.dataset.songdata),
 			{ code: await response.text() }));
 	}
@@ -777,7 +777,7 @@ globalThis.bytebeat = new class {
 		const waitElem = headerElem.querySelector('.loading-wait');
 		waitElem.classList.remove('hidden');
 		const response = await fetch(`./library/${ containerElem.id.replace('library-', '') }.json`,
-			{ cache: 'force-cache' });
+			{ cache: 'no-cache' });
 		const { status } = response;
 		waitElem.classList.add('hidden');
 		if(status !== 200 && status !== 304) {
