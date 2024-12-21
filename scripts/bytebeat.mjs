@@ -1214,8 +1214,14 @@ updateUrl() {
         songData.mode = this.songData.mode;
     }
     this.setCodeSize(code);
-    const newHash = `#GFLJBeat3-${btoa(String.fromCharCode.apply(undefined,
-        deflateRaw(JSON.stringify(songData)))).replaceAll('=', '')}`;
-    history.replaceState(undefined, undefined, newHash);
+
+    // Validate and sanitize the song data before updating the URL
+    try {
+        const encodedData = btoa(String.fromCharCode.apply(undefined, deflateRaw(JSON.stringify(songData)))).replaceAll('=', '');
+        const newHash = `#GFLJBeat3-${encodedData}`;
+        history.replaceState(undefined, undefined, newHash);
+    } catch (err) {
+        console.error('Error updating URL:', err);
+    }
 }
 }();
