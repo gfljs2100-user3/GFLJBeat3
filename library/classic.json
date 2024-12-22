@@ -1076,6 +1076,13 @@
 		"date": "2022-06-19",
 		"codeOriginal": "(t>>10|t*5)&(t>>8|t*4)&(t>>4|t*6)"
 	}, {
+		"author": "Notrandom-246",
+		"url": "https://youtu.be/uFH8p-HJ-eA?si=FOcXsW_ndWU7GUtw",
+		"date": "2022-10-09",
+		"sampleRate": 8000,
+		"codeOriginal": "(t*(((t/10|0)^(t/10|0)-1280)%12)/2&12345)+(t*(((t/6423|1)^(t/641|12)-39)%30)/81*123)",
+		"codeMinified": "(t*(((t/10|0)^(t/10|0)-1280)%12)/2&12345)+t*(((t/6423|1)^(t/641|12)-39)%30)/81*123"
+	}, {
 		"author": "k0370_",
 		"url": "https://dollchan.net/btb/res/3.html#258",
 		"children": [{
@@ -1100,13 +1107,6 @@
 			"codeOriginal": "t+(t&1)+(t>>5)*(t>>1)/1|t>>4|t>>8",
 			"codeMinified": "t+(t&1)+(t>>5)*(t>>1)|t>>4|t>>8"
 		}]
-	}, 
-	{
-		"author": "Notrandom-246",
-		"url": "https://youtu.be/uFH8p-HJ-eA?si=FOcXsW_ndWU7GUtw",
-		"date": "2022-10-09",
-		"sampleRate": 8000,
-		"codeOriginal": "(t*(((t/10|0)^(t/10|0)-1280)%12)/2&12345)+(t*(((t/6423|1)^(t/641|12)-39)%30)/81*123)"
 	}, {
 		"author": "Devan Wolf",
 		"url": "https://dollchan.net/btb/res/3.html#224",
