@@ -424,17 +424,17 @@ globalThis.bytebeat = new class {
 			if(fileFormatted) {
 				codeBtn += `<button class="code-button code-load code-load-formatted" data-songdata='${
 					songData }' data-code-file="${ file
-				}" title="Click to load and play the formatted code">format</button>`;
+				}" title="Click to load and play the formatted code">format ${this.formatBytes(file.length) }</button>`;
 			}
 			if(fileOriginal) {
 				codeBtn += `<button class="code-button code-load code-load-original" data-songdata='${
 					songData }' data-code-file="${ file
-				}" title="Click to load and play the original code">orig</button>`;
+				}" title="Click to load and play the original code">orig ${this.formatBytes(file.length) }</button>`;
 			}
 			if(fileMinified) {
 				codeBtn += `<button class="code-button code-load code-load-minified" data-songdata='${
 					songData }' data-code-file="${ file
-				}" title="Click to load and play the minified code">min</button>`;
+				}" title="Click to load and play the minified code">min ${this.formatBytes(file.length) }</button>`;
 			}
 			if(codeBtn) {
 				entry += `<div class="code-buttons-container">${ codeBtn }</div>`;
@@ -1202,14 +1202,18 @@ globalThis.bytebeat = new class {
 	toggleTimeCursor() {
 		this.canvasTimeCursor.classList.toggle('hidden', !this.timeCursorEnabled);
 	}
-	updateLocation() {
-		const pData = { code: this.editorElem.value };
-		if(this.sampleRate !== 8000) {
-			pData.sampleRate = this.sampleRate;
-		}
-		if(this.mode !== 'Bytebeat') {
-			pData.mode = this.mode;
-		}
-		window.location.hash = '#GFLJBeat3-' + btoa(pako.deflateRaw(JSON.stringify(pData), { to: 'string' }));
-	}
+updateUrl() {
+    const code = this.editorValue;
+    const songData = { code };
+    if (this.songData.sampleRate !== 8000) {
+        songData.sampleRate = this.songData.sampleRate;
+    }
+    if (this.songData.mode !== 'Bytebeat') {
+        songData.mode = this.songData.mode;
+    }
+    this.setCodeSize(code);
+    const newHash = `#GFLJBeat3-${btoa(String.fromCharCode.apply(undefined,
+        deflateRaw(JSON.stringify(songData)))).replaceAll('=', '')}`;
+    history.replaceState(undefined, undefined, newHash);
+}
 }();
