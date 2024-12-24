@@ -327,157 +327,163 @@ globalThis.bytebeat = new class {
 	expandEditor() {
 		this.containerFixedElem.classList.toggle('container-expanded');
 	}
+const file = this.files[0];
+if (file) {
+    const size = formatFileSize(file.size);
+    sizeDisplay.textContent = `${file.name}: ${size}`;
+}
+
 	formatBytes(bytes) {
 	if(bytes < 1E4) {
 		return bytes + 'B';
 	}
 	const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)), 10);
-	return (i ? (bytes / (1024 ** i)).toFixed(2) : bytes) + ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'][i];
 }
+	return (i ? (bytes / (1024 ** i)).toFixed(2) : bytes) + ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'][i];
 generateLibraryEntry({
     author, children, codeMinified, codeOriginal, cover, date, description, drawing, file, fileFormatted,
     fileMinified, fileOriginal, mode, name, remix, sampleRate, starred, stereo, url
 }) {
     let entry = '';
     const noArrayUrl = url && !Array.isArray(url);
-    if(name) {
-        entry += url ? `<a href="${ noArrayUrl ? url : url[0] }" target="_blank">${ name }</a>` : name;
+    if (name) {
+        entry += url ? `<a href="${noArrayUrl ? url : url[0]}" target="_blank">${name}</a>` : name;
     }
-    if(author) {
+    if (author) {
         let authorsList = '';
         const authorsArr = Array.isArray(author) ? author : [author];
-        for(let i = 0, len = authorsArr.length; i < len; ++i) {
+        for (let i = 0, len = authorsArr.length; i < len; ++i) {
             const authorElem = authorsArr[i];
-            if(typeof authorElem === 'string') {
-                authorsList += name || !noArrayUrl ? '<b>' + authorElem + '</b>':
-                    `<a href="${ url }" target="_blank">${ authorElem }</a>`;
+            if (typeof authorElem === 'string') {
+                authorsList += name || !noArrayUrl ? '<b>' + authorElem + '</b>' :
+                    `<a href="${url}" target="_blank">${authorElem}</a>`;
             } else {
-                authorsList += `<a href="${ authorElem[1] }" target="_blank">${ authorElem[0] }</a>`;
+                authorsList += `<a href="${authorElem[1]}" target="_blank">${authorElem[0]}</a>`;
             }
-            if(i < len - 1) {
+            if (i < len - 1) {
                 authorsList += ', ';
             }
         }
-        entry += ` <span>by ${ authorsList }</span>`;
+        entry += ` <span>by ${authorsList}</span>`;
     }
-    if(url && (!noArrayUrl || !name && !author)) {
-        if(noArrayUrl) {
-            entry += `[<a href="${ url }" target="_blank">link</a>]`;
+    if (url && (!noArrayUrl || !name && !author)) {
+        if (noArrayUrl) {
+            entry += `[<a href="${url}" target="_blank">link</a>]`;
         } else {
             const urlsList = [];
-            for(let i = name ? 1 : 0, len = url.length; i < len; ++i) {
-                urlsList.push(`<a href="${ url[i] }" target="_blank">link${ i + 1 }</a>`);
+            for (let i = name ? 1 : 0, len = url.length; i < len; ++i) {
+                urlsList.push(`<a href="${url[i]}" target="_blank">link${i + 1}</a>`);
             }
-            entry += ` [${ urlsList.join(', ') }]`;
+            entry += ` [${urlsList.join(', ')}]`;
         }
     }
-    if(cover) {
+    if (cover) {
         const { url: cUrl, name: coverName } = cover;
-        entry += ` <span class="code-remix">(cover of ${ cUrl ?
-            `<a href="${ cUrl }" target="_blank">${ coverName }</a>` :
-            `"${ coverName }"`
+        entry += ` <span class="code-remix">(cover of ${cUrl ?
+            `<a href="${cUrl}" target="_blank">${coverName}</a>` :
+            `"${coverName}"`
         })</span>`;
     }
-    if(remix) {
+    if (remix) {
         const arr = [];
         const remixArr = Array.isArray(remix) ? remix : [remix];
-        for(let i = 0, len = remixArr.length; i < len; ++i) {
+        for (let i = 0, len = remixArr.length; i < len; ++i) {
             const { url: rUrl, name: remixName, author: rAuthor } = remixArr[i];
-            arr.push(`${ rUrl ? `<a href="${ rUrl }" target="_blank">${
-                remixName || rAuthor }</a>` : `"${ remixName }"`
-            }${ remixName && rAuthor ? ' by ' + rAuthor : '' }`);
+            arr.push(`${rUrl ? `<a href="${rUrl}" target="_blank">${
+                remixName || rAuthor}</a>` : `"${remixName}"`
+            }${remixName && rAuthor ? ' by ' + rAuthor : ''}`);
         }
-        entry += ` <span class="code-remix">(remix of ${ arr.join(', ') })</span>`;
+        entry += ` <span class="code-remix">(remix of ${arr.join(', ')})</span>`;
     }
 
-    if(date || sampleRate || mode || stereo || drawing) {
-        let infoStr = date ? `(${ date })` : '';
-        if(sampleRate) {
-            infoStr += `${ infoStr ? ' ' : '' }${ sampleRate }Hz`;
+    if (date || sampleRate || mode || stereo || drawing) {
+        let infoStr = date ? `(${date})` : '';
+        if (sampleRate) {
+            infoStr += `${infoStr ? ' ' : ''}${sampleRate}Hz`;
         }
-        if(mode) {
+        if (mode) {
             infoStr += (infoStr ? ' ' : '') + mode;
         }
-        if(stereo) {
-            infoStr += `${ infoStr ? ' ' : '' }<span class="code-stereo">Stereo</span>`;
+        if (stereo) {
+            infoStr += `${infoStr ? ' ' : ''}<span class="code-stereo">Stereo</span>`;
         }
-        if(drawing) {
-            infoStr += `${ infoStr ? ' ' : '' } (${ drawing.mode } mode)`;
+        if (drawing) {
+            infoStr += `${infoStr ? ' ' : ''} (${drawing.mode} mode)`;
         }
-        entry += ` <span class="code-info">${ infoStr }</span>`;
+        entry += ` <span class="code-info">${infoStr}</span>`;
     }
     const songObj = { sampleRate, mode };
-    if(drawing) {
+    if (drawing) {
         songObj.drawMode = drawing.mode;
         songObj.scale = drawing.scale;
     }
     const songData = codeOriginal || codeMinified || file ? JSON.stringify(songObj) : '';
-    if(codeMinified) {
+    if (codeMinified) {
         entry += ` <span class="code-length" title="Size in characters">${
-            this.formatBytes(codeMinified.length) }</span>` + (codeOriginal ? '<button class="code-button code-toggle"' +
+            this.formatBytes(codeMinified.length)}</span>` + (codeOriginal ? '<button class="code-button code-toggle"' +
                 ' title="Minified version shown. Click to view the original version.">+</button>' : '');
-    } else if(codeOriginal) {
-        entry += ` <span class="code-length" title="Size in characters">${ this.formatBytes(codeOriginal.length) }</span>`;
+    } else if (codeOriginal) {
+        entry += ` <span class="code-length" title="Size in characters">${this.formatBytes(codeOriginal.length)}</span>`;
     }
-    if(file) {
+    if (file) {
         let codeBtn = '';
-        if(fileFormatted) {
+        if (fileFormatted) {
             codeBtn += `<button class="code-button code-load code-load-formatted" data-songdata='${
-                songData }' data-code-file="${ file
+                songData}' data-code-file="${file
             }" title="Click to load and play the formatted code">format ${this.formatBytes(file.size)}</button>`;
         }
-        if(fileOriginal) {
+        if (fileOriginal) {
             codeBtn += `<button class="code-button code-load code-load-original" data-songdata='${
-                songData }' data-code-file="${ file
+                songData}' data-code-file="${file
             }" title="Click to load and play the original code">orig ${this.formatBytes(file.size)}</button>`;
         }
-        if(fileMinified) {
+        if (fileMinified) {
             codeBtn += `<button class="code-button code-load code-load-minified" data-songdata='${
-                songData }' data-code-file="${ file
+                songData}' data-code-file="${file
             }" title="Click to load and play the minified code">min ${this.formatBytes(file.size)}</button>`;
         }
-        if(codeBtn) {
-            entry += `<div class="code-buttons-container">${ codeBtn }</div>`;
+        if (codeBtn) {
+            entry += `<div class="code-buttons-container">${codeBtn}</div>`;
         }
         entry += `<div><strong>File Name:</strong> ${file.name}<br><strong>Size:</strong> ${this.formatBytes(file.size)}</div>`;
     }
-    if(description) {
+    if (description) {
         entry += (entry ? '<br>' : '') + description;
     }
-    if(codeOriginal) {
-        if(Array.isArray(codeOriginal)) {
+    if (codeOriginal) {
+        if (Array.isArray(codeOriginal)) {
             codeOriginal = codeOriginal.join('\n');
         }
         entry += `<br><button class="code-text code-text-original${
-            codeMinified ? ' hidden' : '' }" data-songdata='${ songData }' code-length="${
-            this.formatBytes(codeOriginal.length) }">${ this.escapeHTML(codeOriginal) }</button>`;
+            codeMinified ? ' hidden' : ''}" data-songdata='${songData}' code-length="${
+            this.formatBytes(codeOriginal.length)}">${this.escapeHTML(codeOriginal)}</button>`;
     }
-    if(codeMinified) {
-        entry += `${ codeOriginal ? '' : '<br>' }<button class="code-text code-text-minified"` +
-            ` data-songdata='${ songData }' code-length="${ this.formatBytes(codeMinified.length) }">${
-                this.escapeHTML(codeMinified) }</button>`;
+    if (codeMinified) {
+        entry += `${codeOriginal ? '' : '<br>'}<button class="code-text code-text-minified"` +
+            ` data-songdata='${songData}' code-length="${this.formatBytes(codeMinified.length)}">${
+                this.escapeHTML(codeMinified)}</button>`;
     }
-    if(children) {
+    if (children) {
         let childrenStr = '';
         const len = children.length;
-        if(len > 8) {
+        if (len > 8) {
             childrenStr += `<details><summary class="code-button children-toggle">${
-                len - 5 } more bytebeats</summary>`;
-            for(let i = 0; i < len; ++i) {
-                if(i === len - 5) {
+                len - 5} more bytebeats</summary>`;
+            for (let i = 0; i < len; ++i) {
+                if (i === len - 5) {
                     childrenStr += '</details>';
                 }
                 childrenStr += this.generateLibraryEntry(children[i]);
             }
         } else {
-            for(let i = 0; i < len; ++i) {
+            for (let i = 0; i < len; ++i) {
                 childrenStr += this.generateLibraryEntry(children[i]);
             }
         }
-        entry += `<div class="entry-children">${ childrenStr }</div>`;
+        entry += `<div class="entry-children">${childrenStr}</div>`;
     }
-    return `<div class="${ codeOriginal || codeMinified || file || children ? 'entry' : 'entry-text' }${
-        starred ? ' ' + ['star-1', 'star-2'][starred - 1] : '' }">${ entry }</div>`;
+    return `<div class="${codeOriginal || codeMinified || file || children ? 'entry' : 'entry-text'}${
+        starred ? ' ' + ['star-1', 'star-2'][starred - 1] : ''}">${entry}</div>`;
 }
 	getColor(value) {
 		return [
