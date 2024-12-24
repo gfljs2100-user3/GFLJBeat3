@@ -218,42 +218,24 @@ class audioProcessor extends AudioWorkletProcessor {
 					return outValue;
 				};
 				break;
-			case 'No Limit':
+			case 'nowthisisnotmatters':
 				this.getValues = (funcValue, ch) => {
 					const outValue = Math.max(Math.min((funcValue) / 128 - 1, 1), -1);
 					this.lastByteValue[ch] = Math.round((outValue + 1) * 127.5);
 					return outValue;
 				};
 				break;
-
 			case 'Doublebeat':
 				this.getValues = (funcValue, ch) => {
-					const outValue = Math.min(Math.max(((Math.min(Math.max(funcValue, -255), 255) * 127 + 127) & 255) / 128 - 1, -1), 1)
-					this.lastByteValue[ch] = Math.round((outValue + 1) * 127.5);
-					return outValue;
-				};
-				break;
-			case 'No Limit (LOUD)':
-				this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = funcValue) / 127.5 - 1;
-				break;
-			case 'Doublebeat (LOUD)':
-				this.getValues = (funcValue, ch) => {
-					const outValue = Math.min(Math.max(funcValue, -255), 255)
+					const outValue = Math.min(Math.max(((Math.min(Math.max(funcValue, -255), 255) * 127.5 + 127) & 255) / 128 - 1, -1), 1)
 					this.lastByteValue[ch] = Math.round((outValue + 1) * 127.5);
 					return outValue;
 				};
 				break;
 			case 'AnewModeasFloatBeat':
 				this.getValues = (funcValue, ch) => {
-					const outValue = funcValue = Math.max(Math.min(funcValue, 255), -255);
-					this.lastByteValue[ch] = Math.round((funcValue + 1) * 127.5);
-					return outValue;
-				};
-				break;
-			case 'nowthisisnotmatters':
-				this.getValues = (funcValue, ch) => {
-					const outValue = funcValue;
-					this.lastByteValue[ch] = Math.round((outValue + 1) * 127.5);
+					const outValue = Math.min(Math.max(funcValue, -255), 255)
+					this.lastByteValue[ch] = Math.min(Math.max(Math.round((outValue + 1) * 127.5), -1), 1);
 					return outValue;
 				};
 				break;
