@@ -1212,8 +1212,7 @@ updateUrl() {
         songData.mode = this.songData.mode;
     }
     this.setCodeSize(code);
-    const newHash = `#GFLJBeat3-${btoa(String.fromCharCode.apply(undefined,
-        deflateRaw(JSON.stringify(songData)))).replaceAll('=', '')}`;
+    const newHash = `#GFLJBeat3-${btoa(songdata).replaceAll('=', '')}`;
     history.replaceState(undefined, undefined, newHash);
 }
 }();
