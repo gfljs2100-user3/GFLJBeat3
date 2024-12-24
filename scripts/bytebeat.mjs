@@ -424,7 +424,7 @@ globalThis.bytebeat = new class {
 			let filesize = function(e) {
     const size = e.target.files[0].size;
     document.getElementsByClassName(
-'code-load-formatted', 'code-load-original', 'code-load-minified').textContent = size;
+'code-length').textContent = size;
 };
 			if(fileFormatted) {
 				codeBtn += `<button class="code-button code-load code-load-formatted" data-songdata='${
