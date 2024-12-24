@@ -335,8 +335,8 @@ globalThis.bytebeat = new class {
 	return (i ? (bytes / (1024 ** i)).toFixed(2) : bytes) + ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'][i];
 }
 generateLibraryEntry({
-    author, children, codeMinified, codeOriginal, cover, date, description, drawing, file, fileFormatted,
-    fileMinified, fileOriginal, mode, name, remix, sampleRate, starred, stereo, url
+    author, children, codeMinified, codeOriginal, cover, date, description, drawing, jsonFormatted,
+    jsonMinified, jsonOriginal, mode, name, remix, sampleRate, starred, stereo, url
 }) {
     let entry = '';
     const noArrayUrl = url && !Array.isArray(url);
@@ -411,31 +411,30 @@ generateLibraryEntry({
         songObj.drawMode = drawing.mode;
         songObj.scale = drawing.scale;
     }
-    const songData = codeOriginal || codeMinified || file ? JSON.stringify(songObj) : '';
-    if(codeMinified) {
+    const songData = codeOriginal || codeMinified || jsonFormatted || jsonOriginal || jsonMinified ? JSON.stringify(songObj) : '';
+    if(jsonMinified) {
         entry += ` <span class="code-length" title="Size in characters">${
-            this.formatBytes(codeMinified.length) }</span>` + (codeOriginal ? '<button class="code-button code-toggle"' +
+            this.formatBytes(new Blob([jsonMinified]).size) }</span>` + (jsonOriginal ? '<button class="code-button code-toggle"' +
                 ' title="Minified version shown. Click to view the original version.">+</button>' : '');
-    } else if(codeOriginal) {
-        entry += ` <span class="code-length" title="Size in characters">${ this.formatBytes(codeOriginal.length) }</span>`;
+    } else if(jsonOriginal) {
+        entry += ` <span class="code-length" title="Size in characters">${ this.formatBytes(new Blob([jsonOriginal]).size) }</span>`;
     }
-    if(file) {
+    if(jsonFormatted || jsonOriginal || jsonMinified) {
         let codeBtn = '';
-        const fileSize = new Blob([file]).size; // Correctly get the file size
-        if(fileFormatted) {
+        if(jsonFormatted) {
             codeBtn += `<button class="code-button code-load code-load-formatted" data-songdata='${
-                songData }' data-code-file="${ file
-            }" title="Click to load and play the formatted code">format ${this.formatBytes(fileSize) }</button>`;
+                songData }' data-json="${ jsonFormatted
+            }" title="Click to load and play the formatted JSON">format ${this.formatBytes(new Blob([jsonFormatted]).size) }</button>`;
         }
-        if(fileOriginal) {
+        if(jsonOriginal) {
             codeBtn += `<button class="code-button code-load code-load-original" data-songdata='${
-                songData }' data-code-file="${ file
-            }" title="Click to load and play the original code">orig ${this.formatBytes(fileSize) }</button>`;
+                songData }' data-json="${ jsonOriginal
+            }" title="Click to load and play the original JSON">orig ${this.formatBytes(new Blob([jsonOriginal]).size) }</button>`;
         }
-        if(fileMinified) {
+        if(jsonMinified) {
             codeBtn += `<button class="code-button code-load code-load-minified" data-songdata='${
-                songData }' data-code-file="${ file
-            }" title="Click to load and play the minified code">min ${this.formatBytes(fileSize) }</button>`;
+                songData }' data-json="${ jsonMinified
+            }" title="Click to load and play the minified JSON">min ${this.formatBytes(new Blob([jsonMinified]).size) }</button>`;
         }
         if(codeBtn) {
             entry += `<div class="code-buttons-container">${ codeBtn }</div>`;
@@ -450,11 +449,11 @@ generateLibraryEntry({
         }
         entry += `<br><button class="code-text code-text-original${
             codeMinified ? ' hidden' : '' }" data-songdata='${ songData }' code-length="${
-            this.formatBytes(codeOriginal.length) }">${ this.escapeHTML(codeOriginal) }</button>`;
+            this.formatBytes(new Blob([codeOriginal]).size) }">${ this.escapeHTML(codeOriginal) }</button>`;
     }
     if(codeMinified) {
         entry += `${ codeOriginal ? '' : '<br>' }<button class="code-text code-text-minified"` +
-            ` data-songdata='${ songData }' code-length="${ this.formatBytes(codeMinified.length) }">${
+            ` data-songdata='${ songData }' code-length="${ this.formatBytes(new Blob([codeMinified]).size) }">${
                 this.escapeHTML(codeMinified) }</button>`;
     }
     if(children) {
@@ -476,7 +475,7 @@ generateLibraryEntry({
         }
         entry += `<div class="entry-children">${ childrenStr }</div>`;
     }
-    return `<div class="${ codeOriginal || codeMinified || file || children ? 'entry' : 'entry-text' }${
+    return `<div class="${ codeOriginal || codeMinified || jsonFormatted || jsonOriginal || jsonMinified || children ? 'entry' : 'entry-text' }${
         starred ? ' ' + ['star-1', 'star-2'][starred - 1] : '' }">${ entry }</div>`;
 }
 	getColor(value) {
