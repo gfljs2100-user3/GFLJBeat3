@@ -756,7 +756,8 @@ async onclickCodeLoadButton(buttonElem) {
         buttonElem.classList.contains('code-load-original') ? 'original' : ''
     }/${ buttonElem.dataset.codeFile }`, { cache: 'no-cache' });
     const code = await response.text();
-    const fileSize = response.headers.get('content-length');
+    const blob = new Blob([code], { type: 'text/plain' });
+    const fileSize = blob.size;
     this.loadCode(Object.assign(JSON.parse(buttonElem.dataset.songdata), { code, fileSize }));
 }
 	onclickCodeToggleButton(buttonElem) {
