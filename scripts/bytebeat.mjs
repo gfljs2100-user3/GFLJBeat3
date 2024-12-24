@@ -1,4 +1,5 @@
 import { deflateRaw, inflateRaw } from './pako.esm.min.mjs';
+import timeago from 'timeago.js';
 
 const loadScript = src => new Promise(resolve => {
 	try {
