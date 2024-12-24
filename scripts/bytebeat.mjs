@@ -421,20 +421,21 @@ generateLibraryEntry({
     }
     if(file) {
         let codeBtn = '';
+        const fileSize = new Blob([file]).size; // Correctly get the file size
         if(fileFormatted) {
             codeBtn += `<button class="code-button code-load code-load-formatted" data-songdata='${
                 songData }' data-code-file="${ file
-            }" title="Click to load and play the formatted code">format ${this.formatBytes(file.size) }</button>`;
+            }" title="Click to load and play the formatted code">format ${this.formatBytes(fileSize) }</button>`;
         }
         if(fileOriginal) {
             codeBtn += `<button class="code-button code-load code-load-original" data-songdata='${
                 songData }' data-code-file="${ file
-            }" title="Click to load and play the original code">orig ${this.formatBytes(file.size) }</button>`;
+            }" title="Click to load and play the original code">orig ${this.formatBytes(fileSize) }</button>`;
         }
         if(fileMinified) {
             codeBtn += `<button class="code-button code-load code-load-minified" data-songdata='${
                 songData }' data-code-file="${ file
-            }" title="Click to load and play the minified code">min ${this.formatBytes(file.size) }</button>`;
+            }" title="Click to load and play the minified code">min ${this.formatBytes(fileSize) }</button>`;
         }
         if(codeBtn) {
             entry += `<div class="code-buttons-container">${ codeBtn }</div>`;
