@@ -1202,7 +1202,7 @@ globalThis.bytebeat = new class {
 	toggleTimeCursor() {
 		this.canvasTimeCursor.classList.toggle('hidden', !this.timeCursorEnabled);
 	}
-	updateLocation() {
+	updateUrl() {
 		const pData = { code: this.editorElem.value };
 		if(this.sampleRate !== 8000) {
 			pData.sampleRate = this.sampleRate;
