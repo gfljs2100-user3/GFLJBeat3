@@ -411,7 +411,7 @@ globalThis.bytebeat = new class {
 			songObj.drawMode = drawing.mode;
 			songObj.scale = drawing.scale;
 		}
-		const songData = codeOriginal || codeMinified ? JSON.stringify(songObj) : '';
+		const songData = codeOriginal || codeMinified || file ? JSON.stringify(songObj) : '';
 		if(codeMinified) {
 			entry += ` <span class="code-length" title="Size in characters">${
 				this.formatBytes(codeMinified.length) }</span>` + (codeOriginal ? '<button class="code-button code-toggle"' +
