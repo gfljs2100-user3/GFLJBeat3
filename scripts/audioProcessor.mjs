@@ -253,7 +253,7 @@ class audioProcessor extends AudioWorkletProcessor {
 			case 'nowthisisnotmatters':
 				this.getValues = (funcValue, ch) => {
 					const outValue = funcValue;
-					this.lastByteValue[ch] = Math.round((funcValue + 1) * 127.5);
+					this.lastByteValue[ch] = Math.round((outValue + 1) * 127.5);
 					return outValue;
 				};
 				break;
