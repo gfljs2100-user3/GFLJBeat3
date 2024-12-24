@@ -1,5 +1,4 @@
 import { deflateRaw, inflateRaw } from './pako.esm.min.mjs';
-import timeago from 'timeago.js';
 
 const loadScript = src => new Promise(resolve => {
 	try {
@@ -336,6 +335,36 @@ globalThis.bytebeat = new class {
 	return (i ? (bytes / (1024 ** i)).toFixed(2) : bytes) + ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'][i];
 }
 
+// Remove this import statement
+// import timeago from 'timeago.js';
+
+// Add this function to calculate "time ago"
+function timeAgo(date) {
+    const seconds = Math.floor((new Date() - new Date(date)) / 1000);
+    let interval = Math.floor(seconds / 31536000);
+
+    if (interval > 1) {
+        return interval + " years ago";
+    }
+    interval = Math.floor(seconds / 2592000);
+    if (interval > 1) {
+        return interval + " months ago";
+    }
+    interval = Math.floor(seconds / 86400);
+    if (interval > 1) {
+        return interval + " days ago";
+    }
+    interval = Math.floor(seconds / 3600);
+    if (interval > 1) {
+        return interval + " hours ago";
+    }
+    interval = Math.floor(seconds / 60);
+    if (interval > 1) {
+        return interval + " minutes ago";
+    }
+    return Math.floor(seconds) + " seconds ago";
+}
+
 generateLibraryEntry({
     author, children, codeMinified, codeOriginal, cover, date, description, drawing, file, fileFormatted,
     fileMinified, fileOriginal, mode, name, remix, sampleRate, starred, stereo, url
@@ -478,7 +507,7 @@ generateLibraryEntry({
         entry += `<div class="entry-children">${ childrenStr }</div>`;
     }
     if (date) {
-        entry += `<span class="time-ago">${timeago.format(new Date(date))}</span>`;
+        entry += `<span class="time-ago">${timeAgo(date)}</span>`;
     }
     return `<div class="${ codeOriginal || codeMinified || file || children ? 'entry' : 'entry-text' }${
         starred ? ' ' + ['star-1', 'star-2'][starred - 1] : '' }">${ entry }</div>`;
