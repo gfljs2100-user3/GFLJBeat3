@@ -618,7 +618,7 @@ globalThis.bytebeat = new class {
 		loadScript('./scripts/codemirror.min.mjs?version=2024090100');
 	}
 	async initAudioContext() {
-		this.audioCtx = new AudioContext({ latencyHint: 'balanced'});
+		this.audioCtx = new AudioContext({ latencyHint: 'balanced', samplerate: '96000'});
 		this.audioGain = new GainNode(this.audioCtx);
 		this.audioGain.connect(this.audioCtx.destination);
 		await this.audioCtx.audioWorklet.addModule('./scripts/audioProcessor.mjs?version=2024090100');
