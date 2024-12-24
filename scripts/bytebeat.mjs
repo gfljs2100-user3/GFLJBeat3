@@ -1072,8 +1072,6 @@ globalThis.bytebeat = new class {
 	setSampleRate(sampleRate, isSendData = true) {
 		if(!sampleRate || !isFinite(sampleRate)) {
 			sampleRate = 8000;
-		} else if(sampleRate < 0) {
-			sampleRate = -sampleRate;
 		}
 		switch(sampleRate) {
 		case 8000:
