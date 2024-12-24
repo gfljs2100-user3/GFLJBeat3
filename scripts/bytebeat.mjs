@@ -424,22 +424,22 @@ generateLibraryEntry({
         if(fileFormatted) {
             codeBtn += `<button class="code-button code-load code-load-formatted" data-songdata='${
                 songData }' data-code-file="${ file
-            }" title="Click to load and play the formatted code">format ${file.size} bytes</button>`;
+            }" title="Click to load and play the formatted code">format ${this.formatBytes(file.size)}</button>`;
         }
         if(fileOriginal) {
             codeBtn += `<button class="code-button code-load code-load-original" data-songdata='${
                 songData }' data-code-file="${ file
-            }" title="Click to load and play the original code">orig ${file.size} bytes</button>`;
+            }" title="Click to load and play the original code">orig ${this.formatBytes(file.size)}</button>`;
         }
         if(fileMinified) {
             codeBtn += `<button class="code-button code-load code-load-minified" data-songdata='${
                 songData }' data-code-file="${ file
-            }" title="Click to load and play the minified code">min ${file.size} bytes</button>`;
+            }" title="Click to load and play the minified code">min ${this.formatBytes(file.size)}</button>`;
         }
         if(codeBtn) {
             entry += `<div class="code-buttons-container">${ codeBtn }</div>`;
         }
-        entry += `<div><strong>File Name:</strong> ${file.name}<br><strong>Size:</strong> ${file.size} bytes</div>`;
+        entry += `<div><strong>File Name:</strong> ${file.name}<br><strong>Size:</strong> ${this.formatBytes(file.size)}</div>`;
     }
     if(description) {
         entry += (entry ? '<br>' : '') + description;
