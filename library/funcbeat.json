@@ -223,6 +223,7 @@
 			"date": "2024-11-07",
 			"mode": "Funcbeat",
 			"sampleRate": 48000,
+			"stereo": true,
 			"file": "PortablePorcelain - Doubled Dubstep.js",
 			"fileOriginal": true
 		}]
