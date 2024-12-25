@@ -394,8 +394,14 @@ generateLibraryEntry({
     if(date || sampleRate || mode || stereo || drawing) {
         let infoStr = date ? `(${ date })` : '';
         if(date) {
-            const secondsAgo = Math.floor((new Date() - new Date(date)) / 1000);
-            infoStr += ` (${secondsAgo} seconds ago)`;
+            const dateDiff = new Date() - new Date(date);
+            const secondsAgo = Math.floor(dateDiff / 1000);
+            const minutesAgo = Math.floor(secondsAgo / 60);
+            const hoursAgo = Math.floor(minutesAgo / 60);
+            const daysAgo = Math.floor(hoursAgo / 24);
+            const monthsAgo = Math.floor(daysAgo / 30);
+            const yearsAgo = Math.floor(monthsAgo / 12);
+            infoStr += ` (${secondsAgo} seconds, ${minutesAgo} minutes, ${hoursAgo} hours, ${daysAgo} days, ${monthsAgo} months, ${yearsAgo} years ago)`;
         }
         if(sampleRate) {
             infoStr += `${ infoStr ? ' ' : '' }${ sampleRate }Hz`;
