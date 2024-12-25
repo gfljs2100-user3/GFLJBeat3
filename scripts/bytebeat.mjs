@@ -390,12 +390,19 @@ generateLibraryEntry({
             const daysAgo = Math.floor(hoursAgo / 24);
             const monthsAgo = Math.floor(daysAgo / 30);
             const yearsAgo = Math.floor(monthsAgo / 12);
-            infoStr += ` (${secondsAgo} seconds ago)`;
-            if (minutesAgo > 0) infoStr += `, (${minutesAgo} minutes ago)`;
-            if (hoursAgo > 0) infoStr += `, (${hoursAgo} hours ago)`;
-            if (daysAgo > 0) infoStr += `, (${daysAgo} days ago)`;
-            if (monthsAgo > 0) infoStr += `, (${monthsAgo} months ago)`;
-            if (yearsAgo > 0) infoStr += `, (${yearsAgo} years ago)`;
+            if(yearsAgo > 0) {
+                infoStr += ` (${yearsAgo} years ago)`;
+            } else if(monthsAgo > 0) {
+                infoStr += ` (${monthsAgo} months ago)`;
+            } else if(daysAgo > 0) {
+                infoStr += ` (${daysAgo} days ago)`;
+            } else if(hoursAgo > 0) {
+                infoStr += ` (${hoursAgo} hours ago)`;
+            } else if(minutesAgo > 0) {
+                infoStr += ` (${minutesAgo} minutes ago)`;
+            } else {
+                infoStr += ` (${secondsAgo} seconds ago)`;
+            }
         }
         if(sampleRate) {
             infoStr += `${ infoStr ? ' ' : '' }${ sampleRate }Hz`;
