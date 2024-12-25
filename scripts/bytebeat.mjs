@@ -324,6 +324,15 @@ globalThis.bytebeat = new class {
 	return (i ? (bytes / (1024 ** i)).toFixed(2) : bytes) + ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'][i];
 }
 
+// Add the following changes to bytebeat.mjs
+
+// Add this function to fetch file size and display it
+document.getElementById('file').onchange = function(e) {
+    const size = e.target.files[0].size;
+    document.getElementById('size').textContent = `File size: ${size} bytes`;
+};
+
+// Update the generateLibraryEntry function to include file size information
 generateLibraryEntry({
     author, children, codeMinified, codeOriginal, cover, date, description, drawing, file, fileFormatted,
     fileMinified, fileOriginal, mode, name, remix, sampleRate, starred, stereo, url
@@ -436,17 +445,17 @@ generateLibraryEntry({
         if(fileFormatted) {
             codeBtn += `<button class="code-button code-load code-load-formatted" data-songdata='${
                 songData }' data-code-file="${ file
-            }" title="Click to load and play the formatted code">formatted</button>`;
+            }" title="Click to load and play the formatted code">formatted (${this.formatBytes(fileFormatted.length)})</button>`;
         }
         if(fileOriginal) {
             codeBtn += `<button class="code-button code-load code-load-original" data-songdata='${
                 songData }' data-code-file="${ file
-            }" title="Click to load and play the original code">original</button>`;
+            }" title="Click to load and play the original code">original (${this.formatBytes(fileOriginal.length)})</button>`;
         }
         if(fileMinified) {
             codeBtn += `<button class="code-button code-load code-load-minified" data-songdata='${
                 songData }' data-code-file="${ file
-            }" title="Click to load and play the minified code">minified</button>`;
+            }" title="Click to load and play the minified code">minified (${this.formatBytes(fileMinified.length)})</button>`;
         }
         if(codeBtn) {
             entry += `<div class="code-buttons-container">${ codeBtn }</div>`;
@@ -757,15 +766,18 @@ generateLibraryEntry({
 	mod(a, b) {
 		return ((a % b) + b) % b;
 	}
-	async onclickCodeLoadButton(buttonElem) {
-		const response = await fetch(`library/${
-			buttonElem.classList.contains('code-load-formatted') ? 'formatted' :
-			buttonElem.classList.contains('code-load-minified') ? 'minified' :
-			buttonElem.classList.contains('code-load-original') ? 'original' : ''
-		}/${ buttonElem.dataset.codeFile }`, { cache: 'no-cache' });
-		this.loadCode(Object.assign(JSON.parse(buttonElem.dataset.songdata),
-			{ code: await response.text() }));
-	}
+async onclickCodeLoadButton(buttonElem) {
+    const response = await fetch(`library/${
+        buttonElem.classList.contains('code-load-formatted') ? 'formatted' :
+        buttonElem.classList.contains('code-load-minified') ? 'minified' :
+        buttonElem.classList.contains('code-load-original') ? 'original' : ''
+    }/${ buttonElem.dataset.codeFile }`, { cache: 'no-cache' });
+    const code = await response.text();
+    const songData = JSON.parse(buttonElem.dataset.songdata);
+    songData.code = code;
+    songData.size = code.length;  // Add file size
+    this.loadCode(songData);
+}
 	onclickCodeToggleButton(buttonElem) {
 		const parentElem = buttonElem.parentNode;
 		const origElem = parentElem.querySelector('.code-text-original');
