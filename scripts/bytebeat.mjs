@@ -102,17 +102,6 @@ globalThis.bytebeat = new class {
 			this.requestAnimationFrame();
 		}
 	}
-	cacheSongs(libArr) {
-		this.songs = new Map();
-		for(let i = 0, iLen = libArr.length; i < iLen; ++i) {
-			const { author } = libArr[i];
-			for(let j = 0, jLen = libArr[i].songs.length; j < jLen; ++j) {
-				const song = libArr[i].songs[j];
-				song.author = author;
-				this.songs.set(song.hash, song);
-			}
-		}
-	}
 	clearCanvas() {
 		this.canvasCtx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
 	}
@@ -401,7 +390,12 @@ generateLibraryEntry({
             const daysAgo = Math.floor(hoursAgo / 24);
             const monthsAgo = Math.floor(daysAgo / 30);
             const yearsAgo = Math.floor(monthsAgo / 12);
-            infoStr += ` (${secondsAgo} seconds, ${minutesAgo} minutes, ${hoursAgo} hours, ${daysAgo} days, ${monthsAgo} months, ${yearsAgo} years ago)`;
+            infoStr += ` (${secondsAgo} seconds ago)`;
+            if (minutesAgo > 0) infoStr += `, (${minutesAgo} minutes ago)`;
+            if (hoursAgo > 0) infoStr += `, (${hoursAgo} hours ago)`;
+            if (daysAgo > 0) infoStr += `, (${daysAgo} days ago)`;
+            if (monthsAgo > 0) infoStr += `, (${monthsAgo} months ago)`;
+            if (yearsAgo > 0) infoStr += `, (${yearsAgo} years ago)`;
         }
         if(sampleRate) {
             infoStr += `${ infoStr ? ' ' : '' }${ sampleRate }Hz`;
