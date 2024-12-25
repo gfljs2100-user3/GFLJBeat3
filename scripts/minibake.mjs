@@ -1,8 +1,7 @@
-function strEncodeUTF16() {
-  var inputText = document.getElementById('inputText').value; // Get text from input field
+function strEncodeUTF16(text) {
   var arr = [];
-  for (var i = 0; i < inputText.length; i++) {
-    arr[i] = inputText.charCodeAt(i);
+  for (var i = 0; i < text.length; i++) {
+    arr[i] = text.charCodeAt(i);
   }
   return arr;
 }
@@ -13,11 +12,20 @@ function setTextById(id, text) {
   if (element) {
     element.textContent = text;
   } else {
+    console.log("Element with ID '" + id + "' not found.");
   }
 }
 
 // Function to encode text from input field
 function encodeText() {
-  var encodedArr = strEncodeUTF16();
+  var inputText = document.getElementById('inputText').value;
+  var encodedArr = strEncodeUTF16(inputText);
+  setTextById('output', encodedArr.join(', '));
+}
+
+// Function to generate a UTF-16 encoded string and display it
+function generateUTF16Text() {
+  var generatedText = "Example Text";  // You can change this to any default text
+  var encodedArr = strEncodeUTF16(generatedText);
   setTextById('output', encodedArr.join(', '));
 }
