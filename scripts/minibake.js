@@ -13,6 +13,6 @@ function convertText() {
 }
 
 function copyText() {
-    var sourceText = document.getElementById("input").value;
-    document.getElementById("editor-default").value = sourceText;
+    var sourceText = document.getElementById("editor-default").value;
+    document.getElementById("input").value = sourceText;
 }
