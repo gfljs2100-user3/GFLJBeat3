@@ -4,9 +4,7 @@ function minibake(str) {
     for(let i = 0; i < str.length; i += 2) {
         out += String.fromCharCode((str.charCodeAt(i) << 8) | str.charCodeAt(i + 1));
     }
-    const minibaketext = ["eval(unescape(escape`", out, "`.replace(/u(..)/g,"$1%")))"];
-    let text = minibaketext.join();
-    return text;
+    return out;
 }
 
 function convertText() {
