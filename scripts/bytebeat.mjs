@@ -391,17 +391,17 @@ generateLibraryEntry({
             const monthsAgo = Math.floor(daysAgo / 30);
             const yearsAgo = Math.floor(monthsAgo / 12);
             if(yearsAgo > 0) {
-                infoStr += ` (${yearsAgo} years ago)`;
+                infoStr += ` (${yearsAgo} year${yearsAgo > 1 ? 's' : ''} ago)`;
             } else if(monthsAgo > 0) {
-                infoStr += ` (${monthsAgo} months ago)`;
+                infoStr += ` (${monthsAgo} month${monthsAgo > 1 ? 's' : ''} ago)`;
             } else if(daysAgo > 0) {
-                infoStr += ` (${daysAgo} days ago)`;
+                infoStr += ` (${daysAgo} day${daysAgo > 1 ? 's' : ''} ago)`;
             } else if(hoursAgo > 0) {
-                infoStr += ` (${hoursAgo} hours ago)`;
+                infoStr += ` (${hoursAgo} hour${hoursAgo > 1 ? 's' : ''} ago)`;
             } else if(minutesAgo > 0) {
-                infoStr += ` (${minutesAgo} minutes ago)`;
+                infoStr += ` (${minutesAgo} minute${minutesAgo > 1 ? 's' : ''} ago)`;
             } else {
-                infoStr += ` (${secondsAgo} seconds ago)`;
+                infoStr += ` (${secondsAgo} second${secondsAgo > 1 ? 's' : ''} ago)`;
             }
         }
         if(sampleRate) {
