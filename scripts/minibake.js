@@ -4,6 +4,7 @@ function minibake(str) {
     for(let i = 0; i < str.length; i += 2) {
         out += String.fromCharCode((str.charCodeAt(i) << 8) | str.charCodeAt(i + 1));
     }
+    arr = ["eval(unescape(escape`", out, "`.replace(/u(..)/g,"$1%")))"];
     return out;
 }
 
