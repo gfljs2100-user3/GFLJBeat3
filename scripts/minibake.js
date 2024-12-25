@@ -11,3 +11,8 @@ function convertText() {
     let conv = minibake(document.getElementById('input').value);
     document.getElementById('output').textContent = conv;
 }
+
+function copyText() {
+    var sourceText = document.getElementById("input").value;
+    document.getElementById("editor-default").value = sourceText;
+}
