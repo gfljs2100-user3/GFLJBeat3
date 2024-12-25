@@ -431,27 +431,27 @@ generateLibraryEntry({
     } else if(codeOriginal) {
         entry += ` <span class="code-length" title="Size in characters">${ this.formatBytes(codeOriginal.length) }</span>`;
     }
-    if(file) {
-        let codeBtn = '';
-        if(fileFormatted) {
-            codeBtn += `<button class="code-button code-load code-load-formatted" data-songdata='${
-                songData }' data-code-file="${ file
-            }" title="Click to load and play the formatted code">formatted</button>`;
-        }
-        if(fileOriginal) {
-            codeBtn += `<button class="code-button code-load code-load-original" data-songdata='${
-                songData }' data-code-file="${ file
-            }" title="Click to load and play the original code">original</button>`;
-        }
-        if(fileMinified) {
-            codeBtn += `<button class="code-button code-load code-load-minified" data-songdata='${
-                songData }' data-code-file="${ file
-            }" title="Click to load and play the minified code">minified</button>`;
-        }
-        if(codeBtn) {
-            entry += `<div class="code-buttons-container">${ codeBtn }</div>`;
-        }
+if(file) {
+    let codeBtn = '';
+    if(fileFormatted) {
+        codeBtn += `<button class="code-button code-load code-load-formatted" data-songdata='${
+            songData }' data-code-file="${ file
+        }" title="Click to load and play the formatted code (Size: ${fileSize})">formatted ${fileSize}</button>`;
     }
+    if(fileOriginal) {
+        codeBtn += `<button class="code-button code-load code-load-original" data-songdata='${
+            songData }' data-code-file="${ file
+        }" title="Click to load and play the original code (Size: ${fileSize})">original ${fileSize}</button>`;
+    }
+    if(fileMinified) {
+        codeBtn += `<button class="code-button code-load code-load-minified" data-songdata='${
+            songData }' data-code-file="${ file
+        }" title="Click to load and play the minified code (Size: ${fileSize})">minified ${fileSize}</button>`;
+    }
+    if(codeBtn) {
+        entry += `<div class="code-buttons-container">${ codeBtn }</div>`;
+    }
+}
     if(description) {
         entry += (entry ? '<br>' : '') + description;
     }
@@ -757,15 +757,19 @@ generateLibraryEntry({
 	mod(a, b) {
 		return ((a % b) + b) % b;
 	}
-	async onclickCodeLoadButton(buttonElem) {
-		const response = await fetch(`library/${
-			buttonElem.classList.contains('code-load-formatted') ? 'formatted' :
-			buttonElem.classList.contains('code-load-minified') ? 'minified' :
-			buttonElem.classList.contains('code-load-original') ? 'original' : ''
-		}/${ buttonElem.dataset.codeFile }`, { cache: 'no-cache' });
-		this.loadCode(Object.assign(JSON.parse(buttonElem.dataset.songdata),
-			{ code: await response.text() }));
-	}
+async onclickCodeLoadButton(buttonElem) {
+    const response = await fetch(`library/${
+        buttonElem.classList.contains('code-load-formatted') ? 'formatted' :
+        buttonElem.classList.contains('code-load-minified') ? 'minified' :
+        buttonElem.classList.contains('code-load-original') ? 'original' : ''
+    }/${ buttonElem.dataset.codeFile }`, { cache: 'no-cache' });
+    
+    const fileContent = await response.text();
+    const fileSize = this.formatBytes(new Blob([fileContent]).size);
+
+    this.loadCode(Object.assign(JSON.parse(buttonElem.dataset.songdata),
+        { code: fileContent, fileSize }));
+}
 	onclickCodeToggleButton(buttonElem) {
 		const parentElem = buttonElem.parentNode;
 		const origElem = parentElem.querySelector('.code-text-original');
