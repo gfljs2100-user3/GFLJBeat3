@@ -299,11 +299,12 @@ html {
 	color-scheme: dark;
 	background-color: #000;
 	color: #c5c8c6;
-	font: var(--font-size) var(--font-size);
+	font: var(--font-size) var(--font);
 }
 
 body {
 	margin: 0;
+	font-family: "Roboto Condensed", sans-serif;
 }
 
 a, a:visited {
