@@ -28,6 +28,24 @@
                     }
                 });
             });
+
+            // Handle file upload
+            const input = document.getElementById('fileinput');
+            const upload = (file) => {
+                fetch('https://gfljbeat3.pages.dev', { // Replace with your actual endpoint
+                    method: 'POST',
+                    headers: {
+                        // Content-Type may need to be completely omitted
+                        // or you may need something
+                        "Content-Type": "application/octet-stream" // This is an example, adjust as needed
+                    },
+                    body: file // This is your file object
+                }).then(response => response.json())
+                .then(success => console.log(success)) // Handle the success response object
+                .catch(error => console.log(error)); // Handle the error response object
+            };
+            const onSelectFile = () => upload(input.files[0]);
+            input.addEventListener('change', onSelectFile, false);
         });
 
         function addRemixField(event) {
