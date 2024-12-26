@@ -30,21 +30,22 @@
             });
 
             // Handle file upload
-            const input = document.getElementById('fileinput');
+            const input = document.querySelector('input[type="submit"]');
             const upload = (file) => {
-                fetch('https://gfljbeat3.pages.dev', { // Replace with your actual endpoint
+                fetch('./library', {
                     method: 'POST',
-                    headers: {
-                        // Content-Type may need to be completely omitted
-                        // or you may need something
-                        "Content-Type": "application/octet-stream" // This is an example, adjust as needed
-                    },
-                    body: file // This is your file object
+                    body: file
                 }).then(response => response.json())
                 .then(success => console.log(success)) // Handle the success response object
                 .catch(error => console.log(error)); // Handle the error response object
             };
-            const onSelectFile = () => upload(input.files[0]);
+            const onSelectFile = () => {
+                var data = new FormData();
+                for (const file of input.files) {
+                    data.append('files', file, file.name);
+                }
+                upload(data);
+            };
             input.addEventListener('change', onSelectFile, false);
         });
 
