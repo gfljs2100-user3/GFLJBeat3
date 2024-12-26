@@ -788,7 +788,7 @@ generateLibraryEntry({
 		state.add('loaded');
 		const waitElem = headerElem.querySelector('.loading-wait');
 		waitElem.classList.remove('hidden');
-		const response = await fetch(`./library/${ containerElem.id.replace('library-', '') }.json`,
+		const response = await fetch(`./library/${ containerElem.id.replace('library-', '') }.gz`,
 			{ cache: 'no-cache' });
 		const { status } = response;
 		waitElem.classList.add('hidden');
@@ -800,7 +800,7 @@ generateLibraryEntry({
 		}
 		containerElem.innerHTML = '';
 		let libraryHTML = '';
-		const libraryArr = await response.json();
+		const libraryArr = JSON.parse(ungzip(await response.arrayBuffer(), { to: 'string' }));
 		for(let i = 0, len = libraryArr.length; i < len; ++i) {
 			libraryHTML += `<div class="entry-top">${ this.generateLibraryEntry(libraryArr[i]) }</div>`;
 		}
