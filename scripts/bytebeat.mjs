@@ -1212,7 +1212,8 @@ generateLibraryEntry({
 		this.playbackToggle(true);
 	}
 	toggleTimeCursor() {
-		this.canvasTimeCursor.classList.toggle('hidden', !this.timeCursorEnabled);
+	    const timeCursorEnabled = Math.abs(this.songData.sampleRate * this.playbackSpeed) < (2000 << this.settings.drawScale);
+	    this.canvasTimeCursor.classList.toggle('hidden', !timeCursorEnabled);
 	}
 updateUrl() {
     const code = this.editorValue;
