@@ -32,6 +32,7 @@
 	--entry-star: #ffff00;
 	--focus: #c26100;
 	--font-size: 10.5pt;
+	--font: "Afacad Flux";
 	--library-header: linear-gradient(to bottom, #5e5e06, #5e4206);
 	--library-header-hover: linear-gradient(to bottom, #a8ad00, #ad7400);
 	--library-header-hover-color: #94c7ff;
@@ -57,6 +58,7 @@ html[data-theme="Blue"] {
 	--editor: #12151c;
 	--entry-star: #2fffff;
 	--focus: #9782ff;
+	--font: sans-serif;
 	--library-header: linear-gradient(to bottom, #2c3e6a, #101420);
 	--library-header-hover: linear-gradient(to bottom, #405588, #192035);
 	--error: #f92672;
@@ -80,6 +82,7 @@ html[data-theme="Cake"] {
 	--editor: #1e071c;
 	--entry-star: #ff60f5;
 	--focus: #56e6ff;
+	--font: sans-serif;
 	--library-header: linear-gradient(to bottom, #c0359d, #00353a);
 	--library-header-hover: linear-gradient(to bottom, #ee58c9, #004950);
 	--library-header-hover-color: #94fbff;
@@ -106,6 +109,7 @@ html[data-theme="Dusk"] {
 	--editor: #101018;
 	--entry-star: #8080c0;
 	--focus: #8080c0;
+	--font: sans-serif;
 	--library-header: linear-gradient(to bottom, #202030, #404060);
 	--library-header-hover: linear-gradient(to bottom, #303048, #606096);
 	--library-header-hover-color: #d0d0f0;
@@ -131,6 +135,7 @@ html[data-theme="Green"] {
 	--editor: #0f1712;
 	--entry-star: #00ff00;
 	--focus: #aaffc4;
+	--font: sans-serif;
 	--library-header: linear-gradient(to bottom, #20462c, #0b170d);
 	--library-header-hover: linear-gradient(to bottom, #326c42, #152b1b);
 	--library-header-hover-color: #94ffc7;
@@ -153,6 +158,7 @@ html[data-theme="Orange"] {
 	--control-volume-hover: linear-gradient(to bottom, #ffaf6a, #4e2e10);
 	--editor: #171006;
 	--focus: #fff2aa;
+	--font: sans-serif;
 	--library-header: linear-gradient(to bottom, #c56600, #1d1206);
 	--library-header-hover: linear-gradient(to bottom, #f58004, #3b260d);
 	--library-header-hover-color: #ffffa5;
@@ -175,6 +181,7 @@ html[data-theme="Purple"] {
 	--control-volume-hover: linear-gradient(to bottom, #ab68b4, #693f71);
 	--editor: #1a121c;
 	--focus: #8289ff;
+	--font: sans-serif;
 	--library-header: linear-gradient(to bottom, #432046, #170b16);
 	--library-header-hover: linear-gradient(to bottom, #65326c, #2b152a);
 	--link: #ca89ff;
@@ -199,6 +206,7 @@ html[data-theme="Teal"] {
 	--editor: #061717;
 	--entry-star: #65ff4f;
 	--focus: #aafcff;
+	--font: sans-serif;
 	--library-header: linear-gradient(to bottom, #2b8082, #0e2828);
 	--library-header-hover: linear-gradient(to bottom, #3c9fa2, #214a4a);
 	--library-header-hover-color: #94fbff;
@@ -238,6 +246,7 @@ html[data-theme="Dollchan"] {
 	--entry-star: #ffff00;
 	--focus: #614fdb;
 	--font-size: 10.5pt;
+	--font: sans-serif;
 	--library-header: linear-gradient(to bottom, #202c46, #0b0d17);
 	--library-header-hover: linear-gradient(to bottom, #32426c, #151b2b);
 	--library-header-hover-color: #94c7ff;
@@ -290,7 +299,7 @@ html {
 	color-scheme: dark;
 	background-color: #000;
 	color: #c5c8c6;
-	font: var(--font-size) sans-serif;
+	font: var(--font-size) var(--font-size);
 }
 
 body {
