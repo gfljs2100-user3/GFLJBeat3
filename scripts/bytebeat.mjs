@@ -94,7 +94,7 @@ globalThis.bytebeat = new class {
 		return saveData;
 	}
 	get timeCursorEnabled() {
-	    return Math.abs(this.songData.sampleRate * this.playbackSpeed) < 2000;
+	    return Math.abs(this.songData.sampleRate * this.playbackSpeed) < (2000 << this.settings.drawScale);
 	}
 	animationFrame() {
 		this.drawGraphics(this.byteSample);
@@ -1108,23 +1108,22 @@ generateLibraryEntry({
 		}
 	}
 	setScale(amount, buttonElem) {
-	    if (buttonElem?.getAttribute('disabled')) {
-	        return;
-	    }
-	    const scale = Math.max(this.settings.drawScale + amount, 0);
-	    this.settings.drawScale = scale;
-	    this.controlScale.innerHTML = !scale ? '1x' :
-	        scale < 7 ? `1/${2 ** scale}${scale < 4 ? 'x' : ''}` :
-	            `<sub>2</sub>-${scale}`;
-	    this.saveSettings();
-	    this.clearCanvas();
-	    this.toggleTimeCursor();
-	    if (this.settings.drawScale <= 0) {
-	        this.controlScaleDown.setAttribute('disabled', true);
-	    } else {
-	        this.controlScaleDown.removeAttribute('disabled');
-	    }
-	    this.toggleTimeCursor();
+		if(buttonElem?.getAttribute('disabled')) {
+			return;
+		}
+		const scale = Math.max(this.settings.drawScale + amount, 0);
+		this.settings.drawScale = scale;
+		this.controlScale.innerHTML = !scale ? '1x' :
+			scale < 7 ? `1/${ 2 ** scale }${ scale < 4 ? 'x' : '' }` :
+			`<sub>2</sub>-${ scale }`;
+		this.saveSettings();
+		this.clearCanvas();
+		this.toggleTimeCursor();
+		if(this.settings.drawScale <= 0) {
+			this.controlScaleDown.setAttribute('disabled', true);
+		} else {
+			this.controlScaleDown.removeAttribute('disabled');
+		}
 	}
 	setThemeStyle(value) {
 		if(value === undefined) {
@@ -1213,8 +1212,7 @@ generateLibraryEntry({
 		this.playbackToggle(true);
 	}
 	toggleTimeCursor() {
-	    const timeCursorEnabled = Math.abs(this.songData.sampleRate * this.playbackSpeed) < (2000 << this.settings.drawScale);
-	    this.canvasTimeCursor.classList.toggle('hidden', !timeCursorEnabled);
+		this.canvasTimeCursor.classList.toggle('hidden', !this.timeCursorEnabled);
 	}
 updateUrl() {
     const code = this.editorValue;
