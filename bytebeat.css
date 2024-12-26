@@ -582,7 +582,7 @@ button[name="close"] {
 	margin: 4px 0;
 	padding: 5px 10px;
 	width: fit-content;
-	font: var(--font-size)/var(--font-size) sans-serif;
+	font: var(--font-size)/var(--font-size) var(--font);
 }
 
 .code-button > .loading-wait {
@@ -591,7 +591,7 @@ button[name="close"] {
 }
 
 .code-buttons {
-	font: 90%/var(--font-size) sans-serif;
+	font: 90%/var(--font-size) var(--font);
 }
 
 .code-buttons > .code-load {
