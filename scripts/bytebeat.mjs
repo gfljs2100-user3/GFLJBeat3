@@ -1119,7 +1119,7 @@ generateLibraryEntry({
 		this.saveSettings();
 		this.clearCanvas();
 		this.toggleTimeCursor();
-		if(this.settings.drawScale <= 0) {
+		if(this.settings.drawScale <= 0 || (this.songData.sampleRate || this.playbackSpeed) <= 2000) {
 			this.controlScaleDown.setAttribute('disabled', true);
 		} else {
 			this.controlScaleDown.removeAttribute('disabled');
