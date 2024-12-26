@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bytebeat Management</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelector('#loginForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+                const password = event.target.elements['managepassword'].value;
+                if (password === 'your_admin_password') { // Replace 'your_admin_password' with the actual password
+                    document.querySelector('#loginForm').style.display = 'none';
+                    document.querySelector('#managementPanel').style.display = 'flex';
+                    // Set session cookie for 30 days
+                    document.cookie = "session_id=" + password + "; max-age=" + (30*24*60*60) + "; path=/; samesite=Strict";
+                } else {
+                    alert('Incorrect password. Please try again.');
+                }
+            });
+
+            document.querySelectorAll('.control-button').forEach(button => {
+                button.addEventListener('click', function(event) {
+                    if (button.getAttribute('href') === '?addsong_request') {
+                        event.preventDefault();
+                        document.querySelector('#addSongForm').style.display = 'block';
+                    }
+                });
+            });
+        });
+
+        function addRemixField(event) {
+            event.preventDefault();
+            const newField = event.target.parentNode.cloneNode(true);
+            newField.querySelector('input').value = '';
+            event.target.parentNode.insertAdjacentElement('afterend', newField);
+        }
+
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+</head>
+<body style="text-align: center;">
+
+    <!-- Login Form -->
+    <fieldset id="loginForm">
+        <legend align="center">Enter an administrator password</legend>
+        <form name="form_login">
+            <input type="password" name="managepassword">
+            <input type="submit" value="Log In">
+        </form>
+    </fieldset>
+
+    <!-- Management Panel -->
+    <fieldset id="managementPanel" style="display: none; flex-direction: column; gap: 4px;">
+        <legend align="center">Select an action to manage the library</legend>
+        <a href="?addsong_request" class="control-button">Add a song</a>
+        <a href="?files_to_db" class="control-button" onclick="return confirm('Are you sure to copy songs from library files into the database?')">Migrate to database</a>
+        <a href="?db_to_files" class="control-button">Make library files</a>
+        <a href="?logout" class="control-button">Logout</a>
+    </fieldset>
+
+    <!-- Add Song Form -->
+    <fieldset id="addSongForm" style="display: none;">
+        <legend align="center">Adding a song</legend>
+        <form name="form_addsong" method="post" action="?addsong">
+            <table class="table-form">
+                <tbody>
+                    <tr>
+                        <th>Author</th>
+                        <td><input type="text" name="author"></td>
+                    </tr>
+                    <tr>
+                        <th>Name</th>
+                        <td><input type="text" name="name"></td>
+                    </tr>
+                    <tr>
+                        <th>Description</th>
+                        <td><textarea name="description"></textarea></td>
+                    </tr>
+                    <tr>
+                        <th>URL</th>
+                        <td><textarea name="url" placeholder='URL or ["URL1","URL2",...]'></textarea></td>
+                    </tr>
+                    <tr>
+                        <th>Date</th>
+                        <td><input type="text" name="date" placeholder="yyyy-mm-dd"></td>
+                    </tr>
+                    <tr>
+                        <th>Mode</th>
+                        <td>
+                            <select name="mode">
+                                <option value="Bytebeat">Bytebeat</option>
+                                <option value="Signed Bytebeat">Signed Bytebeat</option>
+                                <option value="Floatbeat">Floatbeat</option>
+                                <option value="Funcbeat">Funcbeat</option>
+                            </select>
+                            <label><input type="checkbox" name="stereo"> Stereo</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Sample rate (Hz)</th>
+                        <td><input type="text" name="samplerate"></td>
+                    </tr>
+                    <tr>
+                        <th>Remix</th>
+                        <td>
+                            <div>
+                                <input type="text" name="remix[]" placeholder="Source song hash" style="width: 88%;">
+                                <button onclick="addRemixField(event)" title="Click to add more sources.">+</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Cover name</th>
+                        <td><input type="text" name="cover_name"></td>
+                    </tr>
+                    <tr>
+                        <th>Cover URL</th>
+                        <td><input type="text" name="cover_url"></td>
+                    </tr>
+                    <tr>
+                        <th>Code original</th>
+                        <td><textarea name="code"></textarea></td>
+                    </tr>
+                    <tr>
+                        <th>Code minified</th>
+                        <td><textarea name="code_minified"></textarea></td>
+                    </tr>
+                    <tr>
+                        <th>Code formatted</th>
+                        <td><textarea name="code_formatted"></textarea></td>
+                    </tr>
+                    <tr>
+                        <th>Drawing mode</th>
+                        <td>
+                            <select name="drawing_mode">
+                                <option value="">None</option>
+                                <option value="Points">Points</option>
+                                <option value="Waveform">Waveform</option>
+                                <option value="Diagram">Diagram</option>
+                                <option value="Combined">Combined</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Drawing scale</th>
+                        <td><input type="text" name="drawing_scale" placeholder="1=1/2, 2=1/4, 3=1/8, 4=1/16 ..."></td>
+                    </tr>
+                    <tr>
+                        <th>Tags</th>
+                        <td><input type="text" name="tags" placeholder='Tag or ["tag1","tag2",...]'></td>
+                    </tr>
+                    <tr>
+                        <th>Rating</th>
+                        <td>
+                            <select name="rating">
+                                <option value="0">No rating</option>
+                                <option value="1">Star</option>
+                                <option value="2">Yellow star</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><input type="submit" value="Submit"></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+    </fieldset>
+
+    <!-- Back Button -->
+    <button onclick="goBack()">Back</button>
+
+</body>
+</html>
