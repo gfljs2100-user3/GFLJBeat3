@@ -1108,22 +1108,23 @@ generateLibraryEntry({
 		}
 	}
 	setScale(amount, buttonElem) {
-		if(buttonElem?.getAttribute('disabled')) {
-			return;
-		}
-		const scale = Math.max(this.settings.drawScale + amount, 0);
-		this.settings.drawScale = scale;
-		this.controlScale.innerHTML = !scale ? '1x' :
-			scale < 7 ? `1/${ 2 ** scale }${ scale < 4 ? 'x' : '' }` :
-			`<sub>2</sub>-${ scale }`;
-		this.saveSettings();
-		this.clearCanvas();
-		this.toggleTimeCursor();
-		if(this.settings.drawScale <= 0) {
-			this.controlScaleDown.setAttribute('disabled', true);
-		} else {
-			this.controlScaleDown.removeAttribute('disabled');
-		}
+	    if (buttonElem?.getAttribute('disabled')) {
+	        return;
+	    }
+	    const scale = Math.max(this.settings.drawScale + amount, 0);
+	    this.settings.drawScale = scale;
+	    this.controlScale.innerHTML = !scale ? '1x' :
+	        scale < 7 ? `1/${2 ** scale}${scale < 4 ? 'x' : ''}` :
+	            `<sub>2</sub>-${scale}`;
+	    this.saveSettings();
+	    this.clearCanvas();
+	    this.toggleTimeCursor();
+	    if (this.settings.drawScale <= 0) {
+	        this.controlScaleDown.setAttribute('disabled', true);
+	    } else {
+	        this.controlScaleDown.removeAttribute('disabled');
+	    }
+	    this.toggleTimeCursor();
 	}
 	setThemeStyle(value) {
 		if(value === undefined) {
