@@ -767,7 +767,7 @@ button[name="close"] {
 	border-radius: var(--control-corners);
 	background-image: var(--control-button);
 	color: #e3e3e3;
-	font: bold var(--font-size)/var(--control-size) sans-serif;
+	font: bold var(--font-size)/var(--control-size) var(--font);
 	cursor: pointer;
 }
 
