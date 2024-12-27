@@ -1,4 +1,4 @@
-import { deflateRaw, inflateRaw, ungzip } from './pako.esm.min.mjs';
+import { deflateRaw, inflateRaw, ungzip } from 'pako';
 
 const loadScript = src => new Promise(resolve => {
 	try {
