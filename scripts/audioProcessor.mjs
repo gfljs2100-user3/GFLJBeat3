@@ -187,13 +187,14 @@ class audioProcessor extends AudioWorkletProcessor {
 					return outValue;
 				};
 				break;
-			case 'WavePot':
-				this.getValues = (funcValue, ch) => {
-					const outValue = Math.max(Math.min(funcValue, 1), -1);
-					this.lastByteValue[ch] = Math.round((outValue + 1) * 127.5);
-					return outValue;
-				};
-				break;
+		        case 'WavePot':
+		            this.getValues = (funcValue, ch) => {
+			                const outValue = Math.max(Math.min(funcValue, 1), -1);
+			                this.lastByteValue[ch] = Math.round((outValue + 1) * 127.5);
+			                return outValue;
+		                };
+		                this.sampleRate = 44100;
+		                break;
 			case 'Logmode':
 				this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = (Math.log2(funcValue) * 32) & 255) / 127.5 - 1;
 				break;
