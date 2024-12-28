@@ -310,6 +310,9 @@ class audioProcessor extends AudioWorkletProcessor {
 			if(this.isFuncbeat) {
 				this.func = this.func();
 				this.func(0, this.sampleRate);
+			} else if(this.isDSP) {
+				this.func = this.func();
+				this.func(0, this.sampleRate);
 			} else {
 				this.func(0);
 			}
