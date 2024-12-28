@@ -272,9 +272,31 @@ class audioProcessor extends AudioWorkletProcessor {
   }
 
   switchToDspMode() {
-    // Implement DSP mode switching logic here
+    class MyProcessor extends AudioWorkletProcessor {
+      constructor() {
+        super();
+        this.t = 0;
+        this.stopped = false;
+        this.port.onmessage = (e) => {
+          if(e.data==='stop') {
+            this.stopped = true;
+          }
+        };
+      }
+      process(inputs, outputs, parameters) {
+        const output = outputs[0];
+        for (let i = 0; i < output[0].length; i++) {
+          const out = dsp(this.t / sampleRate);
+          output.forEach((channel) => {
+            channel[i] = out;
+          });
+          this.t++;
+        }
+        return !this.stopped;
+      }
+    }
+    registerProcessor('MyProcessor', MyProcessor);
     console.log("Switched to DSP mode");
-    // Add DSP node setup and connection logic here
   }
 
   sendData(data) {
