@@ -9,7 +9,7 @@ class audioProcessor extends AudioWorkletProcessor {
         this.getValues = null;
         this.isFuncbeat = false;
         this.isPlaying = false;
-        this.isDSP = false; // Add this line
+        this.isDSP = false;
         this.playbackSpeed = 1;
         this.lastByteValue = [null, null];
         this.lastFuncValue = [null, null];
@@ -24,12 +24,10 @@ class audioProcessor extends AudioWorkletProcessor {
         this.port.start();
     }
     static deleteGlobals() {
-        // Delete single letter variables to prevent persistent variable errors (covers a good enough range)
         for(let i = 0; i < 26; ++i) {
             delete globalThis[String.fromCharCode(65 + i)];
             delete globalThis[String.fromCharCode(97 + i)];
         }
-        // Delete global variables
         for(const name in globalThis) {
             if(Object.prototype.hasOwnProperty.call(globalThis, name)) {
                 delete globalThis[name];
@@ -243,6 +241,13 @@ class audioProcessor extends AudioWorkletProcessor {
                     return outValue;
                 };
                 break;
+            case 'DSP': // Add this case
+                this.getValues = (funcValue, ch) => {
+                    const outValue = Math.max(Math.min(funcValue, 1), -1);
+                    this.lastByteValue[ch] = Math.round((outValue + 1) * 127.5);
+                    return outValue;
+                };
+                break;
             default: this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = NaN);
             }
         }
@@ -277,13 +282,11 @@ class audioProcessor extends AudioWorkletProcessor {
         this.outValue = [0, 0];
     }
     setFunction(codeText) {
-        // Create shortened Math functions
         const params = Object.getOwnPropertyNames(Math);
         const values = params.map(k => Math[k]);
         params.push('int', 'window');
         values.push(Math.floor, globalThis);
         audioProcessor.deleteGlobals();
-        // Bytebeat code testing
         let isCompiled = false;
         const oldFunc = this.func;
         try {
@@ -292,7 +295,6 @@ class audioProcessor extends AudioWorkletProcessor {
             } else if(this.isFuncbeat) {
                 this.func = new Function(...params, codeText).bind(globalThis, ...values);
             } else {
-                // Optimize code like eval(unescape(escape`XXXX`.replace(/u(..)/g,"$1%")))
                 codeText = codeText.trim().replace(
                     /^eval\(unescape\(escape(?:`|\('|\("|\(`)(.*?)(?:`|'\)|"\)|`\)).replace\(\/u\(\.\.\)\/g,["'`]\$1%["'`]\)\)\)$/,
                     (match, m1) => unescape(escape(m1).replace(/u(..)/g, '$1%')));
