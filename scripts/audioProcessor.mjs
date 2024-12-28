@@ -59,8 +59,9 @@ class audioProcessor extends AudioWorkletProcessor {
 			typeof lineNumber === 'number' && typeof columnNumber === 'number' ?
 				` (at line ${ lineNumber - 3 }, character ${ +columnNumber })` : '' }`;
 	}
-	process(inputs, [chData]) {
+	process(inputs, [chData], e) {
 		const chDataLen = chData[0].length;
+		let output = e.outputBuffer.getChannelData(0);
 		if(!chDataLen || !this.isPlaying) {
 			return true;
 		}
@@ -78,8 +79,8 @@ class audioProcessor extends AudioWorkletProcessor {
 					if(this.isFuncbeat) {
 						funcValue = this.func(currentSample / this.sampleRate, this.sampleRate);
 					} else if(this.isDSP) {
-    						const t = time + (currentSample / this.sampleRate); 
-    						chData[currentSample] = (t); 
+    						const t = funcValue = time + (currentSample / this.sampleRate); 
+    						chData[currentSample] = this.func(t); 
 					} else {
 						funcValue = this.func(currentSample);
 					}
