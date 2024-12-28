@@ -292,7 +292,6 @@ class audioProcessor extends AudioWorkletProcessor {
         try {
             if(this.isDSP) {
                 this.func = new Function(...params, 't', `return Math.max(Math.min(${codeText}, 1), -1);`).bind(globalThis, ...values);
-                this.func = new Function(...params, codeText).bind(globalThis, ...values);
             } else if(this.isFuncbeat) {
                 this.func = new Function(...params, codeText).bind(globalThis, ...values);
             } else {
