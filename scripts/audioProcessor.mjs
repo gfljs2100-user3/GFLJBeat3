@@ -78,7 +78,7 @@ class audioProcessor extends AudioWorkletProcessor {
 					if(this.isFuncbeat) {
 						funcValue = this.func(currentSample / this.sampleRate, this.sampleRate);
 					} else if(this.isWavePot) {
-						funcValue = this.func(currentSample / 44100);
+						funcValue = this.func(currentSample / 44100, 44100);
 					} else {
 						funcValue = this.func(currentSample);
 					}
