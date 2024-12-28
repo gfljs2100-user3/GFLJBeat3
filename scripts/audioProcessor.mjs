@@ -62,12 +62,10 @@ class audioProcessor extends AudioWorkletProcessor {
                 ` (at line ${ lineNumber - 3 }, character ${ +columnNumber })` : '' }`;
     }
 
-    dsp(sample) {
+    dsp(t) {
         if (this.customDSPFunction) {
-            return this.customDSPFunction(sample); // Use custom DSP function if provided
+            return this.customDSPFunction(t); // Use custom DSP function if provided
         }
-        // Default DSP function
-        return Math.sin(sample * 2 * Math.PI * 440); // Example: Simple sine wave at 440 Hz
     }
 
     setCustomDSP(customFunction) {
