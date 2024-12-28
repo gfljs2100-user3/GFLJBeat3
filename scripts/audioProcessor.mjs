@@ -17,6 +17,7 @@ class audioProcessor extends AudioWorkletProcessor {
         this.outValue = [0, 0];
         this.sampleRate = 8000;
         this.sampleRatio = 1;
+        this.customDSPFunction = null; // Add this line to store custom DSP function
         Object.seal(this);
         audioProcessor.deleteGlobals();
         audioProcessor.freezeGlobals();
@@ -62,8 +63,15 @@ class audioProcessor extends AudioWorkletProcessor {
     }
 
     dsp(sample) {
-        // Define your DSP function logic here
+        if (this.customDSPFunction) {
+            return this.customDSPFunction(sample); // Use custom DSP function if provided
+        }
+        // Default DSP function
         return Math.sin(sample * 2 * Math.PI * 440); // Example: Simple sine wave at 440 Hz
+    }
+
+    setCustomDSP(customFunction) {
+        this.customDSPFunction = customFunction;
     }
 
     process(inputs, [chData]) {
@@ -251,7 +259,7 @@ class audioProcessor extends AudioWorkletProcessor {
                     return outValue;
                 };
                 break;
-            case 'DSP':
+            case 'DSP': // Add this case
                 this.getValues = (funcValue, ch) => {
                     const outValue = Math.max(Math.min(funcValue, 1), -1);
                     this.lastByteValue[ch] = Math.round((outValue + 1) * 127.5);
