@@ -68,8 +68,6 @@ class audioProcessor extends AudioWorkletProcessor {
 		let { byteSample } = this;
 		const drawBuffer = [];
 		const isDiagram = this.drawMode === 'Combined' || this.drawMode === 'Diagram';
-		scriptNode.onaudioprocess = function(e) {
-		const output = e.outputBuffer.getChannelData(0);
 		for(let i = 0; i < chDataLen; ++i) {
 			time += this.sampleRatio;
 			const currentTime = Math.floor(time);
@@ -135,8 +133,6 @@ class audioProcessor extends AudioWorkletProcessor {
 			chData[0][i] = this.outValue[0];
 			chData[1][i] = this.outValue[1];
 		}
-		currentTime += output.length/this.sampleRate;
-		};
 		if(Math.abs(byteSample) > Number.MAX_SAFE_INTEGER) {
 			this.resetTime();
 			return true;
