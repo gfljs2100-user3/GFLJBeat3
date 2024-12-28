@@ -8,7 +8,7 @@ class audioProcessor extends AudioWorkletProcessor {
         this.func = null;
         this.getValues = null;
         this.isFuncbeat = false;
-        this.isDSP = false; // Added this line
+        this.isDSP = false;
         this.isPlaying = false;
         this.playbackSpeed = 1;
         this.lastByteValue = [null, null];
@@ -58,6 +58,18 @@ class audioProcessor extends AudioWorkletProcessor {
                 ` (at line ${ lineNumber - 3 }, character ${ +columnNumber })` : '' }`;
     }
     process(inputs, [chData]) {
+        if(this.isDSP) {
+            processor.onaudioprocess = function(audioProcessingEvent) {
+                const outputBuffer = audioProcessingEvent.outputBuffer;
+                const outputData = outputBuffer.getChannelData(0);
+                for (let sample = 0; sample < outputData.length; sample++) {
+                    const t = audioCtx.currentTime + (sample / audioCtx.sampleRate);
+                    outputData[sample] = this.func(t);
+                }
+            }.bind(this);
+            return true;
+        }
+        
         const chDataLen = chData[0].length;
         if(!chDataLen || !this.isPlaying) {
             return true;
@@ -75,8 +87,6 @@ class audioProcessor extends AudioWorkletProcessor {
                 try {
                     if(this.isFuncbeat) {
                         funcValue = this.func(currentSample / this.sampleRate, this.sampleRate);
-                    } else if (this.isDSP) {
-                        funcValue = this.func(currentSample / this.sampleRate);
                     } else {
                         funcValue = this.func(currentSample);
                     }
@@ -168,7 +178,7 @@ class audioProcessor extends AudioWorkletProcessor {
         }
         if(data.mode !== undefined) {
             this.isFuncbeat = data.mode === 'Funcbeat';
-            this.isDSP = data.mode === 'DSP'; // Added this line
+            this.isDSP = data.mode === 'DSP';
             switch(data.mode) {
             case 'Bytebeat':
                 this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = funcValue & 255) / 127.5 - 1;
@@ -241,7 +251,7 @@ class audioProcessor extends AudioWorkletProcessor {
                     return outValue;
                 };
                 break;
-            case 'DSP': // Added DSP mode case
+            case 'DSP':
                 this.getValues = (funcValue, ch) => {
                     const outValue = Math.max(Math.min(funcValue, 1), -1);
                     this.lastByteValue[ch] = Math.round((outValue + 1) * 127.5);
