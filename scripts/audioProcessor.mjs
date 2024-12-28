@@ -79,8 +79,7 @@ class audioProcessor extends AudioWorkletProcessor {
 					if(this.isFuncbeat) {
 						funcValue = this.func(currentSample / this.sampleRate, this.sampleRate);
 					} else if(this.isDSP) {
-    						const t = funcValue = time + (currentSample / this.sampleRate); 
-    						chData[currentSample] = this.func(t); 
+    						funcValue = time + (currentSample / this.sampleRate);
 					} else {
 						funcValue = this.func(currentSample);
 					}
