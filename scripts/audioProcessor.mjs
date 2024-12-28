@@ -8,7 +8,6 @@ class audioProcessor extends AudioWorkletProcessor {
         this.func = null;
         this.getValues = null;
         this.isFuncbeat = false;
-        this.isDSP = false;
         this.isPlaying = false;
         this.playbackSpeed = 1;
         this.lastByteValue = [null, null];
@@ -17,6 +16,7 @@ class audioProcessor extends AudioWorkletProcessor {
         this.outValue = [0, 0];
         this.sampleRate = 8000;
         this.sampleRatio = 1;
+        this.dsp = null; // Add DSP function
         Object.seal(this);
         audioProcessor.deleteGlobals();
         audioProcessor.freezeGlobals();
@@ -24,10 +24,12 @@ class audioProcessor extends AudioWorkletProcessor {
         this.port.start();
     }
     static deleteGlobals() {
+        // Delete single letter variables to prevent persistent variable errors (covers a good enough range)
         for(let i = 0; i < 26; ++i) {
             delete globalThis[String.fromCharCode(65 + i)];
             delete globalThis[String.fromCharCode(97 + i)];
         }
+        // Delete global variables
         for(const name in globalThis) {
             if(Object.prototype.hasOwnProperty.call(globalThis, name)) {
                 delete globalThis[name];
@@ -58,18 +60,6 @@ class audioProcessor extends AudioWorkletProcessor {
                 ` (at line ${ lineNumber - 3 }, character ${ +columnNumber })` : '' }`;
     }
     process(inputs, [chData]) {
-        if(this.isDSP) {
-            processor.onaudioprocess = function(audioProcessingEvent) {
-                const outputBuffer = audioProcessingEvent.outputBuffer;
-                const outputData = outputBuffer.getChannelData(0);
-                for (let sample = 0; sample < outputData.length; sample++) {
-                    const t = audioCtx.currentTime + (sample / audioCtx.sampleRate);
-                    outputData[sample] = this.func(t);
-                }
-            }.bind(this);
-            return true;
-        }
-        
         const chDataLen = chData[0].length;
         if(!chDataLen || !this.isPlaying) {
             return true;
@@ -178,7 +168,6 @@ class audioProcessor extends AudioWorkletProcessor {
         }
         if(data.mode !== undefined) {
             this.isFuncbeat = data.mode === 'Funcbeat';
-            this.isDSP = data.mode === 'DSP';
             switch(data.mode) {
             case 'Bytebeat':
                 this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = funcValue & 255) / 127.5 - 1;
@@ -251,7 +240,7 @@ class audioProcessor extends AudioWorkletProcessor {
                     return outValue;
                 };
                 break;
-            case 'DSP':
+            case 'DSP': // Added DSP mode case
                 this.getValues = (funcValue, ch) => {
                     const outValue = Math.max(Math.min(funcValue, 1), -1);
                     this.lastByteValue[ch] = Math.round((outValue + 1) * 127.5);
@@ -276,6 +265,9 @@ class audioProcessor extends AudioWorkletProcessor {
         if(data.sampleRatio !== undefined) {
             this.setSampleRatio(data.sampleRatio);
         }
+        if(data.dsp !== undefined) {
+            this.dsp = data.dsp; // Set DSP function
+        }
     }
     sendData(data) {
         this.port.postMessage(data);
@@ -292,19 +284,20 @@ class audioProcessor extends AudioWorkletProcessor {
         this.outValue = [0, 0];
     }
     setFunction(codeText) {
+        // Create shortened Math functions
         const params = Object.getOwnPropertyNames(Math);
         const values = params.map(k => Math[k]);
         params.push('int', 'window');
         values.push(Math.floor, globalThis);
         audioProcessor.deleteGlobals();
+        // Bytebeat code testing
         let isCompiled = false;
         const oldFunc = this.func;
         try {
             if(this.isFuncbeat) {
                 this.func = new Function(...params, codeText).bind(globalThis, ...values);
-            } else if(this.isDSP) {
-                this.func = new Function(...params, codeText).bind(globalThis, ...values);
             } else {
+                // Optimize code like eval(unescape(escape`XXXX`.replace(/u(..)/g,"$1%")))
                 codeText = codeText.trim().replace(
                     /^eval\(unescape\(escape(?:`|\('|\("|\(`)(.*?)(?:`|'\)|"\)|`\)).replace\(\/u\(\.\.\)\/g,["'`]\$1%["'`]\)\)\)$/,
                     (match, m1) => unescape(escape(m1).replace(/u(..)/g, '$1%')));
@@ -341,5 +334,16 @@ class audioProcessor extends AudioWorkletProcessor {
         this.lastTime = Math.floor(this.sampleRatio * this.audioSample) - timeOffset;
     }
 }
+
+// Add DSP processing functionality
+processor.onaudioprocess = function(audioProcessingEvent) {
+    const outputBuffer = audioProcessingEvent.outputBuffer;
+    const outputData = outputBuffer.getChannelData(0);
+
+    for (let sample = 0; sample < outputData.length; sample++) {
+        const t = audioCtx.currentTime + (sample / audioCtx.sampleRate); 
+        outputData[sample] = dsp(t); // Apply DSP function
+    }
+};
 
 registerProcessor('audioProcessor', audioProcessor);
