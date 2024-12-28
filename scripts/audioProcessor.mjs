@@ -59,8 +59,7 @@ class audioProcessor extends AudioWorkletProcessor {
 			typeof lineNumber === 'number' && typeof columnNumber === 'number' ?
 				` (at line ${ lineNumber - 3 }, character ${ +columnNumber })` : '' }`;
 	}
-	process(inputs, [chData], outputs) {
-		const output = chDataLen[0];
+	process(inputs, [chData]) {
 		const chDataLen = chData[0].length;
 		if(!chDataLen || !this.isPlaying) {
 			return true;
@@ -69,7 +68,7 @@ class audioProcessor extends AudioWorkletProcessor {
 		let { byteSample } = this;
 		const drawBuffer = [];
 		const isDiagram = this.drawMode === 'Combined' || this.drawMode === 'Diagram';
-		for(let i = 0; i < output[0]; ++i) {
+		for(let i = 0; i < chDataLen[0]; ++i) {
 			time += this.sampleRatio;
 			const currentTime = Math.floor(time);
 			if(this.lastTime !== currentTime) {
@@ -79,8 +78,7 @@ class audioProcessor extends AudioWorkletProcessor {
 					if(this.isFuncbeat) {
 						funcValue = this.func(currentSample / this.sampleRate, this.sampleRate);
 					} else if(this.isDSP) {
-						funcValue = out = dsp(currentSample / this.sampleRate);
-						output.forEach((channel) => {channel[i] = out});
+						funcValue = dsp(currentSample / this.sampleRate);
 					} else {
 						funcValue = this.func(currentSample);
 					}
