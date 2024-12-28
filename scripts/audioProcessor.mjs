@@ -178,6 +178,7 @@ class audioProcessor extends AudioWorkletProcessor {
     }
     if(data.mode !== undefined) {
       this.isFuncbeat = data.mode === 'Funcbeat';
+      this.isDSP = data.mode === 'DSP';
       switch(data.mode) {
       case 'Bytebeat':
         this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = funcValue & 255) / 127.5 - 1;
