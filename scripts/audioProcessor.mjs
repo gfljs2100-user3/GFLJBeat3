@@ -79,13 +79,8 @@ class audioProcessor extends AudioWorkletProcessor {
         try {
           if(this.isFuncbeat) {
             funcValue = this.func(currentSample / this.sampleRate, this.sampleRate);
-          } else {
-            funcValue = this.func(currentSample);
-          }
-        }
-        try {
-          if(this.isDSP) {
-            funcValue = this.func(currentSample / this.sampleRate, this.sampleRate);
+          } else if(this.isDSP) {
+            funcValue = this.func(currentSample / this.sampleRate);
           } else {
             funcValue = this.func(currentSample);
           }
@@ -281,9 +276,20 @@ class audioProcessor extends AudioWorkletProcessor {
   }
 
   switchToDspMode() {
-    // Implement DSP mode switching logic here
     console.log("Switched to DSP mode");
-    // Add DSP node setup and connection logic here
+    this.process = this.dspProcess;
+  }
+
+  dspProcess(inputs, outputs, parameters) {
+    const output = outputs[0];
+    for (let i = 0; i < output[0].length; i++) {
+      const out = this.func(this.t / sampleRate);
+      output.forEach((channel) => {
+        channel[i] = out;
+      });
+      this.t++;
+    }
+    return !this.stopped;
   }
 
   sendData(data) {
@@ -353,14 +359,4 @@ class audioProcessor extends AudioWorkletProcessor {
   }
 }
 
-registerProcessor('audioProcessor', audioProcessor); When switching to dsp mode, use process(inputs, outputs, parameters) {
-    const output = outputs[0];
-    for (let i = 0; i < output[0].length; i++) {
-      const out = dsp(this.t / ${ac.sampleRate});
-      output.forEach((channel) => {
-        channel[i] = out;
-      });
-      this.t++;
-    }
-    return !this.stopped;
-  }
+registerProcessor('audioProcessor', audioProcessor);
