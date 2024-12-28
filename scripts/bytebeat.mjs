@@ -1062,9 +1062,12 @@ generateLibraryEntry({
 		this.sendData({ setFunction: this.editorValue });
 	}
 	setPlaybackMode(mode) {
-		this.songData.mode = mode;
-		this.updateUrl();
-		this.sendData({ mode });
+	    this.songData.mode = mode;
+	    if (mode === 'WavePot') {
+	        this.setSampleRate(44100, true);
+	    }
+	    this.updateUrl();
+	    this.sendData({ mode });
 	}
 	setPlayButton(buttonElem, speed) {
 		const isFast = speed !== 1;
