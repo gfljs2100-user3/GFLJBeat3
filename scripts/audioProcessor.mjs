@@ -298,6 +298,8 @@ class audioProcessor extends AudioWorkletProcessor {
 		try {
 			if(this.isFuncbeat) {
 				this.func = new Function(...params, codeText).bind(globalThis, ...values);
+			} else if(this.isDSP) {
+				this.func = new Function(...params, codeText).bind(globalThis, ...values);
 			} else {
 				// Optimize code like eval(unescape(escape`XXXX`.replace(/u(..)/g,"$1%")))
 				codeText = codeText.trim().replace(
