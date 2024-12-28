@@ -23,6 +23,7 @@ class audioProcessor extends AudioWorkletProcessor {
         this.port.addEventListener('message', e => this.receiveData(e.data));
         this.port.start();
     }
+
     static deleteGlobals() {
         for(let i = 0; i < 26; ++i) {
             delete globalThis[String.fromCharCode(65 + i)];
@@ -34,6 +35,7 @@ class audioProcessor extends AudioWorkletProcessor {
             }
         }
     }
+
     static freezeGlobals() {
         Object.getOwnPropertyNames(globalThis).forEach(name => {
             const prop = globalThis[name];
@@ -47,6 +49,7 @@ class audioProcessor extends AudioWorkletProcessor {
             Object.defineProperty(globalThis, name, { writable: false, configurable: false });
         });
     }
+
     static getErrorMessage(err, time) {
         const when = time === null ? 'compilation' : 't=' + time;
         if(!(err instanceof Error)) {
@@ -57,6 +60,12 @@ class audioProcessor extends AudioWorkletProcessor {
             typeof lineNumber === 'number' && typeof columnNumber === 'number' ?
                 ` (at line ${ lineNumber - 3 }, character ${ +columnNumber })` : '' }`;
     }
+
+    dsp(sample) {
+        // Define your DSP function logic here
+        return Math.sin(sample * 2 * Math.PI * 440); // Example: Simple sine wave at 440 Hz
+    }
+
     process(inputs, [chData]) {
         const chDataLen = chData[0].length;
         if(!chDataLen || !this.isPlaying) {
@@ -74,7 +83,7 @@ class audioProcessor extends AudioWorkletProcessor {
                 const currentSample = Math.floor(byteSample);
                 try {
                     if (this.isDSP) {
-                        funcValue = this.func(currentSample / 44100); // Use DSP function
+                        funcValue = this.dsp(currentSample / 44100); // Use DSP function
                     } else if(this.isFuncbeat) {
                         funcValue = this.func(currentSample / this.sampleRate, this.sampleRate);
                     } else {
@@ -150,6 +159,7 @@ class audioProcessor extends AudioWorkletProcessor {
         }
         return true;
     }
+
     receiveData(data) {
         if(data.byteSample !== undefined) {
             this.byteSample = +data.byteSample || 0;
@@ -168,7 +178,7 @@ class audioProcessor extends AudioWorkletProcessor {
         }
         if(data.mode !== undefined) {
             this.isFuncbeat = data.mode === 'Funcbeat';
-            this.isDSP = data.mode === 'DSP'; // Add this line
+            this.isDSP = data.mode === 'DSP';
             switch(data.mode) {
             case 'Bytebeat':
                 this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = funcValue & 255) / 127.5 - 1;
@@ -241,7 +251,7 @@ class audioProcessor extends AudioWorkletProcessor {
                     return outValue;
                 };
                 break;
-            case 'DSP': // Add this case
+            case 'DSP':
                 this.getValues = (funcValue, ch) => {
                     const outValue = Math.max(Math.min(funcValue, 1), -1);
                     this.lastByteValue[ch] = Math.round((outValue + 1) * 127.5);
@@ -267,20 +277,24 @@ class audioProcessor extends AudioWorkletProcessor {
             this.setSampleRatio(data.sampleRatio);
         }
     }
+
     sendData(data) {
         this.port.postMessage(data);
     }
+
     resetTime() {
         this.byteSample = 0;
         this.resetValues();
         this.sendData({ byteSample: 0 });
     }
+
     resetValues() {
         this.audioSample = 0;
         this.lastByteValue = this.lastFuncValue = [null, null];
         this.lastTime = -1;
         this.outValue = [0, 0];
     }
+
     setFunction(codeText) {
         const params = Object.getOwnPropertyNames(Math);
         const values = params.map(k => Math[k]);
@@ -325,6 +339,7 @@ class audioProcessor extends AudioWorkletProcessor {
         this.errorDisplayed = false;
         this.sendData({ error: { message: '', isCompiled }, updateUrl: true });
     }
+
     setSampleRatio(sampleRatio) {
         const timeOffset = Math.floor(this.sampleRatio * this.audioSample) - this.lastTime;
         this.sampleRatio = sampleRatio * this.playbackSpeed;
