@@ -8,7 +8,6 @@ class audioProcessor extends AudioWorkletProcessor {
 		this.func = null;
 		this.getValues = null;
 		this.isFuncbeat = false;
-		this.isDSP = false;
 		this.isPlaying = false;
 		this.playbackSpeed = 1;
 		this.lastByteValue = [null, null];
@@ -59,9 +58,8 @@ class audioProcessor extends AudioWorkletProcessor {
 			typeof lineNumber === 'number' && typeof columnNumber === 'number' ?
 				` (at line ${ lineNumber - 3 }, character ${ +columnNumber })` : '' }`;
 	}
-	process(inputs, [chData], e) {
+	process(inputs, [chData]) {
 		const chDataLen = chData[0].length;
-		let output = e.outputBuffer.getChannelData(0);
 		if(!chDataLen || !this.isPlaying) {
 			return true;
 		}
@@ -78,8 +76,6 @@ class audioProcessor extends AudioWorkletProcessor {
 				try {
 					if(this.isFuncbeat) {
 						funcValue = this.func(currentSample / this.sampleRate, this.sampleRate);
-					} else if(this.isDSP) {
-    						funcValue = this.func(currentSample / this.sampleRate);
 					} else {
 						funcValue = this.func(currentSample);
 					}
@@ -171,7 +167,6 @@ class audioProcessor extends AudioWorkletProcessor {
 		}
 		if(data.mode !== undefined) {
 			this.isFuncbeat = data.mode === 'Funcbeat';
-			this.isDSP = data.mode === 'DSP';
 			switch(data.mode) {
 			case 'Bytebeat':
 				this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = funcValue & 255) / 127.5 - 1;
@@ -244,13 +239,6 @@ class audioProcessor extends AudioWorkletProcessor {
 					return outValue;
 				};
 				break;
-			case 'DSP':
-				this.getValues = (funcValue, ch) => {
-					const outValue = Math.max(Math.min(funcValue, 1), -1);
-					this.lastByteValue[ch] = Math.round((outValue + 1) * 127.5);
-					return outValue;
-				};
-				break;
 			default: this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = NaN);
 			}
 		}
@@ -297,8 +285,6 @@ class audioProcessor extends AudioWorkletProcessor {
 		try {
 			if(this.isFuncbeat) {
 				this.func = new Function(...params, codeText).bind(globalThis, ...values);
-			} else if(this.isDSP) {
-				this.func = new Function(...params, codeText).bind(globalThis, ...values);
 			} else {
 				// Optimize code like eval(unescape(escape`XXXX`.replace(/u(..)/g,"$1%")))
 				codeText = codeText.trim().replace(
@@ -309,9 +295,6 @@ class audioProcessor extends AudioWorkletProcessor {
 			}
 			isCompiled = true;
 			if(this.isFuncbeat) {
-				this.func = this.func();
-				this.func(0, this.sampleRate);
-			} else if(this.isDSP) {
 				this.func = this.func();
 				this.func(0, this.sampleRate);
 			} else {
