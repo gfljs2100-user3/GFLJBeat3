@@ -8,6 +8,7 @@ class audioProcessor extends AudioWorkletProcessor {
     this.func = null;
     this.getValues = null;
     this.isFuncbeat = false;
+    this.isDSP = false;
     this.isPlaying = false;
     this.playbackSpeed = 1;
     this.lastByteValue = [null, null];
@@ -77,6 +78,13 @@ class audioProcessor extends AudioWorkletProcessor {
         const currentSample = Math.floor(byteSample);
         try {
           if(this.isFuncbeat) {
+            funcValue = this.func(currentSample / this.sampleRate, this.sampleRate);
+          } else {
+            funcValue = this.func(currentSample);
+          }
+        }
+        try {
+          if(this.isDSP) {
             funcValue = this.func(currentSample / this.sampleRate, this.sampleRate);
           } else {
             funcValue = this.func(currentSample);
