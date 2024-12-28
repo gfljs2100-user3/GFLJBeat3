@@ -310,9 +310,7 @@ class audioProcessor extends AudioWorkletProcessor {
         let isCompiled = false;
         const oldFunc = this.func;
         try {
-            if(this.isDSP) {
-                this.func = new Function(...params, codeText).bind(globalThis, ...values);
-            } else if(this.isFuncbeat) {
+            if(this.isDSP || this.isFuncbeat) {
                 this.func = new Function(...params, codeText).bind(globalThis, ...values);
             } else {
                 codeText = codeText.trim().replace(
@@ -347,7 +345,7 @@ class audioProcessor extends AudioWorkletProcessor {
     }
 
     setSampleRatio(sampleRatio) {
-        const timeOffset = Math.floor(this.sampleRatio * this.audioSample) - this.lastTime;
+        const timeOffset = Math.floor(this.sampleRatio * this.audioSample) - this lastTime;
         this.sampleRatio = sampleRatio * this.playbackSpeed;
         this.lastTime = Math.floor(this.sampleRatio * this.audioSample) - timeOffset;
     }
