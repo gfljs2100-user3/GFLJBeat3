@@ -318,15 +318,7 @@ class audioProcessor extends AudioWorkletProcessor {
     let isCompiled = false;
     const oldFunc = this.func;
     try {
-      if(this.isFuncbeat) {
-        this.func = new Function(...params, codeText).bind(globalThis, ...values);
-      } else {
-        codeText = codeText.trim().replace(
-          /^eval\(unescape\(escape(?:`|\('|\("|\(`)(.*?)(?:`|'\)|"\)|`\)).replace\(\/u\(\.\.\)\/g,["'`]\$1%["'`]\)\)\)$/,
-          (match, m1) => unescape(escape(m1).replace(/u(..)/g, '$1%')));
-        this.func = new Function(...params, 't', `return 0,\n${ codeText || 0 };`)
-          .bind(globalThis, ...values);
-      }
+      this.func = new Function(...params, codeText).bind(globalThis, ...values);
       isCompiled = true;
       if(this.isFuncbeat) {
         this.func = this.func();
