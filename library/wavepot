@@ -153,5 +153,14 @@
 				"sampleRate": 44100,
 				"fileOriginal": true,
 				"file": "justaboutdead - YAY!.js"
+			}, {
+				"name": "subwah",
+				"url": "https://wavepot.com/",
+				"author": "wavepot.com",
+				"date": "2014-06-17",
+				"mode": "WavePot",
+				"sampleRate": 44100,
+				"fileOriginal": true,
+				"file": "wavepot.com - subwah.js"
 			}
 ]
