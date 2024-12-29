@@ -299,6 +299,7 @@ class audioProcessor extends AudioWorkletProcessor {
 				this.func = new Function(...params, codeText).bind(globalThis, ...values);
 			} else if(this.isWavePot) {
 				this.func = new Function(...params, `${codeText} return dsp;`).bind(globalThis, ...values);
+				this.func = this.func()(0, this.sampleRate);
 			} else {
 				// Optimize code like eval(unescape(escape`XXXX`.replace(/u(..)/g,"$1%")))
 				codeText = codeText.trim().replace(
