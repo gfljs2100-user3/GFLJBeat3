@@ -1,0 +1,360 @@
+<html><head><base href="." /><title>File to GZ Compressor & Converter</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.2/ace.js"></script>
+<style>
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 1rem;
+  background: black;
+  color: white;
+}
+
+.container {
+  background: #1a1a1a;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(255,255,255,0.1);
+}
+
+.drop-zone {
+  border: 3px dashed #444;
+  border-radius: 8px;
+  padding: 2rem;
+  text-align: center;
+  transition: all 0.3s ease;
+  background: #2a2a2a;
+  cursor: pointer;
+}
+
+.drop-zone.dragover {
+  background: #333;
+  border-color: #bbc200;
+}
+
+.drop-zone svg {
+  width: 64px;
+  height: 64px;
+  margin-bottom: 1rem;
+  color: #fff;
+}
+
+button, .download-button {
+  background: linear-gradient(to bottom, #eff300, #ffa200) !important;
+  color: black !important;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-top: 1rem;
+  transition: background 0.3s ease;
+  font-weight: bold;
+}
+
+button:hover, .download-button:hover {
+  background: linear-gradient(to bottom, #fff700, #ffb700) !important;
+}
+
+.download-section {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+#status {
+  margin-top: 1rem;
+  color: #ccc;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 4px;
+  background: #333;
+  margin-top: 1rem;
+  border-radius: 2px;
+  overflow: hidden;
+  display: none;
+}
+
+.progress {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(to right, #bbc200, #c27e00);
+  transition: width 0.3s ease;
+}
+
+.mode-switch {
+  margin: 1rem 0;
+  text-align: center;
+}
+
+.mode-switch button {
+  margin: 0 0.5rem;
+}
+
+.active {
+  background: linear-gradient(to bottom, #bbc200, #c27e00) !important;
+}
+
+.editor-container {
+  margin-top: 2rem;
+  display: none;
+}
+
+#editor {
+  height: 400px;
+  border-radius: 4px;
+  background: #2a2a2a;
+  color: #fff;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.processing {
+  animation: pulse 1s infinite;
+}
+</style></head><body>
+<div class="container">
+  <h1>File to GZ Converter</h1>
+  
+  <div class="mode-switch">
+    <button id="compressMode" class="active">Compress to GZ</button>
+    <button id="decompressMode">Extract from GZ</button>
+  </div>
+  
+  <div class="drop-zone" id="dropZone">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+      <polyline points="17 8 12 3 7 8"/>
+      <line x1="12" y1="3" x2="12" y2="15"/>
+    </svg>
+    <p>Drag & drop files here or click to select</p>
+    <input type="file" id="fileInput" style="display: none" multiple>
+  </div>
+  
+  <div class="progress-bar">
+    <div class="progress" id="progress"></div>
+  </div>
+  
+  <div id="status"></div>
+  <div class="editor-container" id="editorContainer">
+    <div id="editor"></div>
+    <button id="saveChanges">Save as GZ</button>
+  </div>
+  <div class="download-section" id="downloadSection"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
+<script>
+const dropZone = document.getElementById('dropZone');
+const fileInput = document.getElementById('fileInput');
+const status = document.getElementById('status');
+const downloadSection = document.getElementById('downloadSection');
+const progressBar = document.querySelector('.progress-bar');
+const progress = document.getElementById('progress');
+const compressMode = document.getElementById('compressMode');
+const decompressMode = document.getElementById('decompressMode');
+const editorContainer = document.getElementById('editorContainer');
+const saveChangesBtn = document.getElementById('saveChanges');
+
+let editor = ace.edit("editor");
+editor.setTheme("ace/theme/monokai");
+editor.session.setMode("ace/mode/javascript");
+editor.setOptions({
+  fontSize: '14px',
+  enableBasicAutocompletion: true,
+  enableSnippets: true,
+  enableLiveAutocompletion: true
+});
+
+let currentFile = null;
+let isCompressMode = true;
+
+compressMode.addEventListener('click', () => {
+  isCompressMode = true;
+  compressMode.classList.add('active');
+  decompressMode.classList.remove('active');
+  editorContainer.style.display = 'none';
+});
+
+decompressMode.addEventListener('click', () => {
+  isCompressMode = false;
+  decompressMode.classList.add('active');
+  compressMode.classList.remove('active');
+});
+
+saveChangesBtn.addEventListener('click', () => {
+  if (currentFile) {
+    const content = editor.getValue();
+    const uint8Array = new TextEncoder().encode(content);
+    const compressed = pako.gzip(uint8Array);
+    const blob = new Blob([compressed], { type: 'application/gzip' });
+    const url = URL.createObjectURL(blob);
+    
+    const downloadLink = document.createElement('a');
+    downloadLink.href = url;
+    downloadLink.download = `${currentFile.name}.gz`; 
+    downloadLink.click();
+    
+    URL.revokeObjectURL(url);
+  }
+});
+
+['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+  dropZone.addEventListener(eventName, preventDefaults, false);
+  document.body.addEventListener(eventName, preventDefaults, false);
+});
+
+function preventDefaults (e) {
+  e.preventDefault();
+  e.stopPropagation();
+}
+
+['dragenter', 'dragover'].forEach(eventName => {
+  dropZone.addEventListener(eventName, highlight, false);
+});
+
+['dragleave', 'drop'].forEach(eventName => {
+  dropZone.addEventListener(eventName, unhighlight, false);
+});
+
+function highlight(e) {
+  dropZone.classList.add('dragover');
+}
+
+function unhighlight(e) {
+  dropZone.classList.remove('dragover');
+}
+
+dropZone.addEventListener('drop', handleDrop, false);
+dropZone.addEventListener('click', () => fileInput.click());
+fileInput.addEventListener('change', handleFiles);
+
+function handleDrop(e) {
+  const dt = e.dataTransfer;
+  const files = dt.files;
+  handleFiles({ target: { files } });
+}
+
+async function handleFiles(e) {
+  const files = [...e.target.files];
+  status.textContent = `Processing ${files.length} file(s)...`;
+  downloadSection.innerHTML = '';
+  progressBar.style.display = 'block';
+  editorContainer.style.display = 'none';
+  
+  for(let i = 0; i < files.length; i++) {
+    const file = files[i];
+    progress.style.width = `${((i + 1) / files.length) * 100}%`;
+    
+    try {
+      let processedData;
+      let fileName;
+      let mimeType;
+      
+      if (isCompressMode) {
+        processedData = await compressFile(file);
+        fileName = `${file.name}.gz`;
+        mimeType = 'application/gzip';
+      } else {
+        if (!file.name.endsWith('.gz')) {
+          throw new Error('Not a GZ file');
+        }
+        processedData = await decompressFile(file);
+        fileName = file.name.replace('.gz', '');
+        mimeType = 'application/gzip';
+        
+        const textDecoder = new TextDecoder();
+        try {
+          const text = textDecoder.decode(processedData);
+          editor.setValue(text, -1);
+          editorContainer.style.display = 'block';
+          currentFile = file;
+        } catch (error) {
+          console.log('Not a text file');
+        }
+      }
+      
+      const blob = new Blob([processedData], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      
+      const downloadLink = document.createElement('a');
+      downloadLink.href = url;
+      downloadLink.download = fileName;
+      downloadLink.className = 'download-button';
+      downloadLink.innerHTML = `Download ${downloadLink.download}`;
+      downloadLink.style.display = 'block';
+      downloadLink.style.margin = '10px auto';
+      downloadLink.style.textDecoration = 'none';
+      downloadLink.style.width = 'fit-content';
+
+      downloadLink.onclick = function() {
+        downloadLink.click();
+        setTimeout(() => {
+          URL.revokeObjectURL(url);
+        }, 100);
+      };
+      
+      downloadSection.appendChild(downloadLink);
+      
+    } catch (error) {
+      console.error('Error processing file:', error);
+      status.textContent = `Error processing ${file.name}: ${error.message}`;
+    }
+  }
+  
+  status.textContent = `Completed processing ${files.length} file(s)`;
+  setTimeout(() => {
+    progressBar.style.display = 'none';
+    progress.style.width = '0%';
+  }, 1000);
+}
+
+async function compressFile(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    
+    reader.onload = function(e) {
+      try {
+        const content = new Uint8Array(e.target.result);
+        const compressed = pako.gzip(content);
+        resolve(compressed);
+      } catch (error) {
+        reject(error);
+      }
+    };
+    
+    reader.onerror = function() {
+      reject(new Error('Error reading file'));
+    };
+    
+    reader.readAsArrayBuffer(file);
+  });
+}
+
+async function decompressFile(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    
+    reader.onload = function(e) {
+      try {
+        const content = new Uint8Array(e.target.result);
+        const decompressed = pako.ungzip(content);
+        resolve(decompressed);
+      } catch (error) {
+        reject(error);
+      }
+    };
+    
+    reader.onerror = function() {
+      reject(new Error('Error reading file'));
+    };
+    
+    reader.readAsArrayBuffer(file);
+  });
+}
+</script></body></html>
