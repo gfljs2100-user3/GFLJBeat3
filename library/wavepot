@@ -1,0 +1,8 @@
+[
+			{
+				"name": "Cool 3 channel music (used songs.reduce((a,v)=>a+v%256,0)/songs.length method because dollchan and GFLJBeat3 composers dont have 3 channels)",
+				"codeOriginal": "songs=[((t&t>>12|t&t>>8)&t&t>>4),t&t>>9|t&t>>2,t&t>>1], songs.reduce((a,v)=>a+v%256,0)/songs.length",
+				"date": "2014-06-17",
+				"sampleRate": 44100
+			}
+]
