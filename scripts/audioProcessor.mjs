@@ -313,7 +313,7 @@ class audioProcessor extends AudioWorkletProcessor {
 				this.func(0, this.sampleRate);
 			} else if(this.isWavePot) {
 				this.func = this.func();
-				this.func(0, this.sampleRate);
+				this.func(0, 44100);
 			} else {
 				this.func(0);
 			}
