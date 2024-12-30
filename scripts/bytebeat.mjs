@@ -159,6 +159,7 @@ globalThis.bytebeat = new class {
 		}
 		// Drawing in a segment
 		const { drawMode } = this.settings;
+		const isPointsAndWaveform = drawMode === 'Points and Waveform combined';
 		const isCombined = drawMode === 'Combined';
 		const isDiagram = drawMode === 'Diagram';
 		const isWaveform = drawMode === 'Waveform';
@@ -234,7 +235,7 @@ globalThis.bytebeat = new class {
 					drawPoint(data, (drawWidth * (255 - curYCh) + x) << 2, colorPoints, colorCh, ch);
 				}
 				// Waveform vertical lines drawing
-				if(isCombined || isWaveform) {
+				if(isCombined || isWaveform || isPointsAndWaveform) {
 					const prevYCh = prevY[ch];
 					if(isNaN(prevYCh)) {
 						continue;
