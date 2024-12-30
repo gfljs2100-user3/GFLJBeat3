@@ -185,8 +185,7 @@ class audioProcessor extends AudioWorkletProcessor {
 				this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = funcValue & 255) / 127.5 - 1;
 				break;
 			case 'Signed Bytebeat':
-				this.getValues = (funcValue, ch) =>
-					(this.lastByteValue[ch] = (funcValue + 128) & 255) / 127.5 - 1;
+				this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = funcValue + 128 & 255) / 127.5 - 1;
 				break;
 			case 'Signed FuncBytebeat':
 				this.getValues = (funcValue, ch) =>
