@@ -9,6 +9,8 @@ class audioProcessor extends AudioWorkletProcessor {
 		this.getValues = null;
 		this.isFuncbeat = false;
 		this.isWavePot = false;
+		this.isFuncBytebeat = false;
+		this.isSignedFuncBytebeat = false;
 		this.isPlaying = false;
 		this.playbackSpeed = 1;
 		this.lastByteValue = [null, null];
@@ -79,6 +81,8 @@ class audioProcessor extends AudioWorkletProcessor {
 						funcValue = this.func(currentSample / this.sampleRate, this.sampleRate);
 					} else if(this.isWavePot) {
 						funcValue = this.func(currentSample / 44100, 44100);
+					} else if(this.isFuncBytebeat) {
+						funcValue = this.func(currentSample / this.sampleRate, this.sampleRate);
 					} else {
 						funcValue = this.func(currentSample);
 					}
@@ -170,12 +174,21 @@ class audioProcessor extends AudioWorkletProcessor {
 		}
 		if(data.mode !== undefined) {
 			this.isFuncbeat = data.mode === 'Funcbeat';
+			this.isFuncBytebeat = data.mode === 'FuncBytebeat';
+			this.isSignedFuncBytebeat = data.mode === 'Signed FuncBytebeat';
 			this.isWavePot = data.mode === 'WavePot';
 			switch(data.mode) {
 			case 'Bytebeat':
 				this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = funcValue & 255) / 127.5 - 1;
 				break;
+			case 'FuncBytebeat':
+				this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = funcValue & 255) / 127.5 - 1;
+				break;
 			case 'Signed Bytebeat':
+				this.getValues = (funcValue, ch) =>
+					(this.lastByteValue[ch] = (funcValue + 128) & 255) / 127.5 - 1;
+				break;
+			case 'Signed FuncBytebeat':
 				this.getValues = (funcValue, ch) =>
 					(this.lastByteValue[ch] = (funcValue + 128) & 255) / 127.5 - 1;
 				break;
@@ -299,6 +312,10 @@ class audioProcessor extends AudioWorkletProcessor {
 				this.func = new Function(...params, codeText).bind(globalThis, ...values);
 			} else if(this.isWavePot) {
 				this.func = new Function(...params, `var sampleRate = ${this.sampleRate}; ${codeText} return dsp;`).bind(globalThis, ...values);
+			} else if(this.isFuncBytebeat) {
+				this.func = new Function(...params, codeText).bind(globalThis, ...values);
+			} else if(this.isSignedFuncBytebeat) {
+				this.func = new Function(...params, codeText).bind(globalThis, ...values);
 			} else {
 				// Optimize code like eval(unescape(escape`XXXX`.replace(/u(..)/g,"$1%")))
 				codeText = codeText.trim().replace(
