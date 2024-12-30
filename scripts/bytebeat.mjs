@@ -157,7 +157,8 @@ drawGraphics(endTime) {
     const { drawMode } = this.settings;
     const isCombined = drawMode === 'Combined';
     const isDiagram = drawMode === 'Diagram';
-    const isWaveform = drawMode === 'Waveform' || drawMode === 'PointsAndWaveform';
+    const isWaveform = drawMode === 'Waveform';
+    const isPointsAndWaveform = drawMode === 'PointsAndWaveform'
     const { colorDiagram, colorWaveform } = this;
     const colorPoints = this.colorWaveform;
     let ch, drawDiagramPoint, drawPoint, drawWavePoint;
