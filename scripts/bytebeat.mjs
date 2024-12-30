@@ -165,7 +165,6 @@ globalThis.bytebeat = new class {
 		const isWaveform = drawMode === 'Waveform';
 		const { colorDiagram } = this;
 		const colorPoints = this.colorWaveform;
-		const colorPointsAndWaveform = this.colorPointsAndWaveform
 		const colorWaveform = !isWaveform ? colorPoints : [
 			Math.floor(.6 * colorPoints[0] | 0),
 			Math.floor(.6 * colorPoints[1] | 0),
