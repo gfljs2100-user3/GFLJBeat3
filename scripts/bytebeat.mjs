@@ -158,9 +158,13 @@ drawGraphics(endTime) {
     const isCombined = drawMode === 'Combined';
     const isDiagram = drawMode === 'Diagram';
     const isWaveform = drawMode === 'Waveform';
-    const isPointsAndWaveform = drawMode === 'PointsAndWaveform'
-    const { colorDiagram, colorWaveform } = this;
+    const isPointsAndWaveform = drawMode === 'PointsAndWaveform';
+    const { colorDiagram } = this;
     const colorPoints = this.colorWaveform;
+    const colorWaveform = !isWaveform ? colorPoints : [
+        Math.floor(.6 * colorPoints[0] | 0),
+        Math.floor(.6 * colorPoints[1] | 0),
+        Math.floor(.6 * colorPoints[2] | 0)];
     let ch, drawDiagramPoint, drawPoint, drawWavePoint;
     for (let i = 0; i < bufferLen; ++i) {
         const curY = buffer[i].value;
@@ -222,7 +226,7 @@ drawGraphics(endTime) {
             for (let x = curX; x !== nextX; x = this.mod(x + 1, width)) {
                 drawPoint(data, (drawWidth * (255 - curYCh) + x) << 2, colorPoints, colorCh, ch);
             }
-            if (isCombined || isWaveform) {
+            if (isCombined || isWaveform || isPointsAndWaveform) {
                 const prevYCh = prevY[ch];
                 if (isNaN(prevYCh)) {
                     continue;
