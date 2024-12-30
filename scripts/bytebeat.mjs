@@ -165,6 +165,7 @@ globalThis.bytebeat = new class {
 		const isWaveform = drawMode === 'Waveform';
 		const { colorDiagram } = this;
 		const colorPoints = this.colorWaveform;
+		const colorPointsAndWaveform = this.colorPointsAndWaveform
 		const colorWaveform = !isWaveform ? colorPoints : [
 			Math.floor(.6 * colorPoints[0] | 0),
 			Math.floor(.6 * colorPoints[1] | 0),
@@ -199,11 +200,13 @@ globalThis.bytebeat = new class {
 				drawDiagramPoint = isCombined ? this.drawSoftPointMono : this.drawPointMono;
 				drawPoint = this.drawPointMono;
 				drawWavePoint = isCombined ? this.drawPointMono : this.drawSoftPointMono;
+				drawWavePointCombined = isPointsAndWaveform ? this.drawWavePointMono : this.drawPointMono;
 			} else {
 				ch = 2;
 				drawDiagramPoint = isCombined ? this.drawSoftPointStereo : this.drawPointStereo;
 				drawPoint = this.drawPointStereo;
 				drawWavePoint = isCombined ? this.drawPointStereo : this.drawSoftPointStereo;
+				drawWavePointCombined = isPointsAndWaveform ? this.drawWavePointStereo : this.drawPointStereo;
 			}
 			while(ch--) {
 				const curYCh = curY[ch];
