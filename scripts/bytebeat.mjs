@@ -159,6 +159,8 @@ drawGraphics(endTime) {
     const isDiagram = drawMode === 'Diagram';
     const isWaveform = drawMode === 'Waveform';
     const isPointsAndWaveform = drawMode === 'PointsAndWaveform';
+    const isPointsAndDiagram = drawMode === 'PointsAndDiagram';
+    const isWaveformAndDiagram = drawMode === 'WaveformAndDiagram';
     const { colorDiagram } = this;
     const colorPoints = this.colorWaveform;
     const colorWaveform = !isWaveform ? colorPoints : [
@@ -175,7 +177,7 @@ drawGraphics(endTime) {
         const curX = this.mod(Math.floor(this.getX(isReverse ? nextTime + 1 : curTime)) - startX, width);
         const nextX = this.mod(Math.ceil(this.getX(isReverse ? curTime + 1 : nextTime)) - startX, width);
         let diagramSize, diagramStart;
-        if (isCombined || isDiagram) {
+        if (isCombined || isDiagram || isPointsAndDiagram || isWaveformAndDiagram) {
             diagramSize = Math.max(1, 256 >> scale);
             diagramStart = diagramSize * this.mod(curTime, 1 << scale);
         } else if (isNaNCurY[0] || isNaNCurY[1]) {
@@ -202,7 +204,7 @@ drawGraphics(endTime) {
         while (ch--) {
             const curYCh = curY[ch];
             const colorCh = this.colorChannels;
-            if (isCombined || isDiagram) {
+            if (isCombined || isDiagram || isPointsAndDiagram || isWaveformAndDiagram) {
                 const isNaNCurYCh = isNaNCurY[ch];
                 const value = (curYCh & 255) / 256;
                 const color = [
@@ -223,10 +225,12 @@ drawGraphics(endTime) {
             if (isNaNCurY[ch] || isDiagram) {
                 continue;
             }
-            for (let x = curX; x !== nextX; x = this.mod(x + 1, width)) {
-                drawPoint(data, (drawWidth * (255 - curYCh) + x) << 2, colorPoints, colorCh, ch);
+            if (isPointsAndDiagram || isCombined) {
+                for (let x = curX; x !== nextX; x = this.mod(x + 1, width)) {
+                    drawPoint(data, (drawWidth * (255 - curYCh) + x) << 2, colorPoints, colorCh, ch);
+                }
             }
-            if (isCombined || isWaveform || isPointsAndWaveform) {
+            if (isWaveformAndDiagram || isCombined || isWaveform || isPointsAndWaveform) {
                 const prevYCh = prevY[ch];
                 if (isNaN(prevYCh)) {
                     continue;
