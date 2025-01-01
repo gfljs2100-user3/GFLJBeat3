@@ -423,18 +423,18 @@ if (file) {
     let codeBtn = '';
     if (fileFormatted) {
         codeBtn += `<button class="code-button code-load code-load-formatted" data-songdata='${
-            songData }' data-code-file="${ file
-        }" title="Click to load and play the formatted code (Size: ${songData.fileSize})">formatted (${songData.fileSize})</button>`;
+            JSON.stringify(Object.assign(songObj, { fileSize: this.formatBytes(new Blob([fileFormatted]).size) })) }' 
+            data-code-file="${ file }" title="Click to load and play the formatted code (Size: ${ this.formatBytes(new Blob([fileFormatted]).size) })">formatted (${ this.formatBytes(new Blob([fileFormatted]).size) })</button>`;
     }
     if (fileOriginal) {
         codeBtn += `<button class="code-button code-load code-load-original" data-songdata='${
-            songData }' data-code-file="${ file
-        }" title="Click to load and play the original code (Size: ${songData.fileSize})">original (${songData.fileSize})</button>`;
+            JSON.stringify(Object.assign(songObj, { fileSize: this.formatBytes(new Blob([fileOriginal]).size) })) }' 
+            data-code-file="${ file }" title="Click to load and play the original code (Size: ${ this.formatBytes(new Blob([fileOriginal]).size) })">original (${ this.formatBytes(new Blob([fileOriginal]).size) })</button>`;
     }
     if (fileMinified) {
         codeBtn += `<button class="code-button code-load code-load-minified" data-songdata='${
-            songData }' data-code-file="${ file
-        }" title="Click to load and play the minified code (Size: ${songData.fileSize})">minified (${songData.fileSize})</button>`;
+            JSON.stringify(Object.assign(songObj, { fileSize: this.formatBytes(new Blob([fileMinified]).size) })) }' 
+            data-code-file="${ file }" title="Click to load and play the minified code (Size: ${ this.formatBytes(new Blob([fileMinified]).size) })">minified (${ this.formatBytes(new Blob([fileMinified]).size) })</button>`;
     }
     if (codeBtn) {
         entry += `<div class="code-buttons-container">${ codeBtn }</div>`;
@@ -755,8 +755,11 @@ async onclickCodeLoadButton(buttonElem) {
     const code = await response.text();
     const fileSize = new Blob([code]).size;
 
-    this.loadCode(Object.assign(JSON.parse(buttonElem.dataset.songdata),
-        { code: code, fileSize: this.formatBytes(fileSize) }));
+    // Parse and update the song data with the correct fileSize
+    const songData = JSON.parse(buttonElem.dataset.songdata);
+    songData.fileSize = this.formatBytes(fileSize);
+
+    this.loadCode(Object.assign(songData, { code: code }));
 }
 	onclickCodeToggleButton(buttonElem) {
 		const parentElem = buttonElem.parentNode;
