@@ -767,63 +767,33 @@ generateLibraryEntry({
 			'Original version shown. Click to view the minified version.';
 		buttonElem.textContent = isMinified ? '+' : '–';
 	}
-async onclickLibraryHeader(headerElem) {
-    const containerElem = headerElem.nextElementSibling;
-    const state = containerElem.classList;
-    if (state.contains('loaded') || headerElem.parentNode.open) {
-        return;
-    }
-    state.add('loaded');
-    const waitElem = headerElem.querySelector('.loading-wait');
-    waitElem.classList.remove('hidden');
-
-    const response = await fetch(`./library/${containerElem.id.replace('library-', '')}.gz`, { cache: 'no-cache' });
-    const { status } = response;
-    waitElem.classList.add('hidden');
-    if (status !== 200 && status !== 304) {
-        state.remove('loaded');
-        containerElem.innerHTML = `<div class="loading-error">Unable to load the library: ${status} ${response.statusText}</div>`;
-        return;
-    }
-    containerElem.innerHTML = '';
-
-    const libraryArr = JSON.parse(ungzip(await response.arrayBuffer(), { to: 'string' }));
-    const fragment = document.createDocumentFragment();
-
-    const loadFileButton = async (button) => {
-        const fileResponse = await fetch(`library/${
-            button.classList.contains('code-load-formatted') ? 'formatted' :
-            button.classList.contains('code-load-minified') ? 'minified' :
-            button.classList.contains('code-load-original') ? 'original' : ''
-        }/${button.dataset.codeFile}`, { cache: 'no-cache' });
-
-        const fileSize = fileResponse.headers.get('content-length');
-        let sizeText;
-        if (fileSize) {
-            sizeText = this.formatBytes(parseInt(fileSize, 10));
-        } else {
-            const code = await fileResponse.text();
-            const calculatedSize = new Blob([code]).size;
-            sizeText = this.formatBytes(calculatedSize);
-        }
-
-        button.setAttribute('data-file-size', sizeText);
-        button.textContent += ` (${sizeText})`;
-    };
-
-    await Promise.all(libraryArr.map(async (entryData) => {
-        const entryHTML = this.generateLibraryEntry(entryData);
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = entryHTML;
-        const entry = tempDiv.firstChild;
-        const fileButtons = entry.querySelectorAll('.code-button.code-load');
-
-        await Promise.all(Array.from(fileButtons).map(loadFileButton));
-        fragment.appendChild(entry);
-    }));
-
-    containerElem.appendChild(fragment);
-}
+	async onclickLibraryHeader(headerElem) {
+		const containerElem = headerElem.nextElementSibling;
+		const state = containerElem.classList;
+		if(state.contains('loaded') || headerElem.parentNode.open) {
+			return;
+		}
+		state.add('loaded');
+		const waitElem = headerElem.querySelector('.loading-wait');
+		waitElem.classList.remove('hidden');
+		const response = await fetch(`./library/${ containerElem.id.replace('library-', '') }.gz`,
+			{ cache: 'no-cache' });
+		const { status } = response;
+		waitElem.classList.add('hidden');
+		if(status !== 200 && status !== 304) {
+			state.remove('loaded');
+			containerElem.innerHTML = `<div class="loading-error">Unable to load the library: ${
+				status } ${ response.statusText }</div>`;
+			return;
+		}
+		containerElem.innerHTML = '';
+		let libraryHTML = '';
+		const libraryArr = JSON.parse(ungzip(await response.arrayBuffer(), { to: 'string' }));
+		for(let i = 0, len = libraryArr.length; i < len; ++i) {
+			libraryHTML += `<div class="entry-top">${ this.generateLibraryEntry(libraryArr[i]) }</div>`;
+		}
+		containerElem.insertAdjacentHTML('beforeend', libraryHTML);
+	}
 	oninputCounter(e) {
 		if(e.key === 'Enter') {
 			this.controlTime.blur();
