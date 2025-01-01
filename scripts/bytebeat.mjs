@@ -756,15 +756,22 @@ async onclickCodeLoadButton(buttonElem) {
     if (!buttonElem.hasAttribute('data-file-size')) {
         if (fileSize) {
             buttonElem.setAttribute('data-file-size', this.formatBytes(fileSize));
-            buttonElem.textContent += ` (${this.formatBytes(fileSize)})`;
+            buttonElem.textContent += ` ${this.formatBytes(fileSize)}`;
         } else {
             const calculatedSize = new Blob([code]).size;
             buttonElem.setAttribute('data-file-size', this.formatBytes(calculatedSize));
-            buttonElem.textContent += ` (${this.formatBytes(calculatedSize)})`;
+            buttonElem.textContent += ` ${this.formatBytes(calculatedSize)}`;
         }
     }
     this.loadCode(Object.assign(JSON.parse(buttonElem.dataset.songdata), { code }));
 }
+
+// On page load
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.code-load').forEach(buttonElem => {
+        onclickCodeLoadButton(buttonElem);
+    });
+});
 	onclickCodeToggleButton(buttonElem) {
 		const parentElem = buttonElem.parentNode;
 		const origElem = parentElem.querySelector('.code-text-original');
