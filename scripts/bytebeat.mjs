@@ -746,14 +746,14 @@ initAfterDom() {
 		return ((a % b) + b) % b;
 	}
 async onclickCodeLoadButton(buttonElem) {
+    const response = await fetch(`library/${
+        buttonElem.classList.contains('code-load-formatted') ? 'formatted' :
+        buttonElem.classList.contains('code-load-minified') ? 'minified' :
+        buttonElem.classList.contains('code-load-original') ? 'original' : ''
+    }/${ buttonElem.dataset.codeFile }`, { cache: 'no-cache' });
+    const fileSize = response.headers.get('content-length');
+    const code = await response.text();
     if (!buttonElem.hasAttribute('data-file-size')) {
-        const response = await fetch(`library/${
-            buttonElem.classList.contains('code-load-formatted') ? 'formatted' :
-            buttonElem.classList.contains('code-load-minified') ? 'minified' :
-            buttonElem.classList.contains('code-load-original') ? 'original' : ''
-        }/${ buttonElem.dataset.codeFile }`, { cache: 'no-cache' });
-        const fileSize = response.headers.get('content-length');
-        const code = await response.text();
         if (fileSize) {
             buttonElem.setAttribute('data-file-size', this.formatBytes(fileSize));
             buttonElem.textContent += ` (${this.formatBytes(fileSize)})`;
