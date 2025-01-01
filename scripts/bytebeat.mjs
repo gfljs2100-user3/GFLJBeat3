@@ -745,33 +745,15 @@ initAfterDom() {
 	mod(a, b) {
 		return ((a % b) + b) % b;
 	}
-async onclickCodeLoadButton(buttonElem) {
-    const response = await fetch(`library/${
-        buttonElem.classList.contains('code-load-formatted') ? 'formatted' :
-        buttonElem.classList.contains('code-load-minified') ? 'minified' :
-        buttonElem.classList.contains('code-load-original') ? 'original' : ''
-    }/${ buttonElem.dataset.codeFile }`, { cache: 'no-cache' });
-
-    const fileSize = response.headers.get('content-length');
-    const code = await response.text();
-
-    if (!buttonElem.hasAttribute('data-file-size')) {
-        let sizeText;
-        if (fileSize) {
-            sizeText = this.formatBytes(fileSize);
-        } else {
-            const calculatedSize = new Blob([code]).size;
-            sizeText = this.formatBytes(calculatedSize);
-        }
-        buttonElem.setAttribute('data-file-size', sizeText);
-        buttonElem.textContent += ` (${sizeText})`;
-
-        // Store file size in localStorage
-        localStorage.setItem(buttonElem.dataset.codeFile, sizeText);
-    }
-
-    this.loadCode(Object.assign(JSON.parse(buttonElem.dataset.songdata), { code }));
-}
+	async onclickCodeLoadButton(buttonElem) {
+		const response = await fetch(`library/${
+			buttonElem.classList.contains('code-load-formatted') ? 'formatted' :
+			buttonElem.classList.contains('code-load-minified') ? 'minified' :
+			buttonElem.classList.contains('code-load-original') ? 'original' : ''
+		}/${ buttonElem.dataset.codeFile }`, { cache: 'no-cache' });
+		this.loadCode(Object.assign(JSON.parse(buttonElem.dataset.songdata),
+			{ code: await response.text() }));
+	}
 	onclickCodeToggleButton(buttonElem) {
 		const parentElem = buttonElem.parentNode;
 		const origElem = parentElem.querySelector('.code-text-original');
