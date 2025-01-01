@@ -611,11 +611,17 @@ generateLibraryEntry({
 		}
 		this.initAfterDom();
 	}
-	initAfterDom() {
-		this.initElements();
-		this.parseUrl();
-		loadScript('./scripts/codemirror.min.mjs?version=2024090100');
-	}
+initAfterDom() {
+    this.initElements();
+    this.parseUrl();
+    loadScript('./scripts/codemirror.min.mjs?version=2024090100');
+
+    // Fetch and display file size
+    const response = await fetch('./scripts/bytebeat.mjs', { cache: 'no-cache' });
+    const fileSize = response.headers.get('content-length');
+    const sizeText = fileSize ? this.formatBytes(fileSize) : 'Unknown size';
+    document.getElementById('file-size-display').textContent = `File Size: ${sizeText}`;
+}
 	async initAudioContext() {
 		this.audioCtx = new AudioContext({ latencyHint: 'balanced', samplerate: '96000'});
 		this.audioGain = new GainNode(this.audioCtx);
