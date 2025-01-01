@@ -790,16 +790,16 @@ async onclickLibraryHeader(headerElem) {
     containerElem.innerHTML = '';
 
     const libraryArr = JSON.parse(ungzip(await response.arrayBuffer(), { to: 'string' }));
-    let libraryHTML = '';
+    const fragment = document.createDocumentFragment();
 
-    const entryPromises = libraryArr.map(async (entryData) => {
+    await Promise.all(libraryArr.map(async (entryData) => {
         const entryHTML = this.generateLibraryEntry(entryData);
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = entryHTML;
         const entry = tempDiv.firstChild;
         const fileButtons = entry.querySelectorAll('.code-button.code-load');
 
-        const fetchPromises = Array.from(fileButtons).map(async (button) => {
+        await Promise.all(Array.from(fileButtons).map(async (button) => {
             const fileResponse = await fetch(`library/${
                 button.classList.contains('code-load-formatted') ? 'formatted' :
                 button.classList.contains('code-load-minified') ? 'minified' :
@@ -818,14 +818,12 @@ async onclickLibraryHeader(headerElem) {
 
             button.setAttribute('data-file-size', sizeText);
             button.textContent += ` (${sizeText})`;
-        });
+        }));
 
-        await Promise.all(fetchPromises);
-        libraryHTML += `<div class="entry-top">${entry.outerHTML}</div>`;
-    });
+        fragment.appendChild(entry);
+    }));
 
-    await Promise.all(entryPromises);
-    containerElem.insertAdjacentHTML('beforeend', libraryHTML);
+    containerElem.appendChild(fragment);
 }
 	oninputCounter(e) {
 		if(e.key === 'Enter') {
