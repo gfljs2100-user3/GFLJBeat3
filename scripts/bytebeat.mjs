@@ -798,20 +798,20 @@ async onclickLibraryHeader(headerElem) {
             const buttonContainer = document.createElement('div');
             buttonContainer.className = 'code-buttons-container';
             if (entry.fileFormatted) {
-                const response = await fetch(`library/formatted/${entry.fileFormatted}`, { cache: 'no-cache' });
-                const formattedBlob = await response.blob();
+                const formattedResponse = await fetch(`library/formatted/${entry.fileFormatted}`, { cache: 'no-cache' });
+                const formattedBlob = await formattedResponse.blob();
                 const formattedFileSize = this.formatBytes(formattedBlob.size);
                 buttonContainer.innerHTML += `<button class="code-button code-load code-load-formatted" data-songdata='${JSON.stringify(entry)}' data-code-file="${entry.fileFormatted}" title="Click to load and play the formatted code">formatted (${formattedFileSize})</button>`;
             }
             if (entry.fileOriginal) {
-                const response = await fetch(`library/original/${entry.fileOriginal}`, { cache: 'no-cache' });
-                const originalBlob = await response.blob();
+                const originalResponse = await fetch(`library/original/${entry.fileOriginal}`, { cache: 'no-cache' });
+                const originalBlob = await originalResponse.blob();
                 const originalFileSize = this.formatBytes(originalBlob.size);
                 buttonContainer.innerHTML += `<button class="code-button code-load code-load-original" data-songdata='${JSON.stringify(entry)}' data-code-file="${entry.fileOriginal}" title="Click to load and play the original code">original (${originalFileSize})</button>`;
             }
             if (entry.fileMinified) {
-                const response = await fetch(`library/minified/${entry.fileMinified}`, { cache: 'no-cache' });
-                const minifiedBlob = await response.blob();
+                const minifiedResponse = await fetch(`library/minified/${entry.fileMinified}`, { cache: 'no-cache' });
+                const minifiedBlob = await minifiedResponse.blob();
                 const minifiedFileSize = this.formatBytes(minifiedBlob.size);
                 buttonContainer.innerHTML += `<button class="code-button code-load code-load-minified" data-songdata='${JSON.stringify(entry)}' data-code-file="${entry.fileMinified}" title="Click to load and play the minified code">minified (${minifiedFileSize})</button>`;
             }
