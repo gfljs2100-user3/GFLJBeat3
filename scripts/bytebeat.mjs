@@ -800,52 +800,40 @@ async onclickLibraryHeader(headerElem) {
     waitElem.classList.add('hidden');
     if (status !== 200 && status !== 304) {
         state.remove('loaded');
-        containerElem.innerHTML = `<div class="loading-error">Unable to load the library: ${status} ${response.statusText}</div>`;
+        containerElem.innerHTML = `<div class="loading-error">Unable to load the library: ${
+            status
+        } ${response.statusText}</div>`;
         return;
     }
     containerElem.innerHTML = '';
     let libraryHTML = '';
     const libraryArr = JSON.parse(ungzip(await response.arrayBuffer(), { to: 'string' }));
-
-    // Pre-fetch file sizes
-    const fileSizePromises = [];
-    const fileSizeCache = new Map();
-
-    libraryArr.forEach(entry => {
+    for (let i = 0, len = libraryArr.length; i < len; ++i) {
+        const entryHTML = this.generateLibraryEntry(libraryArr[i]);
         const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = this.generateLibraryEntry(entry);
-        const entryElem = tempDiv.firstChild;
-        const fileButtons = entryElem.querySelectorAll('.code-button.code-load');
-
-        fileButtons.forEach(button => {
-            const fileType = button.classList.contains('code-load-formatted') ? 'formatted' :
-                button.classList.contains('code-load-minified') ? 'minified' :
-                button.classList.contains('code-load-original') ? 'original' : '';
-            const filePath = `library/${fileType}/${button.dataset.codeFile}`;
-            
-            if (!fileSizeCache.has(filePath)) {
-                fileSizeCache.set(filePath, fetch(filePath, { cache: 'no-cache' }).then(async fileResponse => {
-                    const fileSize = fileResponse.headers.get('content-length');
-                    if (fileSize) {
-                        return this.formatBytes(parseInt(fileSize, 10));
-                    } else {
-                        const code = await fileResponse.text();
-                        const calculatedSize = new Blob([code]).size;
-                        return this.formatBytes(calculatedSize);
-                    }
-                }));
+        tempDiv.innerHTML = entryHTML;
+        const entry = tempDiv.firstChild;
+        const fileButtons = entry.querySelectorAll('.code-button.code-load');
+        for (let button of fileButtons) {
+            const fileResponse = await fetch(`library/${
+        buttonElem.classList.contains('code-load-formatted') ? 'formatted' :
+        buttonElem.classList.contains('code-load-minified') ? 'minified' :
+        buttonElem.classList.contains('code-load-original') ? 'original' : ''
+    }/${ buttonElem.dataset.codeFile }`, { cache: 'no-cache' });
+            const fileSize = fileResponse.headers.get('content-length');
+            let sizeText;
+            if (fileSize) {
+                sizeText = this.formatBytes(fileSize);
+            } else {
+                const code = await fileResponse.text();
+                const calculatedSize = new Blob([code]).size;
+                sizeText = this.formatBytes(calculatedSize);
             }
-
-            fileSizePromises.push(fileSizeCache.get(filePath).then(sizeText => {
-                button.setAttribute('data-file-size', sizeText);
-                button.textContent += ` (${sizeText})`;
-            }));
-        });
-
-        libraryHTML += `<div class="entry-top">${entryElem.outerHTML}</div>`;
-    });
-
-    await Promise.all(fileSizePromises);
+            button.setAttribute('data-file-size', sizeText);
+            button.textContent += ` (${sizeText})`;
+        }
+        libraryHTML += `<div class="entry-top">${entry.outerHTML}</div>`;
+    }
     containerElem.insertAdjacentHTML('beforeend', libraryHTML);
 }
 	oninputCounter(e) {
