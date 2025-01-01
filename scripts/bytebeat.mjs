@@ -751,45 +751,36 @@ async onclickCodeLoadButton(buttonElem) {
         buttonElem.classList.contains('code-load-minified') ? 'minified' :
         buttonElem.classList.contains('code-load-original') ? 'original' : ''
     }/${ buttonElem.dataset.codeFile }`, { cache: 'no-cache' });
+
     const fileSize = response.headers.get('content-length');
     const code = await response.text();
+
     if (!buttonElem.hasAttribute('data-file-size')) {
+        let sizeText;
         if (fileSize) {
-            buttonElem.setAttribute('data-file-size', this.formatBytes(fileSize));
-            buttonElem.textContent += ` (${this.formatBytes(fileSize)})`;
+            sizeText = this.formatBytes(fileSize);
         } else {
             const calculatedSize = new Blob([code]).size;
-            buttonElem.setAttribute('data-file-size', this.formatBytes(calculatedSize));
-            buttonElem.textContent += ` (${this.formatBytes(calculatedSize)})`;
+            sizeText = this.formatBytes(calculatedSize);
         }
+        buttonElem.setAttribute('data-file-size', sizeText);
+        buttonElem.textContent += ` (${sizeText})`;
+
+        // Store file size in localStorage
+        localStorage.setItem(buttonElem.dataset.codeFile, sizeText);
     }
+
     this.loadCode(Object.assign(JSON.parse(buttonElem.dataset.songdata), { code }));
 }
 
-// Ensure the file size is set when the page reloads
+// On page load, retrieve file sizes from localStorage and update button elements
 document.addEventListener('DOMContentLoaded', () => {
-    const buttons = document.querySelectorAll('.code-button.code-load');
-    buttons.forEach(async (buttonElem) => {
-        const response = await fetch(`library/${
-            buttonElem.classList.contains('code-load-formatted') ? 'formatted' :
-            buttonElem.classList.contains('code-load-minified') ? 'minified' :
-            buttonElem.classList.contains('code-load-original') ? 'original' : ''
-        }/${ buttonElem.dataset.codeFile }`, { cache: 'no-cache' });
-        const fileSize = response.headers.get('content-length');
-        const code = await response.text();
-        if (!buttonElem.hasAttribute('data-file-size')) {
-            if (fileSize) {
-                buttonElem.setAttribute('data-file-size', formatBytes(fileSize));
-                buttonElem.textContent += ` (${formatBytes(fileSize)})`;
-            } else {
-                const calculatedSize = new Blob([code]).size;
-                buttonElem.setAttribute('data-file-size', formatBytes(calculatedSize));
-                buttonElem.textContent += ` (${formatBytes(calculatedSize)})`;
-            }
+    document.querySelectorAll('button[data-code-file]').forEach(buttonElem => {
+        const sizeText = localStorage.getItem(buttonElem.dataset.codeFile);
+        if (sizeText) {
+            buttonElem.setAttribute('data-file-size', sizeText);
+            buttonElem.textContent += ` (${sizeText})`;
         }
-        buttonElem.addEventListener('click', async () => {
-            await loadCode(Object.assign(JSON.parse(buttonElem.dataset.songdata), { code }));
-        });
     });
 });
 	onclickCodeToggleButton(buttonElem) {
