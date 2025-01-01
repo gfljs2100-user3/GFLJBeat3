@@ -782,15 +782,34 @@ async onclickLibraryHeader(headerElem) {
     waitElem.classList.add('hidden');
     if (status !== 200 && status !== 304) {
         state.remove('loaded');
-        containerElem.innerHTML = `<div class="loading-error">Unable to load the library: ${
-            status
-        } ${response.statusText}</div>`;
+        containerElem.innerHTML = `<div class="loading-error">Unable to load the library: ${status} ${response.statusText}</div>`;
         return;
     }
     containerElem.innerHTML = '';
 
     const libraryArr = JSON.parse(ungzip(await response.arrayBuffer(), { to: 'string' }));
     const fragment = document.createDocumentFragment();
+
+    const loadFileButton = async (button) => {
+        const fileResponse = await fetch(`library/${
+            button.classList.contains('code-load-formatted') ? 'formatted' :
+            button.classList.contains('code-load-minified') ? 'minified' :
+            button.classList.contains('code-load-original') ? 'original' : ''
+        }/${button.dataset.codeFile}`, { cache: 'no-cache' });
+
+        const fileSize = fileResponse.headers.get('content-length');
+        let sizeText;
+        if (fileSize) {
+            sizeText = this.formatBytes(parseInt(fileSize, 10));
+        } else {
+            const code = await fileResponse.text();
+            const calculatedSize = new Blob([code]).size;
+            sizeText = this.formatBytes(calculatedSize);
+        }
+
+        button.setAttribute('data-file-size', sizeText);
+        button.textContent += ` (${sizeText})`;
+    };
 
     await Promise.all(libraryArr.map(async (entryData) => {
         const entryHTML = this.generateLibraryEntry(entryData);
@@ -799,27 +818,7 @@ async onclickLibraryHeader(headerElem) {
         const entry = tempDiv.firstChild;
         const fileButtons = entry.querySelectorAll('.code-button.code-load');
 
-        await Promise.all(Array.from(fileButtons).map(async (button) => {
-            const fileResponse = await fetch(`library/${
-                button.classList.contains('code-load-formatted') ? 'formatted' :
-                button.classList.contains('code-load-minified') ? 'minified' :
-                button.classList.contains('code-load-original') ? 'original' : ''
-            }/${button.dataset.codeFile}`, { cache: 'no-cache' });
-
-            const fileSize = fileResponse.headers.get('content-length');
-            let sizeText;
-            if (fileSize) {
-                sizeText = this.formatBytes(parseInt(fileSize, 10));
-            } else {
-                const code = await fileResponse.text();
-                const calculatedSize = new Blob([code]).size;
-                sizeText = this.formatBytes(calculatedSize);
-            }
-
-            button.setAttribute('data-file-size', sizeText);
-            button.textContent += ` (${sizeText})`;
-        }));
-
+        await Promise.all(Array.from(fileButtons).map(loadFileButton));
         fragment.appendChild(entry);
     }));
 
