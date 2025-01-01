@@ -419,40 +419,40 @@ generateLibraryEntry({
     } else if(codeOriginal) {
         entry += ` <span class="code-length" title="Size in characters">${ this.formatBytes(codeOriginal.length) }</span>`;
     }
-if (file) {
-    let codeBtn = '';
-    if (fileFormatted) {
-        const response = await fetch(`library/formatted/${fileFormatted}`, { cache: 'no-cache' });
-        const code = await response.text();
-        const fileSize = this.formatBytes(code.length); // Correctly get the file size
+    if (file) {
+        let codeBtn = '';
+        if (fileFormatted) {
+            const response = await fetch(`library/formatted/${fileFormatted}`, { cache: 'no-cache' });
+            const code = await response.text();
+            const fileSize = this.formatBytes(code.length); // Correctly get the file size
 
-        codeBtn += `<button class="code-button code-load code-load-formatted" data-songdata='${
-            JSON.stringify(Object.assign(songObj, { fileSize })) }' 
-            data-code-file="${ fileFormatted }" title="Click to load and play the formatted code (Size: ${ fileSize })">formatted (${ fileSize })</button>`;
-    }
-    if (fileOriginal) {
-        const response = await fetch(`library/original/${fileOriginal}`, { cache: 'no-cache' });
-        const code = await response.text();
-        const fileSize = this.formatBytes(code.length); // Correctly get the file size
+            codeBtn += `<button class="code-button code-load code-load-formatted" data-songdata='${
+                JSON.stringify(Object.assign(songObj, { fileSize })) }' 
+                data-code-file="${ fileFormatted }" title="Click to load and play the formatted code (Size: ${ fileSize })">formatted (${ fileSize })</button>`;
+        }
+        if (fileOriginal) {
+            const response = await fetch(`library/original/${fileOriginal}`, { cache: 'no-cache' });
+            const code = await response.text();
+            const fileSize = this.formatBytes(code.length); // Correctly get the file size
 
-        codeBtn += `<button class="code-button code-load code-load-original" data-songdata='${
-            JSON.stringify(Object.assign(songObj, { fileSize })) }' 
-            data-code-file="${ fileOriginal }" title="Click to load and play the original code (Size: ${ fileSize })">original (${ fileSize })</button>`;
-    }
-    if (fileMinified) {
-        const response = await fetch(`library/minified/${fileMinified}`, { cache: 'no-cache' });
-        const code = await response.text();
-        const fileSize = this.formatBytes(code.length); // Correctly get the file size
+            codeBtn += `<button class="code-button code-load code-load-original" data-songdata='${
+                JSON.stringify(Object.assign(songObj, { fileSize })) }' 
+                data-code-file="${ fileOriginal }" title="Click to load and play the original code (Size: ${ fileSize })">original (${ fileSize })</button>`;
+        }
+        if (fileMinified) {
+            const response = await fetch(`library/minified/${fileMinified}`, { cache: 'no-cache' });
+            const code = await response.text();
+            const fileSize = this.formatBytes(code.length); // Correctly get the file size
 
-        codeBtn += `<button class="code-button code-load code-load-minified" data-songdata='${
-            JSON.stringify(Object.assign(songObj, { fileSize })) }' 
-            data-code-file="${ fileMinified }" title="Click to load and play the minified code (Size: ${ fileSize })">minified (${ fileSize })</button>`;
+            codeBtn += `<button class="code-button code-load code-load-minified" data-songdata='${
+                JSON.stringify(Object.assign(songObj, { fileSize })) }' 
+                data-code-file="${ fileMinified }" title="Click to load and play the minified code (Size: ${ fileSize })">minified (${ fileSize })</button>`;
+        }
+        if (codeBtn) {
+            entry += `<div class="code-buttons-container">${ codeBtn }</div>`;
+        }
     }
-    if (codeBtn) {
-        entry += `<div class="code-buttons-container">${ codeBtn }</div>`;
-    }
-}
-      if(description) {
+    if(description) {
         entry += (entry ? '<br>' : '') + description;
     }
     if(codeOriginal) {
