@@ -814,7 +814,8 @@ async onclickLibraryHeader(headerElem) {
         tempDiv.innerHTML = entryHTML;
         const entry = tempDiv.firstChild;
         const fileButtons = entry.querySelectorAll('.code-button.code-load');
-        for (let button of fileButtons) {
+
+        const fetchPromises = Array.from(fileButtons).map(async (button) => {
             const fileResponse = await fetch(`library/${
                 button.classList.contains('code-load-formatted') ? 'formatted' :
                 button.classList.contains('code-load-minified') ? 'minified' :
@@ -831,7 +832,9 @@ async onclickLibraryHeader(headerElem) {
             }
             button.setAttribute('data-file-size', sizeText);
             button.textContent += ` (${sizeText})`;
-        }
+        });
+
+        await Promise.all(fetchPromises);
         libraryHTML += `<div class="entry-top">${entry.outerHTML}</div>`;
     }
     containerElem.insertAdjacentHTML('beforeend', libraryHTML);
