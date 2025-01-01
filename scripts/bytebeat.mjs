@@ -773,40 +773,40 @@ async onclickCodeLoadButton(buttonElem) {
 async onclickLibraryHeader(headerElem) {
     const containerElem = headerElem.nextElementSibling;
     const state = containerElem.classList;
-    if(state.contains('loaded') || headerElem.parentNode.open) {
+    if (state.contains('loaded') || headerElem.parentNode.open) {
         return;
     }
     state.add('loaded');
     const waitElem = headerElem.querySelector('.loading-wait');
     waitElem.classList.remove('hidden');
-    const response = await fetch(`./library/${ containerElem.id.replace('library-', '') }.gz`, { cache: 'no-cache' });
+    const response = await fetch(`./library/${containerElem.id.replace('library-', '')}.gz`, { cache: 'no-cache' });
     const { status } = response;
     waitElem.classList.add('hidden');
-    if(status !== 200 && status !== 304) {
+    if (status !== 200 && status !== 304) {
         state.remove('loaded');
-        containerElem.innerHTML = `<div class="loading-error">Unable to load the library: ${ status } ${ response.statusText }</div>`;
+        containerElem.innerHTML = `<div class="loading-error">Unable to load the library: ${status} ${response.statusText}</div>`;
         return;
     }
     containerElem.innerHTML = '';
     let libraryHTML = '';
     const libraryArr = JSON.parse(ungzip(await response.arrayBuffer(), { to: 'string' }));
-    for(let i = 0, len = libraryArr.length; i < len; ++i) {
-        libraryHTML += `<div class="entry-top">${ this.generateLibraryEntry(libraryArr[i]) }</div>`;
+    for (let i = 0, len = libraryArr.length; i < len; ++i) {
+        libraryHTML += `<div class="entry-top">${this.generateLibraryEntry(libraryArr[i])}</div>`;
     }
     containerElem.insertAdjacentHTML('beforeend', libraryHTML);
-    
+
     // Fetch the file as a blob to get the size
     const buttonElem = headerElem.querySelector('button');
     const fileResponse = await fetch(`library/${
         buttonElem.classList.contains('code-load-formatted') ? 'formatted' :
         buttonElem.classList.contains('code-load-minified') ? 'minified' :
         buttonElem.classList.contains('code-load-original') ? 'original' : ''
-    }/${ buttonElem.dataset.codeFile }`, { cache: 'no-cache' });
+    }/${buttonElem.dataset.codeFile}`, { cache: 'no-cache' });
     const fileBlob = await fileResponse.blob();
-    const fileSize = (fileBlob.size / 1024).toFixed(2); // File size in KB
-    
+    const fileSize = this.formatBytes(fileBlob.size);
+
     // Display the file size in the button
-    buttonElem.textContent += ` (${fileSize} KB)`;
+    buttonElem.textContent += ` (${fileSize})`;
 }
 	oninputCounter(e) {
 		if(e.key === 'Enter') {
