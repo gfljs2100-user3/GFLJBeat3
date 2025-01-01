@@ -424,17 +424,17 @@ generateLibraryEntry({
         if(fileFormatted) {
             codeBtn += `<button class="code-button code-load code-load-formatted" data-songdata='${
                 songData }' data-code-file="${ file
-            }" title="Click to load and play the formatted code">formatted ${this.formatBytes(calculatedSize)}</button>`;
+            }" title="Click to load and play the formatted code">formatted</button>`;
         }
         if(fileOriginal) {
             codeBtn += `<button class="code-button code-load code-load-original" data-songdata='${
                 songData }' data-code-file="${ file
-            }" title="Click to load and play the original code">original ${this.formatBytes(calculatedSize)}</button>`;
+            }" title="Click to load and play the original code">original</button>`;
         }
         if(fileMinified) {
             codeBtn += `<button class="code-button code-load code-load-minified" data-songdata='${
                 songData }' data-code-file="${ file
-            }" title="Click to load and play the minified code">minified ${this.formatBytes(calculatedSize)}</button>`;
+            }" title="Click to load and play the minified code">minified</button>`;
         }
         if(codeBtn) {
             entry += `<div class="code-buttons-container">${ codeBtn }</div>`;
