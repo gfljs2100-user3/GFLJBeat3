@@ -809,7 +809,10 @@ async onclickLibraryHeader(headerElem) {
     let libraryHTML = '';
     const libraryArr = JSON.parse(ungzip(await response.arrayBuffer(), { to: 'string' }));
     for (let i = 0, len = libraryArr.length; i < len; ++i) {
-        const entry = this.generateLibraryEntry(libraryArr[i]);
+        const entryHTML = this.generateLibraryEntry(libraryArr[i]);
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = entryHTML;
+        const entry = tempDiv.firstChild;
         const fileButtons = entry.querySelectorAll('.code-button.code-load');
         for (let button of fileButtons) {
             const fileResponse = await fetch(`library/${button.dataset.codeFile}`, { cache: 'no-cache' });
@@ -825,7 +828,7 @@ async onclickLibraryHeader(headerElem) {
             button.setAttribute('data-file-size', sizeText);
             button.textContent += ` (${sizeText})`;
         }
-        libraryHTML += `<div class="entry-top">${entry}</div>`;
+        libraryHTML += `<div class="entry-top">${entry.outerHTML}</div>`;
     }
     containerElem.insertAdjacentHTML('beforeend', libraryHTML);
 }
