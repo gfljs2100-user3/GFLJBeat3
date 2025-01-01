@@ -792,8 +792,8 @@ async onclickLibraryHeader(headerElem) {
     const libraryArr = JSON.parse(ungzip(await response.arrayBuffer(), { to: 'string' }));
     let libraryHTML = '';
 
-    for (let i = 0, len = libraryArr.length; i < len; ++i) {
-        const entryHTML = this.generateLibraryEntry(libraryArr[i]);
+    const entryPromises = libraryArr.map(async (entryData) => {
+        const entryHTML = this.generateLibraryEntry(entryData);
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = entryHTML;
         const entry = tempDiv.firstChild;
@@ -817,13 +817,14 @@ async onclickLibraryHeader(headerElem) {
             }
 
             button.setAttribute('data-file-size', sizeText);
-            button.textContent += ` ${sizeText}`;
+            button.textContent += ` (${sizeText})`;
         });
 
         await Promise.all(fetchPromises);
         libraryHTML += `<div class="entry-top">${entry.outerHTML}</div>`;
-    }
+    });
 
+    await Promise.all(entryPromises);
     containerElem.insertAdjacentHTML('beforeend', libraryHTML);
 }
 	oninputCounter(e) {
