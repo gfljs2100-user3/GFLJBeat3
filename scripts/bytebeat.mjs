@@ -745,7 +745,7 @@ initAfterDom() {
 	mod(a, b) {
 		return ((a % b) + b) % b;
 	}
-async function onclickCodeLoadButton(buttonElem) {
+async onclickCodeLoadButton(buttonElem) {
     const response = await fetch(`library/${
         buttonElem.classList.contains('code-load-formatted') ? 'formatted' :
         buttonElem.classList.contains('code-load-minified') ? 'minified' :
@@ -765,13 +765,6 @@ async function onclickCodeLoadButton(buttonElem) {
     }
     this.loadCode(Object.assign(JSON.parse(buttonElem.dataset.songdata), { code }));
 }
-
-// On page load
-document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('.code-load').forEach(buttonElem => {
-        onclickCodeLoadButton(buttonElem);
-    });
-});
 	onclickCodeToggleButton(buttonElem) {
 		const parentElem = buttonElem.parentNode;
 		const origElem = parentElem.querySelector('.code-text-original');
