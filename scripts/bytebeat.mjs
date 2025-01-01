@@ -745,15 +745,18 @@ generateLibraryEntry({
 	mod(a, b) {
 		return ((a % b) + b) % b;
 	}
-	async onclickCodeLoadButton(buttonElem) {
-		const response = await fetch(`library/${
-			buttonElem.classList.contains('code-load-formatted') ? 'formatted' :
-			buttonElem.classList.contains('code-load-minified') ? 'minified' :
-			buttonElem.classList.contains('code-load-original') ? 'original' : ''
-		}/${ buttonElem.dataset.codeFile }`, { cache: 'no-cache' });
-		this.loadCode(Object.assign(JSON.parse(buttonElem.dataset.songdata),
-			{ code: await response.text() }));
-	}
+async onclickCodeLoadButton(buttonElem) {
+    const response = await fetch(`library/${
+        buttonElem.classList.contains('code-load-formatted') ? 'formatted' :
+        buttonElem.classList.contains('code-load-minified') ? 'minified' :
+        buttonElem.classList.contains('code-load-original') ? 'original' : ''
+    }/${ buttonElem.dataset.codeFile }`, { cache: 'no-cache' });
+    const blob = await response.blob();
+    const fileSize = this.formatBytes(blob.size);
+    buttonElem.innerHTML += ` (${fileSize})`;
+    const code = await blob.text();
+    this.loadCode(Object.assign(JSON.parse(buttonElem.dataset.songdata), { code }));
+}
 	onclickCodeToggleButton(buttonElem) {
 		const parentElem = buttonElem.parentNode;
 		const origElem = parentElem.querySelector('.code-text-original');
@@ -767,33 +770,34 @@ generateLibraryEntry({
 			'Original version shown. Click to view the minified version.';
 		buttonElem.textContent = isMinified ? '+' : '–';
 	}
-	async onclickLibraryHeader(headerElem) {
-		const containerElem = headerElem.nextElementSibling;
-		const state = containerElem.classList;
-		if(state.contains('loaded') || headerElem.parentNode.open) {
-			return;
-		}
-		state.add('loaded');
-		const waitElem = headerElem.querySelector('.loading-wait');
-		waitElem.classList.remove('hidden');
-		const response = await fetch(`./library/${ containerElem.id.replace('library-', '') }.gz`,
-			{ cache: 'no-cache' });
-		const { status } = response;
-		waitElem.classList.add('hidden');
-		if(status !== 200 && status !== 304) {
-			state.remove('loaded');
-			containerElem.innerHTML = `<div class="loading-error">Unable to load the library: ${
-				status } ${ response.statusText }</div>`;
-			return;
-		}
-		containerElem.innerHTML = '';
-		let libraryHTML = '';
-		const libraryArr = JSON.parse(ungzip(await response.arrayBuffer(), { to: 'string' }));
-		for(let i = 0, len = libraryArr.length; i < len; ++i) {
-			libraryHTML += `<div class="entry-top">${ this.generateLibraryEntry(libraryArr[i]) }</div>`;
-		}
-		containerElem.insertAdjacentHTML('beforeend', libraryHTML);
-	}
+async onclickLibraryHeader(headerElem) {
+    const containerElem = headerElem.nextElementSibling;
+    const state = containerElem.classList;
+    if(state.contains('loaded') || headerElem.parentNode.open) {
+        return;
+    }
+    state.add('loaded');
+    const waitElem = headerElem.querySelector('.loading-wait');
+    waitElem.classList.remove('hidden');
+    const response = await fetch(`./library/${ containerElem.id.replace('library-', '') }.gz`, { cache: 'no-cache' });
+    const { status } = response;
+    waitElem.classList.add('hidden');
+    if(status !== 200 && status !== 304) {
+        state.remove('loaded');
+        containerElem.innerHTML = `<div class="loading-error">Unable to load the library: ${
+            status } ${ response.statusText }</div>`;
+        return;
+    }
+    const blob = await response.blob();
+    const fileSize = this.formatBytes(blob.size);
+    containerElem.innerHTML = `<div class="file-size">File Size: ${fileSize}</div>`;
+    let libraryHTML = '';
+    const libraryArr = JSON.parse(ungzip(await blob.arrayBuffer(), { to: 'string' }));
+    for(let i = 0, len = libraryArr.length; i < len; ++i) {
+        libraryHTML += `<div class="entry-top">${ this.generateLibraryEntry(libraryArr[i]) }</div>`;
+    }
+    containerElem.insertAdjacentHTML('beforeend', libraryHTML);
+}
 	oninputCounter(e) {
 		if(e.key === 'Enter') {
 			this.controlTime.blur();
