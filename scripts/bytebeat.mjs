@@ -421,20 +421,21 @@ generateLibraryEntry({
     }
    if(file) {
         let codeBtn = '';
+        const fileSize = this.formatBytes(file.length); // Adding file size here
         if(fileFormatted) {
             codeBtn += `<button class="code-button code-load code-load-formatted" data-songdata='${
                 songData }' data-code-file="${ file
-            }" title="Click to load and play the formatted code">formatted</button>`;
+            }" title="Click to load and play the formatted code">formatted (${fileSize})</button>`;
         }
         if(fileOriginal) {
             codeBtn += `<button class="code-button code-load code-load-original" data-songdata='${
                 songData }' data-code-file="${ file
-            }" title="Click to load and play the original code">original</button>`;
+            }" title="Click to load and play the original code">original (${fileSize})</button>`;
         }
         if(fileMinified) {
             codeBtn += `<button class="code-button code-load code-load-minified" data-songdata='${
                 songData }' data-code-file="${ file
-            }" title="Click to load and play the minified code">minified</button>`;
+            }" title="Click to load and play the minified code">minified (${fileSize})</button>`;
         }
         if(codeBtn) {
             entry += `<div class="code-buttons-container">${ codeBtn }</div>`;
