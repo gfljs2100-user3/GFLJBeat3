@@ -789,11 +789,32 @@ async onclickLibraryHeader(headerElem) {
     }
     containerElem.innerHTML = '';
 
-    let libraryHTML = '';
-    const libraryArr = JSON.parse(ungzip(await response.arrayBuffer(), { to: 'string' }));
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let libraryJSON = '';
+    const chunkSize = 1024 * 1024; // 1MB chunks
 
-    const entryPromises = libraryArr.map(async (entryData) => {
-        const entryHTML = this.generateLibraryEntry(entryData);
+    while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        libraryJSON += decoder.decode(value, { stream: !done });
+
+        if (libraryJSON.length >= chunkSize) {
+            processLibraryChunk(libraryJSON);
+            libraryJSON = '';
+        }
+    }
+    if (libraryJSON.length) {
+        processLibraryChunk(libraryJSON);
+    }
+}
+
+function processLibraryChunk(libraryJSON) {
+    const libraryArr = JSON.parse(libraryJSON);
+    let libraryHTML = '';
+
+    libraryArr.forEach(async (entryData) => {
+        const entryHTML = generateLibraryEntry(entryData);
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = entryHTML;
         const entry = tempDiv.firstChild;
@@ -809,23 +830,21 @@ async onclickLibraryHeader(headerElem) {
             const fileSize = fileResponse.headers.get('content-length');
             let sizeText;
             if (fileSize) {
-                sizeText = this.formatBytes(parseInt(fileSize, 10));
+                sizeText = formatBytes(parseInt(fileSize, 10));
             } else {
                 const code = await fileResponse.text();
                 const calculatedSize = new Blob([code]).size;
-                sizeText = this.formatBytes(calculatedSize);
+                sizeText = formatBytes(calculatedSize);
             }
 
             button.setAttribute('data-file-size', sizeText);
-            button.textContent += ` (${sizeText})`;
+            button.textContent += ` ${sizeText}`;
         });
 
         await Promise.all(fetchPromises);
-        return `<div class="entry-top">${entry.outerHTML}</div>`;
+        libraryHTML += `<div class="entry-top">${entry.outerHTML}</div>`;
     });
 
-    const entryHTMLArray = await Promise.all(entryPromises);
-    libraryHTML = entryHTMLArray.join('');
     containerElem.insertAdjacentHTML('beforeend', libraryHTML);
 }
 	oninputCounter(e) {
