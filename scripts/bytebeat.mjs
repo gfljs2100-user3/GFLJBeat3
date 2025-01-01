@@ -424,7 +424,7 @@ if (file) {
     if (fileFormatted) {
         const response = await fetch(`library/formatted/${fileFormatted}`, { cache: 'no-cache' });
         const code = await response.text();
-        const fileSize = this.formatBytes(new Blob([code]).size);
+        const fileSize = this.formatBytes(code.length); // Correctly get the file size
 
         codeBtn += `<button class="code-button code-load code-load-formatted" data-songdata='${
             JSON.stringify(Object.assign(songObj, { fileSize })) }' 
@@ -433,7 +433,7 @@ if (file) {
     if (fileOriginal) {
         const response = await fetch(`library/original/${fileOriginal}`, { cache: 'no-cache' });
         const code = await response.text();
-        const fileSize = this.formatBytes(new Blob([code]).size);
+        const fileSize = this.formatBytes(code.length); // Correctly get the file size
 
         codeBtn += `<button class="code-button code-load code-load-original" data-songdata='${
             JSON.stringify(Object.assign(songObj, { fileSize })) }' 
@@ -442,7 +442,7 @@ if (file) {
     if (fileMinified) {
         const response = await fetch(`library/minified/${fileMinified}`, { cache: 'no-cache' });
         const code = await response.text();
-        const fileSize = this.formatBytes(new Blob([code]).size);
+        const fileSize = this.formatBytes(code.length); // Correctly get the file size
 
         codeBtn += `<button class="code-button code-load code-load-minified" data-songdata='${
             JSON.stringify(Object.assign(songObj, { fileSize })) }' 
@@ -452,7 +452,7 @@ if (file) {
         entry += `<div class="code-buttons-container">${ codeBtn }</div>`;
     }
 }
-    if(description) {
+      if(description) {
         entry += (entry ? '<br>' : '') + description;
     }
     if(codeOriginal) {
