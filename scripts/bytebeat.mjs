@@ -772,20 +772,6 @@ async onclickCodeLoadButton(buttonElem) {
 
     this.loadCode(Object.assign(JSON.parse(buttonElem.dataset.songdata), { code }));
 }
-
-// On page load, retrieve file sizes from localStorage and update button elements
-function updateFileSizes() {
-    document.querySelectorAll('button[data-code-file]').forEach(buttonElem => {
-        const sizeText = localStorage.getItem(buttonElem.dataset.codeFile);
-        if (sizeText) {
-            buttonElem.setAttribute('data-file-size', sizeText);
-            buttonElem.textContent += ` (${sizeText})`;
-        }
-    });
-}
-
-// Call updateFileSizes on page load
-updateFileSizes();
 	onclickCodeToggleButton(buttonElem) {
 		const parentElem = buttonElem.parentNode;
 		const origElem = parentElem.querySelector('.code-text-original');
