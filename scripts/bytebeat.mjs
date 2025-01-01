@@ -419,36 +419,24 @@ generateLibraryEntry({
     } else if(codeOriginal) {
         entry += ` <span class="code-length" title="Size in characters">${ this.formatBytes(codeOriginal.length) }</span>`;
     }
-    if (file) {
+    if(file) {
         let codeBtn = '';
-        if (fileFormatted) {
-            const response = await fetch(`library/formatted/${fileFormatted}`, { cache: 'no-cache' });
-            const code = await response.text();
-            const fileSize = this.formatBytes(code.length); // Correctly get the file size
-
+        if(fileFormatted) {
             codeBtn += `<button class="code-button code-load code-load-formatted" data-songdata='${
-                JSON.stringify(Object.assign(songObj, { fileSize })) }' 
-                data-code-file="${ fileFormatted }" title="Click to load and play the formatted code (Size: ${ fileSize })">formatted (${ fileSize })</button>`;
+                songData }' data-code-file="${ file
+            }" title="Click to load and play the formatted code">formatted</button>`;
         }
-        if (fileOriginal) {
-            const response = await fetch(`library/original/${fileOriginal}`, { cache: 'no-cache' });
-            const code = await response.text();
-            const fileSize = this.formatBytes(code.length); // Correctly get the file size
-
+        if(fileOriginal) {
             codeBtn += `<button class="code-button code-load code-load-original" data-songdata='${
-                JSON.stringify(Object.assign(songObj, { fileSize })) }' 
-                data-code-file="${ fileOriginal }" title="Click to load and play the original code (Size: ${ fileSize })">original (${ fileSize })</button>`;
+                songData }' data-code-file="${ file
+            }" title="Click to load and play the original code">original</button>`;
         }
-        if (fileMinified) {
-            const response = await fetch(`library/minified/${fileMinified}`, { cache: 'no-cache' });
-            const code = await response.text();
-            const fileSize = this.formatBytes(code.length); // Correctly get the file size
-
+        if(fileMinified) {
             codeBtn += `<button class="code-button code-load code-load-minified" data-songdata='${
-                JSON.stringify(Object.assign(songObj, { fileSize })) }' 
-                data-code-file="${ fileMinified }" title="Click to load and play the minified code (Size: ${ fileSize })">minified (${ fileSize })</button>`;
+                songData }' data-code-file="${ file
+            }" title="Click to load and play the minified code">minified</button>`;
         }
-        if (codeBtn) {
+        if(codeBtn) {
             entry += `<div class="code-buttons-container">${ codeBtn }</div>`;
         }
     }
@@ -764,15 +752,40 @@ async onclickCodeLoadButton(buttonElem) {
         buttonElem.classList.contains('code-load-original') ? 'original' : ''
     }/${ buttonElem.dataset.codeFile }`, { cache: 'no-cache' });
 
+    const fileSize = response.headers.get('content-length');
     const code = await response.text();
-    const fileSize = new Blob([code]).size;
 
-    // Parse and update the song data with the correct fileSize
-    const songData = JSON.parse(buttonElem.dataset.songdata);
-    songData.fileSize = this.formatBytes(fileSize);
+    if (!buttonElem.hasAttribute('data-file-size')) {
+        let sizeText;
+        if (fileSize) {
+            sizeText = this.formatBytes(fileSize);
+        } else {
+            const calculatedSize = new Blob([code]).size;
+            sizeText = this.formatBytes(calculatedSize);
+        }
+        buttonElem.setAttribute('data-file-size', sizeText);
+        buttonElem.textContent += ` (${sizeText})`;
 
-    this.loadCode(Object.assign(songData, { code: code }));
+        // Store file size in localStorage
+        localStorage.setItem(buttonElem.dataset.codeFile, sizeText);
+    }
+
+    this.loadCode(Object.assign(JSON.parse(buttonElem.dataset.songdata), { code }));
 }
+
+// On page load, retrieve file sizes from localStorage and update button elements
+function updateFileSizes() {
+    document.querySelectorAll('button[data-code-file]').forEach(buttonElem => {
+        const sizeText = localStorage.getItem(buttonElem.dataset.codeFile);
+        if (sizeText) {
+            buttonElem.setAttribute('data-file-size', sizeText);
+            buttonElem.textContent += ` (${sizeText})`;
+        }
+    });
+}
+
+// Call updateFileSizes on page load
+updateFileSizes();
 	onclickCodeToggleButton(buttonElem) {
 		const parentElem = buttonElem.parentNode;
 		const origElem = parentElem.querySelector('.code-text-original');
