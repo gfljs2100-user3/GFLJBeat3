@@ -810,13 +810,16 @@ async onclickLibraryHeader(headerElem) {
     const libraryArr = JSON.parse(ungzip(await response.arrayBuffer(), { to: 'string' }));
     for (let i = 0, len = libraryArr.length; i < len; ++i) {
         const entry = this.generateLibraryEntry(libraryArr[i]);
-        const fileSize = response.headers.get('content-length');
-        let sizeText;
-        if (fileSize) {
-            sizeText = this.formatBytes(fileSize);
-        } else {
-            const calculatedSize = new Blob([entry]).size;
-            sizeText = this.formatBytes(calculatedSize);
+        let sizeText = '';
+        if (libraryArr[i].file) {
+            const fileResponse = await fetch(`library/${libraryArr[i].file}`, { cache: 'no-cache' });
+            const fileSize = fileResponse.headers.get('content-length');
+            if (fileSize) {
+                sizeText = this.formatBytes(fileSize);
+            } else {
+                const calculatedSize = new Blob([entry]).size;
+                sizeText = this.formatBytes(calculatedSize);
+            }
         }
         libraryHTML += `<div class="entry-top">${entry} <span class="file-size">(${sizeText})</span></div>`;
     }
