@@ -419,27 +419,27 @@ generateLibraryEntry({
     } else if(codeOriginal) {
         entry += ` <span class="code-length" title="Size in characters">${ this.formatBytes(codeOriginal.length) }</span>`;
     }
-    if(file) {
-        let codeBtn = '';
-        if(fileFormatted) {
-            codeBtn += `<button class="code-button code-load code-load-formatted" data-songdata='${
-                songData }' data-code-file="${ file
-            }" title="Click to load and play the formatted code">formatted</button>`;
-        }
-        if(fileOriginal) {
-            codeBtn += `<button class="code-button code-load code-load-original" data-songdata='${
-                songData }' data-code-file="${ file
-            }" title="Click to load and play the original code">original</button>`;
-        }
-        if(fileMinified) {
-            codeBtn += `<button class="code-button code-load code-load-minified" data-songdata='${
-                songData }' data-code-file="${ file
-            }" title="Click to load and play the minified code">minified</button>`;
-        }
-        if(codeBtn) {
-            entry += `<div class="code-buttons-container">${ codeBtn }</div>`;
-        }
+if (file) {
+    let codeBtn = '';
+    if (fileFormatted) {
+        codeBtn += `<button class="code-button code-load code-load-formatted" data-songdata='${
+            songData }' data-code-file="${ file
+        }" title="Click to load and play the formatted code (Size: ${songData.fileSize})">formatted (${songData.fileSize})</button>`;
     }
+    if (fileOriginal) {
+        codeBtn += `<button class="code-button code-load code-load-original" data-songdata='${
+            songData }' data-code-file="${ file
+        }" title="Click to load and play the original code (Size: ${songData.fileSize})">original (${songData.fileSize})</button>`;
+    }
+    if (fileMinified) {
+        codeBtn += `<button class="code-button code-load code-load-minified" data-songdata='${
+            songData }' data-code-file="${ file
+        }" title="Click to load and play the minified code (Size: ${songData.fileSize})">minified (${songData.fileSize})</button>`;
+    }
+    if (codeBtn) {
+        entry += `<div class="code-buttons-container">${ codeBtn }</div>`;
+    }
+}
     if(description) {
         entry += (entry ? '<br>' : '') + description;
     }
@@ -752,40 +752,11 @@ async onclickCodeLoadButton(buttonElem) {
         buttonElem.classList.contains('code-load-original') ? 'original' : ''
     }/${ buttonElem.dataset.codeFile }`, { cache: 'no-cache' });
 
-    const fileSize = response.headers.get('content-length');
+    const fileSize = response.headers.get('Content-Length');
     const code = await response.text();
-
-    if (!buttonElem.hasAttribute('data-file-size')) {
-        let sizeText;
-        if (fileSize) {
-            sizeText = this.formatBytes(fileSize);
-        } else {
-            const calculatedSize = new Blob([code]).size;
-            sizeText = this.formatBytes(calculatedSize);
-        }
-        buttonElem.setAttribute('data-file-size', sizeText);
-        buttonElem.textContent += ` (${sizeText})`;
-
-        // Store file size in localStorage
-        localStorage.setItem(buttonElem.dataset.codeFile, sizeText);
-    }
-
-    this.loadCode(Object.assign(JSON.parse(buttonElem.dataset.songdata), { code }));
+    this.loadCode(Object.assign(JSON.parse(buttonElem.dataset.songdata),
+        { code: code, fileSize: this.formatBytes(fileSize) }));
 }
-
-// On page load, retrieve file sizes from localStorage and update button elements
-function updateFileSizes() {
-    document.querySelectorAll('button[data-code-file]').forEach(buttonElem => {
-        const sizeText = localStorage.getItem(buttonElem.dataset.codeFile);
-        if (sizeText) {
-            buttonElem.setAttribute('data-file-size', sizeText);
-            buttonElem.textContent += ` (${sizeText})`;
-        }
-    });
-}
-
-// Call updateFileSizes on page load
-updateFileSizes();
 	onclickCodeToggleButton(buttonElem) {
 		const parentElem = buttonElem.parentNode;
 		const origElem = parentElem.querySelector('.code-text-original');
