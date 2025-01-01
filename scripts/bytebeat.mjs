@@ -745,26 +745,31 @@ initAfterDom() {
 	mod(a, b) {
 		return ((a % b) + b) % b;
 	}
-async onclickCodeLoadButton(buttonElem) {
-    const response = await fetch(`library/${
-        buttonElem.classList.contains('code-load-formatted') ? 'formatted' :
-        buttonElem.classList.contains('code-load-minified') ? 'minified' :
-        buttonElem.classList.contains('code-load-original') ? 'original' : ''
-    }/${ buttonElem.dataset.codeFile }`, { cache: 'no-cache' });
-    const fileSize = response.headers.get('content-length');
-    const code = await response.text();
-    if (!buttonElem.hasAttribute('data-file-size')) {
-        if (fileSize) {
-            buttonElem.setAttribute('data-file-size', this.formatBytes(fileSize));
-            buttonElem.textContent += ` (${this.formatBytes(fileSize)})`;
-        } else {
-            const calculatedSize = new Blob([code]).size;
-            buttonElem.setAttribute('data-file-size', this.formatBytes(calculatedSize));
-            buttonElem.textContent += ` (${this.formatBytes(calculatedSize)})`;
+document.addEventListener('DOMContentLoaded', () => {
+    const buttons = document.querySelectorAll('.code-button.code-load');
+    buttons.forEach(async (buttonElem) => {
+        const response = await fetch(`library/${
+            buttonElem.classList.contains('code-load-formatted') ? 'formatted' :
+            buttonElem.classList.contains('code-load-minified') ? 'minified' :
+            buttonElem.classList.contains('code-load-original') ? 'original' : ''
+        }/${ buttonElem.dataset.codeFile }`, { cache: 'no-cache' });
+        const fileSize = response.headers.get('content-length');
+        const code = await response.text();
+        if (!buttonElem.hasAttribute('data-file-size')) {
+            if (fileSize) {
+                buttonElem.setAttribute('data-file-size', formatBytes(fileSize));
+                buttonElem.textContent += ` (${formatBytes(fileSize)})`;
+            } else {
+                const calculatedSize = new Blob([code]).size;
+                buttonElem.setAttribute('data-file-size', formatBytes(calculatedSize));
+                buttonElem.textContent += ` (${formatBytes(calculatedSize)})`;
+            }
         }
-    }
-    this.loadCode(Object.assign(JSON.parse(buttonElem.dataset.songdata), { code }));
-}
+        buttonElem.addEventListener('click', async () => {
+            await loadCode(Object.assign(JSON.parse(buttonElem.dataset.songdata), { code }));
+        });
+    });
+});
 	onclickCodeToggleButton(buttonElem) {
 		const parentElem = buttonElem.parentNode;
 		const origElem = parentElem.querySelector('.code-text-original');
