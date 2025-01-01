@@ -814,16 +814,17 @@ async onclickLibraryHeader(headerElem) {
         tempDiv.innerHTML = entryHTML;
         const entry = tempDiv.firstChild;
         const fileButtons = entry.querySelectorAll('.code-button.code-load');
-        for (let button of fileButtons) {
+
+        const fetchPromises = Array.from(fileButtons).map(async (button) => {
             const fileResponse = await fetch(`library/${
-        buttonElem.classList.contains('code-load-formatted') ? 'formatted' :
-        buttonElem.classList.contains('code-load-minified') ? 'minified' :
-        buttonElem.classList.contains('code-load-original') ? 'original' : ''
-    }/${ buttonElem.dataset.codeFile }`, { cache: 'no-cache' });
+                button.classList.contains('code-load-formatted') ? 'formatted' :
+                button.classList.contains('code-load-minified') ? 'minified' :
+                button.classList.contains('code-load-original') ? 'original' : ''
+            }/${button.dataset.codeFile}`, { cache: 'no-cache' });
             const fileSize = fileResponse.headers.get('content-length');
             let sizeText;
             if (fileSize) {
-                sizeText = this.formatBytes(fileSize);
+                sizeText = this.formatBytes(parseInt(fileSize, 10));
             } else {
                 const code = await fileResponse.text();
                 const calculatedSize = new Blob([code]).size;
@@ -831,7 +832,9 @@ async onclickLibraryHeader(headerElem) {
             }
             button.setAttribute('data-file-size', sizeText);
             button.textContent += ` (${sizeText})`;
-        }
+        });
+
+        await Promise.all(fetchPromises);
         libraryHTML += `<div class="entry-top">${entry.outerHTML}</div>`;
     }
     containerElem.insertAdjacentHTML('beforeend', libraryHTML);
