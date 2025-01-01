@@ -745,24 +745,54 @@ initAfterDom() {
 	mod(a, b) {
 		return ((a % b) + b) % b;
 	}
-async onclickCodeLoadButton(buttonElem) {
-    const response = await fetch(`library/${
-        buttonElem.classList.contains('code-load-formatted') ? 'formatted' :
-        buttonElem.classList.contains('code-load-minified') ? 'minified' :
-        buttonElem.classList.contains('code-load-original') ? 'original' : ''
-    }/${ buttonElem.dataset.codeFile }`, { cache: 'no-cache' });
-    const fileSize = response.headers.get('content-length');
-    const code = await response.text();
-    if (fileSize) {
-        buttonElem.setAttribute('data-file-size', this.formatBytes(fileSize));
-        buttonElem.textContent += ` (${this.formatBytes(fileSize)})`;
-    } else {
-        const calculatedSize = new Blob([code]).size;
-        buttonElem.setAttribute('data-file-size', this.formatBytes(calculatedSize));
-        buttonElem.textContent += ` (${this.formatBytes(calculatedSize)})`;
+// Add this function to fetch and display file size on page load
+async function displayFileSizeOnLoad() {
+    const buttons = document.querySelectorAll('.code-load');
+    for (const buttonElem of buttons) {
+        if (!buttonElem.hasAttribute('data-file-size')) {
+            const response = await fetch(`library/${
+                buttonElem.classList.contains('code-load-formatted') ? 'formatted' :
+                buttonElem.classList.contains('code-load-minified') ? 'minified' :
+                buttonElem.classList.contains('code-load-original') ? 'original' : ''
+            }/${ buttonElem.dataset.codeFile }`, { cache: 'no-cache' });
+            const fileSize = response.headers.get('content-length');
+            const code = await response.text();
+            if (fileSize) {
+                buttonElem.setAttribute('data-file-size', bytebeat.formatBytes(fileSize));
+                buttonElem.textContent += ` (${bytebeat.formatBytes(fileSize)})`;
+            } else {
+                const calculatedSize = new Blob([code]).size;
+                buttonElem.setAttribute('data-file-size', bytebeat.formatBytes(calculatedSize));
+                buttonElem.textContent += ` (${bytebeat.formatBytes(calculatedSize)})`;
+            }
+        }
     }
-    this.loadCode(Object.assign(JSON.parse(buttonElem.dataset.songdata), { code }));
 }
+
+// Modify the onclickCodeLoadButton function to prevent duplication
+async function onclickCodeLoadButton(buttonElem) {
+    if (!buttonElem.hasAttribute('data-file-size')) {
+        const response = await fetch(`library/${
+            buttonElem.classList.contains('code-load-formatted') ? 'formatted' :
+            buttonElem.classList.contains('code-load-minified') ? 'minified' :
+            buttonElem.classList.contains('code-load-original') ? 'original' : ''
+        }/${ buttonElem.dataset.codeFile }`, { cache: 'no-cache' });
+        const fileSize = response.headers.get('content-length');
+        const code = await response.text();
+        if (fileSize) {
+            buttonElem.setAttribute('data-file-size', bytebeat.formatBytes(fileSize));
+            buttonElem.textContent += ` (${bytebeat.formatBytes(fileSize)})`;
+        } else {
+            const calculatedSize = new Blob([code]).size;
+            buttonElem.setAttribute('data-file-size', bytebeat.formatBytes(calculatedSize));
+            buttonElem.textContent += ` (${bytebeat.formatBytes(calculatedSize)})`;
+        }
+    }
+    bytebeat.loadCode(Object.assign(JSON.parse(buttonElem.dataset.songdata), { code }));
+}
+
+// Call displayFileSizeOnLoad when the page loads
+document.addEventListener('DOMContentLoaded', displayFileSizeOnLoad);
 	onclickCodeToggleButton(buttonElem) {
 		const parentElem = buttonElem.parentNode;
 		const origElem = parentElem.querySelector('.code-text-original');
