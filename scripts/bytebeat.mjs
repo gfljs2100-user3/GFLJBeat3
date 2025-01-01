@@ -774,7 +774,7 @@ async onclickLibraryHeader(headerElem) {
         return;
     }
     state.add('loaded');
-    const waitElem = headerElem.querySelector('.loading-wwait');
+    const waitElem = headerElem.querySelector('.loading-wait');
     waitElem.classList.remove('hidden');
 
     const response = await fetch(`./library/${containerElem.id.replace('library-', '')}.gz`, { cache: 'no-cache' });
