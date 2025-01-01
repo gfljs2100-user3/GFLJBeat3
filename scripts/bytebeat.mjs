@@ -774,7 +774,7 @@ async onclickCodeLoadButton(buttonElem) {
 }
 
 // On page load, retrieve file sizes from localStorage and update button elements
-window.onload = () => {
+function updateFileSizes() {
     document.querySelectorAll('button[data-code-file]').forEach(buttonElem => {
         const sizeText = localStorage.getItem(buttonElem.dataset.codeFile);
         if (sizeText) {
@@ -782,7 +782,10 @@ window.onload = () => {
             buttonElem.textContent += ` (${sizeText})`;
         }
     });
-};
+}
+
+// Call updateFileSizes on page load
+updateFileSizes();
 	onclickCodeToggleButton(buttonElem) {
 		const parentElem = buttonElem.parentNode;
 		const origElem = parentElem.querySelector('.code-text-original');
