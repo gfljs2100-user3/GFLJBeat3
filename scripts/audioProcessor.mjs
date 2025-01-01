@@ -269,11 +269,7 @@ class audioProcessor extends AudioWorkletProcessor {
 				this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = ((funcValue << 1) ^ - (funcValue >> 7 & 1)) & 255) / 127.5 - 1;
 				break;
 			case 'Triangle Bytebeat 2':
-				this.getValues = (funcValue, ch) => {
-					const outValue = Math.max(Math.min((Math.asin(Math.sin((funcValue) * PI / 128)) / 1.57), 1), -1);
-					this.lastByteValue[ch] = Math.round((outValue + 1) * 127.5);
-					return outValue;
-				};
+				this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = ((Math.asin(Math.sin((funcValue) * PI / 128)) / 1.57) * 127 + 127) & 255) / 127.5 - 1;
 				break;
 			default: this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = NaN);
 			}
