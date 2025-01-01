@@ -611,11 +611,11 @@ generateLibraryEntry({
 		}
 		this.initAfterDom();
 	}
-initAfterDom() {
-    this.initElements();
-    this.parseUrl();
-    loadScript('./scripts/codemirror.min.mjs?version=2024090100');
-}
+	initAfterDom() {
+	    this.initElements();
+	    this.parseUrl();
+	    loadScript('./scripts/codemirror.min.mjs?version=2024090100');
+	}
 	async initAudioContext() {
 		this.audioCtx = new AudioContext({ latencyHint: 'balanced', samplerate: '96000'});
 		this.audioGain = new GainNode(this.audioCtx);
@@ -789,32 +789,11 @@ async onclickLibraryHeader(headerElem) {
     }
     containerElem.innerHTML = '';
 
-    const reader = response.body.getReader();
-    const decoder = new TextDecoder();
-    let libraryJSON = '';
-    const chunkSize = 1024 * 1024; // 1MB chunks
-
-    while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        libraryJSON += decoder.decode(value, { stream: !done });
-
-        if (libraryJSON.length >= chunkSize) {
-            processLibraryChunk(libraryJSON);
-            libraryJSON = '';
-        }
-    }
-    if (libraryJSON.length) {
-        processLibraryChunk(libraryJSON);
-    }
-}
-
-function processLibraryChunk(libraryJSON) {
-    const libraryArr = JSON.parse(libraryJSON);
+    const libraryArr = JSON.parse(ungzip(await response.arrayBuffer(), { to: 'string' }));
     let libraryHTML = '';
 
-    libraryArr.forEach(async (entryData) => {
-        const entryHTML = generateLibraryEntry(entryData);
+    for (let i = 0, len = libraryArr.length; i < len; ++i) {
+        const entryHTML = this.generateLibraryEntry(libraryArr[i]);
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = entryHTML;
         const entry = tempDiv.firstChild;
@@ -830,11 +809,11 @@ function processLibraryChunk(libraryJSON) {
             const fileSize = fileResponse.headers.get('content-length');
             let sizeText;
             if (fileSize) {
-                sizeText = formatBytes(parseInt(fileSize, 10));
+                sizeText = this.formatBytes(parseInt(fileSize, 10));
             } else {
                 const code = await fileResponse.text();
                 const calculatedSize = new Blob([code]).size;
-                sizeText = formatBytes(calculatedSize);
+                sizeText = this.formatBytes(calculatedSize);
             }
 
             button.setAttribute('data-file-size', sizeText);
@@ -843,7 +822,7 @@ function processLibraryChunk(libraryJSON) {
 
         await Promise.all(fetchPromises);
         libraryHTML += `<div class="entry-top">${entry.outerHTML}</div>`;
-    });
+    }
 
     containerElem.insertAdjacentHTML('beforeend', libraryHTML);
 }
