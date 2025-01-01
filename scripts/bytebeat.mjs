@@ -813,7 +813,7 @@ async onclickLibraryHeader(headerElem) {
                 sizeText = this.formatBytes(calculatedSize);
             }
             button.setAttribute('data-file-size', sizeText);
-            button.textContent += ` (${sizeText})`;
+            button.textContent += ` ${sizeText}`;
         });
 
         await Promise.all(fetchPromises);
