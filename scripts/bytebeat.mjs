@@ -796,17 +796,15 @@ async onclickLibraryHeader(headerElem) {
     containerElem.insertAdjacentHTML('beforeend', libraryHTML);
 
     // Fetch the file as a blob to get the size
-    const buttonElem = headerElem.querySelector('button');
-    const fileResponse = await fetch(`library/${
-        buttonElem.classList.contains('code-load-formatted') ? 'formatted' :
-        buttonElem.classList.contains('code-load-minified') ? 'minified' :
-        buttonElem.classList.contains('code-load-original') ? 'original' : ''
-    }/${buttonElem.dataset.codeFile}`, { cache: 'no-cache' });
-    const fileBlob = await fileResponse.blob();
-    const fileSize = this.formatBytes(fileBlob.size);
-
-    // Display the file size in the button
-    buttonElem.textContent += ` (${fileSize})`;
+const buttonElem = headerElem.querySelector('button');
+const fileResponse = await fetch(`library/${
+    buttonElem.classList.contains('code-load-formatted') ? 'formatted' :
+    buttonElem.classList.contains('code-load-minified') ? 'minified' :
+    buttonElem.classList.contains('code-load-original') ? 'original' : ''
+}/${buttonElem.dataset.codeFile}`, { cache: 'no-cache' });
+const fileBlob = await fileResponse.blob();
+const fileSize = this.formatBytes(fileBlob.size);
+buttonElem.textContent += ` (${fileSize})`;
 }
 	oninputCounter(e) {
 		if(e.key === 'Enter') {
