@@ -419,27 +419,42 @@ generateLibraryEntry({
     } else if(codeOriginal) {
         entry += ` <span class="code-length" title="Size in characters">${ this.formatBytes(codeOriginal.length) }</span>`;
     }
-    if(file) {
-        let codeBtn = '';
-        if(fileFormatted) {
-            codeBtn += `<button class="code-button code-load code-load-formatted" data-songdata='${
-                songData }' data-code-file="${ file
-            }" title="Click to load and play the formatted code">formatted</button>`;
-        }
-        if(fileOriginal) {
-            codeBtn += `<button class="code-button code-load code-load-original" data-songdata='${
-                songData }' data-code-file="${ file
-            }" title="Click to load and play the original code">original</button>`;
-        }
-        if(fileMinified) {
-            codeBtn += `<button class="code-button code-load code-load-minified" data-songdata='${
-                songData }' data-code-file="${ file
-            }" title="Click to load and play the minified code">minified</button>`;
-        }
-        if(codeBtn) {
-            entry += `<div class="code-buttons-container">${ codeBtn }</div>`;
-        }
+if(file) {
+    let codeBtn = '';
+    if(fileFormatted) {
+        // Get the file size from the response before loading the code
+        const formattedResponse = await fetch(`./library/formatted/${file}`, { cache: 'no-cache' });
+        const formattedText = await formattedResponse.text();
+        const formattedSize = this.formatBytes(formattedText.length);
+        
+        codeBtn += `<button class="code-button code-load code-load-formatted" data-songdata='${
+            songData }' data-code-file="${ file
+        }" title="Click to load and play the formatted code">formatted (${formattedSize})</button>`;
     }
+    if(fileOriginal) {
+        // Get the file size from the response before loading the code
+        const originalResponse = await fetch(`./library/original/${file}`, { cache: 'no-cache' });
+        const originalText = await originalResponse.text();
+        const originalSize = this.formatBytes(originalText.length);
+        
+        codeBtn += `<button class="code-button code-load code-load-original" data-songdata='${
+            songData }' data-code-file="${ file
+        }" title="Click to load and play the original code">original (${originalSize})</button>`;
+    }
+    if(fileMinified) {
+        // Get the file size from the response before loading the code
+        const minifiedResponse = await fetch(`./library/minified/${file}`, { cache: 'no-cache' });
+        const minifiedText = await minifiedResponse.text();
+        const minifiedSize = this.formatBytes(minifiedText.length);
+        
+        codeBtn += `<button class="code-button code-load code-load-minified" data-songdata='${
+            songData }' data-code-file="${ file
+        }" title="Click to load and play the minified code">minified (${minifiedSize})</button>`;
+    }
+    if(codeBtn) {
+        entry += `<div class="code-buttons-container">${ codeBtn }</div>`;
+    }
+}
     if(description) {
         entry += (entry ? '<br>' : '') + description;
     }
