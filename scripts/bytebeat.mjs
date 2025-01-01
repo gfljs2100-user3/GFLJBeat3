@@ -785,33 +785,43 @@ async onclickCodeLoadButton(buttonElem) {
 			'Original version shown. Click to view the minified version.';
 		buttonElem.textContent = isMinified ? '+' : '–';
 	}
-	async onclickLibraryHeader(headerElem) {
-		const containerElem = headerElem.nextElementSibling;
-		const state = containerElem.classList;
-		if(state.contains('loaded') || headerElem.parentNode.open) {
-			return;
-		}
-		state.add('loaded');
-		const waitElem = headerElem.querySelector('.loading-wait');
-		waitElem.classList.remove('hidden');
-		const response = await fetch(`./library/${ containerElem.id.replace('library-', '') }.gz`,
-			{ cache: 'no-cache' });
-		const { status } = response;
-		waitElem.classList.add('hidden');
-		if(status !== 200 && status !== 304) {
-			state.remove('loaded');
-			containerElem.innerHTML = `<div class="loading-error">Unable to load the library: ${
-				status } ${ response.statusText }</div>`;
-			return;
-		}
-		containerElem.innerHTML = '';
-		let libraryHTML = '';
-		const libraryArr = JSON.parse(ungzip(await response.arrayBuffer(), { to: 'string' }));
-		for(let i = 0, len = libraryArr.length; i < len; ++i) {
-			libraryHTML += `<div class="entry-top">${ this.generateLibraryEntry(libraryArr[i]) }</div>`;
-		}
-		containerElem.insertAdjacentHTML('beforeend', libraryHTML);
-	}
+async onclickLibraryHeader(headerElem) {
+    const containerElem = headerElem.nextElementSibling;
+    const state = containerElem.classList;
+    if (state.contains('loaded') || headerElem.parentNode.open) {
+        return;
+    }
+    state.add('loaded');
+    const waitElem = headerElem.querySelector('.loading-wait');
+    waitElem.classList.remove('hidden');
+
+    const response = await fetch(`./library/${containerElem.id.replace('library-', '')}.gz`, { cache: 'no-cache' });
+    const { status } = response;
+    waitElem.classList.add('hidden');
+    if (status !== 200 && status !== 304) {
+        state.remove('loaded');
+        containerElem.innerHTML = `<div class="loading-error">Unable to load the library: ${
+            status
+        } ${response.statusText}</div>`;
+        return;
+    }
+    containerElem.innerHTML = '';
+    let libraryHTML = '';
+    const libraryArr = JSON.parse(ungzip(await response.arrayBuffer(), { to: 'string' }));
+    for (let i = 0, len = libraryArr.length; i < len; ++i) {
+        const entry = this.generateLibraryEntry(libraryArr[i]);
+        const fileSize = response.headers.get('content-length');
+        let sizeText;
+        if (fileSize) {
+            sizeText = this.formatBytes(fileSize);
+        } else {
+            const calculatedSize = new Blob([entry]).size;
+            sizeText = this.formatBytes(calculatedSize);
+        }
+        libraryHTML += `<div class="entry-top">${entry} <span class="file-size">(${sizeText})</span></div>`;
+    }
+    containerElem.insertAdjacentHTML('beforeend', libraryHTML);
+}
 	oninputCounter(e) {
 		if(e.key === 'Enter') {
 			this.controlTime.blur();
