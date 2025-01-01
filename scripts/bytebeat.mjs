@@ -421,7 +421,7 @@ generateLibraryEntry({
     }
    if(file) {
         let codeBtn = '';
-        const fileSize = this.formatBytes(file); // Adding file size here
+        const fileSize = this.formatBytes(file.length); // Adding file size here
         if(fileFormatted) {
             codeBtn += `<button class="code-button code-load code-load-formatted" data-songdata='${
                 songData }' data-code-file="${ file
