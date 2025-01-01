@@ -790,6 +790,8 @@ async onclickLibraryHeader(headerElem) {
     containerElem.innerHTML = '';
     let libraryHTML = '';
     const libraryArr = JSON.parse(ungzip(await response.arrayBuffer(), { to: 'string' }));
+    const fetchPromises = [];
+
     for (let i = 0, len = libraryArr.length; i < len; ++i) {
         const entryHTML = this.generateLibraryEntry(libraryArr[i]);
         const tempDiv = document.createElement('div');
@@ -797,28 +799,31 @@ async onclickLibraryHeader(headerElem) {
         const entry = tempDiv.firstChild;
         const fileButtons = entry.querySelectorAll('.code-button.code-load');
 
-        const fetchPromises = Array.from(fileButtons).map(async (button) => {
-            const fileResponse = await fetch(`library/${
-                button.classList.contains('code-load-formatted') ? 'formatted' :
-                button.classList.contains('code-load-minified') ? 'minified' :
-                button.classList.contains('code-load-original') ? 'original' : ''
-            }/${button.dataset.codeFile}`, { cache: 'no-cache' });
-            const fileSize = fileResponse.headers.get('content-length');
-            let sizeText;
-            if (fileSize) {
-                sizeText = this.formatBytes(parseInt(fileSize, 10));
-            } else {
-                const code = await fileResponse.text();
-                const calculatedSize = new Blob([code]).size;
-                sizeText = this.formatBytes(calculatedSize);
-            }
-            button.setAttribute('data-file-size', sizeText);
-            button.textContent += ` ${sizeText}`;
-        });
+        for (const button of fileButtons) {
+            fetchPromises.push((async () => {
+                const fileResponse = await fetch(`library/${
+                    button.classList.contains('code-load-formatted') ? 'formatted' :
+                    button.classList.contains('code-load-minified') ? 'minified' :
+                    button.classList.contains('code-load-original') ? 'original' : ''
+                }/${button.dataset.codeFile}`, { cache: 'no-cache' });
+                const fileSize = fileResponse.headers.get('content-length');
+                let sizeText;
+                if (fileSize) {
+                    sizeText = this.formatBytes(parseInt(fileSize, 10));
+                } else {
+                    const code = await fileResponse.text();
+                    const calculatedSize = new Blob([code]).size;
+                    sizeText = this.formatBytes(calculatedSize);
+                }
+                button.setAttribute('data-file-size', sizeText);
+                button.textContent += ` ${sizeText}`;
+            })());
+        }
 
-        await Promise.all(fetchPromises);
         libraryHTML += `<div class="entry-top">${entry.outerHTML}</div>`;
     }
+
+    await Promise.allSettled(fetchPromises);
     containerElem.insertAdjacentHTML('beforeend', libraryHTML);
 }
 	oninputCounter(e) {
