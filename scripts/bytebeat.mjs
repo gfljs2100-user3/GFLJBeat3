@@ -815,7 +815,11 @@ async onclickLibraryHeader(headerElem) {
         const entry = tempDiv.firstChild;
         const fileButtons = entry.querySelectorAll('.code-button.code-load');
         for (let button of fileButtons) {
-            const fileResponse = await fetch(`library/${button.dataset.codeFile}`, { cache: 'no-cache' });
+            const fileResponse = await fetch(`library/${
+                button.classList.contains('code-load-formatted') ? 'formatted' :
+                button.classList.contains('code-load-minified') ? 'minified' :
+                button.classList.contains('code-load-original') ? 'original' : ''
+            }/${button.dataset.codeFile}`, { cache: 'no-cache' });
             const fileSize = fileResponse.headers.get('content-length');
             let sizeText;
             if (fileSize) {
