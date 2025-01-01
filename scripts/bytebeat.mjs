@@ -774,7 +774,7 @@ async onclickLibraryHeader(headerElem) {
         return;
     }
     state.add('loaded');
-    const waitElem = headerElem.querySelector('.loading-wait');
+    const waitElem = headerElem.querySelector('.loading-wwait');
     waitElem.classList.remove('hidden');
 
     const response = await fetch(`./library/${containerElem.id.replace('library-', '')}.gz`, { cache: 'no-cache' });
@@ -788,10 +788,12 @@ async onclickLibraryHeader(headerElem) {
         return;
     }
     containerElem.innerHTML = '';
+
     let libraryHTML = '';
     const libraryArr = JSON.parse(ungzip(await response.arrayBuffer(), { to: 'string' }));
-    for (let i = 0, len = libraryArr.length; i < len; ++i) {
-        const entryHTML = this.generateLibraryEntry(libraryArr[i]);
+
+    const entryPromises = libraryArr.map(async (entryData) => {
+        const entryHTML = this.generateLibraryEntry(entryData);
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = entryHTML;
         const entry = tempDiv.firstChild;
@@ -803,6 +805,7 @@ async onclickLibraryHeader(headerElem) {
                 button.classList.contains('code-load-minified') ? 'minified' :
                 button.classList.contains('code-load-original') ? 'original' : ''
             }/${button.dataset.codeFile}`, { cache: 'no-cache' });
+
             const fileSize = fileResponse.headers.get('content-length');
             let sizeText;
             if (fileSize) {
@@ -812,13 +815,17 @@ async onclickLibraryHeader(headerElem) {
                 const calculatedSize = new Blob([code]).size;
                 sizeText = this.formatBytes(calculatedSize);
             }
+
             button.setAttribute('data-file-size', sizeText);
             button.textContent += ` (${sizeText})`;
         });
 
         await Promise.all(fetchPromises);
-        libraryHTML += `<div class="entry-top">${entry.outerHTML}</div>`;
-    }
+        return `<div class="entry-top">${entry.outerHTML}</div>`;
+    });
+
+    const entryHTMLArray = await Promise.all(entryPromises);
+    libraryHTML = entryHTMLArray.join('');
     containerElem.insertAdjacentHTML('beforeend', libraryHTML);
 }
 	oninputCounter(e) {
