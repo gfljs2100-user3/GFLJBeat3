@@ -819,7 +819,7 @@ async onclickLibraryHeader(headerElem) {
             const fileSize = fileResponse.headers.get('content-length');
             let sizeText;
             if (fileSize) {
-                sizeText = this.formatBytes(fileSize);
+                sizeText = this.formatBytes(parseInt(fileSize, 10));
             } else {
                 const code = await fileResponse.text();
                 const calculatedSize = new Blob([code]).size;
