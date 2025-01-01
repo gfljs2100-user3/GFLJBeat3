@@ -745,7 +745,7 @@ initAfterDom() {
 	mod(a, b) {
 		return ((a % b) + b) % b;
 	}
-async onclickCodeLoadButton(buttonElem) {
+async function onclickCodeLoadButton(buttonElem) {
     const response = await fetch(`library/${
         buttonElem.classList.contains('code-load-formatted') ? 'formatted' :
         buttonElem.classList.contains('code-load-minified') ? 'minified' :
@@ -755,15 +755,15 @@ async onclickCodeLoadButton(buttonElem) {
     const code = await response.text();
     if (!buttonElem.hasAttribute('data-file-size')) {
         if (fileSize) {
-            buttonElem.setAttribute('data-file-size', this.formatBytes(fileSize));
-            buttonElem.textContent += ` ${this.formatBytes(fileSize)}`;
+            buttonElem.setAttribute('data-file-size', bytebeat.formatBytes(fileSize));
+            buttonElem.textContent += ` ${bytebeat.formatBytes(fileSize)}`;
         } else {
             const calculatedSize = new Blob([code]).size;
-            buttonElem.setAttribute('data-file-size', this.formatBytes(calculatedSize));
-            buttonElem.textContent += ` ${this.formatBytes(calculatedSize)}`;
+            buttonElem.setAttribute('data-file-size', bytebeat.formatBytes(calculatedSize));
+            buttonElem.textContent += ` ${bytebeat.formatBytes(calculatedSize)}`;
         }
     }
-    this.loadCode(Object.assign(JSON.parse(buttonElem.dataset.songdata), { code }));
+    bytebeat.loadCode(Object.assign(JSON.parse(buttonElem.dataset.songdata), { code }));
 }
 
 // On page load
