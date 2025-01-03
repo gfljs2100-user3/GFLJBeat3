@@ -777,7 +777,11 @@ async onclickLibraryHeader(headerElem) {
     const waitElem = headerElem.querySelector('.loading-wait');
     waitElem.classList.remove('hidden');
 
-    const response = await fetch(`./library/${containerElem.id.replace('library-', '')}.gz`, { cache: 'no-cache' });
+    // Check if the header is "all songs" and set the appropriate file name
+    const headerId = containerElem.id.replace('library-', '');
+    const fileName = headerId === 'all-songs' ? 'all-songs' : headerId;
+
+    const response = await fetch(`./library/${fileName}.gz`, { cache: 'no-cache' });
     const { status } = response;
     waitElem.classList.add('hidden');
     if (status !== 200 && status !== 304) {
