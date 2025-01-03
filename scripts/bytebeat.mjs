@@ -322,17 +322,17 @@ generateLibraryEntry({
         entry += url ? `<a href="${ noArrayUrl ? url : url[0] }" target="_blank">${ name }</a>` : name;
     }
     if(author) {
-        let authorsList = '<span><select>';
+        let authorsList = '<span class="dropdown"><button class="dropbtn">Authors</button><div class="dropdown-content">';
         const authorsArr = Array.isArray(author) ? author : [author];
         for(let i = 0, len = authorsArr.length; i < len; ++i) {
             const authorElem = authorsArr[i];
             if(typeof authorElem === 'string') {
-                authorsList += `<option value="${authorElem}">${authorElem}</option>`;
+                authorsList += `<a href="#">${authorElem}</a>`;
             } else {
-                authorsList += `<option value="${authorElem[0]}">${authorElem[0]}</option>`;
+                authorsList += `<a href="${authorElem[1]}" target="_blank">${authorElem[0]}</a>`;
             }
         }
-        authorsList += '</select></span>';
+        authorsList += '</div></span>';
         entry += ` <span>by ${ authorsList }</span>`;
     }
     if(url && (!noArrayUrl || !name && !author)) {
