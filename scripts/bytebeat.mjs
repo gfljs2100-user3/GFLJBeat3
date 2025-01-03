@@ -321,20 +321,22 @@ generateLibraryEntry({
     if(name) {
         entry += url ? `<a href="${ noArrayUrl ? url : url[0] }" target="_blank">${ name }</a>` : name;
     }
-    if(author) {
-        let authorsList = '<span class="dropdown"><button class="dropbtn">Authors</button><div class="dropdown-content">';
-        const authorsArr = Array.isArray(author) ? author : [author];
-        for(let i = 0, len = authorsArr.length; i < len; ++i) {
-            const authorElem = authorsArr[i];
-            if(typeof authorElem === 'string') {
-                authorsList += `<a href="#">${authorElem}</a>`;
-            } else {
-                authorsList += `<a href="${authorElem[1]}" target="_blank">${authorElem[0]}</a>`;
-            }
+if (author) {
+    let authorsList = '';
+    const authorsArr = Array.isArray(author) ? author : [author];
+    authorsList += '<div class="dropdown"><button class="dropbtn">Authors</button><div class="dropdown-content">';
+    for (let i = 0, len = authorsArr.length; i < len; ++i) {
+        const authorElem = authorsArr[i];
+        if (typeof authorElem === 'string') {
+            authorsList += name || !noArrayUrl ? `<b>${authorElem}</b>` :
+                `<a href="${url}" target="_blank">${authorElem}</a>`;
+        } else {
+            authorsList += `<a href="${authorElem[1]}" target="_blank">${authorElem[0]}</a>`;
         }
-        authorsList += '</div></span>';
-        entry += ` <span>by ${ authorsList }</span>`;
     }
+    authorsList += '</div></div>';
+    entry += ` <span>by ${authorsList}</span>`;
+}
     if(url && (!noArrayUrl || !name && !author)) {
         if(noArrayUrl) {
             entry += `[<a href="${ url }" target="_blank">link</a>]`;
