@@ -322,9 +322,8 @@ generateLibraryEntry({
         entry += url ? `<a href="${ noArrayUrl ? url : url[0] }" target="_blank">${ name }</a>` : name;
     }
     if(author) {
-        let authorsList = '';
+        let authorsList = '<span><select>';
         const authorsArr = Array.isArray(author) ? author : [author];
-        authorsList += '<select>';
         for(let i = 0, len = authorsArr.length; i < len; ++i) {
             const authorElem = authorsArr[i];
             if(typeof authorElem === 'string') {
@@ -333,7 +332,7 @@ generateLibraryEntry({
                 authorsList += `<option value="${authorElem[0]}">${authorElem[0]}</option>`;
             }
         }
-        authorsList += '</select>';
+        authorsList += '</select></span>';
         entry += ` <span>by ${ authorsList }</span>`;
     }
     if(url && (!noArrayUrl || !name && !author)) {
