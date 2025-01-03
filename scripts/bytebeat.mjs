@@ -324,18 +324,16 @@ generateLibraryEntry({
     if(author) {
         let authorsList = '';
         const authorsArr = Array.isArray(author) ? author : [author];
+        authorsList += '<select>';
         for(let i = 0, len = authorsArr.length; i < len; ++i) {
             const authorElem = authorsArr[i];
             if(typeof authorElem === 'string') {
-                authorsList += name || !noArrayUrl ? '<b>' + authorElem + '</b>':
-                    `<a href="${ url }" target="_blank">${ authorElem }</a>`;
+                authorsList += `<option value="${authorElem}">${authorElem}</option>`;
             } else {
-                authorsList += `<a href="${ authorElem[1] }" target="_blank">${ authorElem[0] }</a>`;
-            }
-            if(i < len - 1) {
-                authorsList += ', ';
+                authorsList += `<option value="${authorElem[0]}">${authorElem[0]}</option>`;
             }
         }
+        authorsList += '</select>';
         entry += ` <span>by ${ authorsList }</span>`;
     }
     if(url && (!noArrayUrl || !name && !author)) {
@@ -767,64 +765,33 @@ generateLibraryEntry({
 			'Original version shown. Click to view the minified version.';
 		buttonElem.textContent = isMinified ? '+' : '–';
 	}
-async onclickLibraryHeader(headerElem) {
-    const containerElem = headerElem.nextElementSibling;
-    const state = containerElem.classList;
-    if (state.contains('loaded') || headerElem.parentNode.open) {
-        return;
-    }
-    state.add('loaded');
-    const waitElem = headerElem.querySelector('.loading-wait');
-    waitElem.classList.remove('hidden');
-
-    // Check if the header is "all songs" and set the appropriate file name
-    const headerId = containerElem.id.replace('library-', '');
-    const fileName = headerId === 'all-songs' ? 'all-songs' : headerId;
-
-    const response = await fetch(`./library/${fileName}.gz`, { cache: 'no-cache' });
-    const { status } = response;
-    waitElem.classList.add('hidden');
-    if (status !== 200 && status !== 304) {
-        state.remove('loaded');
-        containerElem.innerHTML = `<div class="loading-error">Unable to load the library: ${
-            status
-        } ${response.statusText}</div>`;
-        return;
-    }
-    containerElem.innerHTML = '';
-    let libraryHTML = '';
-    const libraryArr = JSON.parse(ungzip(await response.arrayBuffer(), { to: 'string' }));
-    for (let i = 0, len = libraryArr.length; i < len; ++i) {
-        const entryHTML = this.generateLibraryEntry(libraryArr[i]);
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = entryHTML;
-        const entry = tempDiv.firstChild;
-        const fileButtons = entry.querySelectorAll('.code-button.code-load');
-
-        const fetchPromises = Array.from(fileButtons).map(async (button) => {
-            const fileResponse = await fetch(`library/${
-                button.classList.contains('code-load-formatted') ? 'formatted' :
-                button.classList.contains('code-load-minified') ? 'minified' :
-                button.classList.contains('code-load-original') ? 'original' : ''
-            }/${button.dataset.codeFile}`, { cache: 'no-cache' });
-            const fileSize = fileResponse.headers.get('content-length');
-            let sizeText;
-            if (fileSize) {
-                sizeText = this.formatBytes(parseInt(fileSize, 10));
-            } else {
-                const code = await fileResponse.text();
-                const calculatedSize = new Blob([code]).size;
-                sizeText = this.formatBytes(calculatedSize);
-            }
-            button.setAttribute('data-file-size', sizeText);
-            button.textContent += ` (${sizeText})`;
-        });
-
-        await Promise.all(fetchPromises);
-        libraryHTML += `<div class="entry-top">${entry.outerHTML}</div>`;
-    }
-    containerElem.insertAdjacentHTML('beforeend', libraryHTML);
-}
+	async onclickLibraryHeader(headerElem) {
+		const containerElem = headerElem.nextElementSibling;
+		const state = containerElem.classList;
+		if(state.contains('loaded') || headerElem.parentNode.open) {
+			return;
+		}
+		state.add('loaded');
+		const waitElem = headerElem.querySelector('.loading-wait');
+		waitElem.classList.remove('hidden');
+		const response = await fetch(`./library/${ containerElem.id.replace('library-', '') }.gz`,
+			{ cache: 'no-cache' });
+		const { status } = response;
+		waitElem.classList.add('hidden');
+		if(status !== 200 && status !== 304) {
+			state.remove('loaded');
+			containerElem.innerHTML = `<div class="loading-error">Unable to load the library: ${
+				status } ${ response.statusText }</div>`;
+			return;
+		}
+		containerElem.innerHTML = '';
+		let libraryHTML = '';
+		const libraryArr = JSON.parse(ungzip(await response.arrayBuffer(), { to: 'string' }));
+		for(let i = 0, len = libraryArr.length; i < len; ++i) {
+			libraryHTML += `<div class="entry-top">${ this.generateLibraryEntry(libraryArr[i]) }</div>`;
+		}
+		containerElem.insertAdjacentHTML('beforeend', libraryHTML);
+	}
 	oninputCounter(e) {
 		if(e.key === 'Enter') {
 			this.controlTime.blur();
