@@ -344,7 +344,7 @@ if(author) {
                 authorsList += ', ';
             }
         }
-        entry += ` <details><summary>by ${ authorsList }</summary>`;
+        entry += ` <details><summary>by ${ authorsList }</summary></details>`;
     }
 }
     if(url && (!noArrayUrl || !name && !author)) {
