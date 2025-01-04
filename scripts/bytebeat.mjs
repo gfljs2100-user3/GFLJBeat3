@@ -336,7 +336,16 @@ if (author) {
             authorsList += ', ';
         }
     }
-    entry += ` <details><summary>by ${ authorsList }</summary></details>`;
+    entry += ` <details><summary>by ${authorsList}</summary>`;
+    if (children) {
+        let childrenStr = '';
+        const len = children.length;
+        for (let i = 0; i < len; ++i) {
+            childrenStr += this.generateLibraryEntry(children[i]);
+        }
+        entry += `<div class="entry-children">${childrenStr}</div>`;
+    }
+    entry += `</details>`;
 }
     if(url && (!noArrayUrl || !name && !author)) {
         if(noArrayUrl) {
