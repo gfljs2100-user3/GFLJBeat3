@@ -318,11 +318,12 @@ generateLibraryEntry({
 }) {
     let entry = '';
     const noArrayUrl = url && !Array.isArray(url);
+    let authorsList = '';
+
     if(name) {
         entry += url ? `<a href="${ noArrayUrl ? url : url[0] }" target="_blank">${ name }</a>` : name;
     }
     if (author) {
-        let authorsList = '';
         const authorsArr = Array.isArray(author) ? author : [author];
         for (let i = 0, len = authorsArr.length; i < len; ++i) {
             const authorElem = authorsArr[i];
@@ -344,7 +345,7 @@ generateLibraryEntry({
         for (let i = 0; i < len; ++i) {
             childrenStr += this.generateLibraryEntry(children[i]);
         }
-        entry += ` <details><summary>Show / Hide songs</summary><div class="entry-children">${childrenStr}</div></details>`;
+        entry += ` <details><summary>by ${authorsList}</summary><div class="entry-children">${childrenStr}</div></details>`;
     }
     if(url && (!noArrayUrl || !name && !author)) {
         if(noArrayUrl) {
