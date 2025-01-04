@@ -320,7 +320,7 @@ generateLibraryEntry({
     const noArrayUrl = url && !Array.isArray(url);
     let authorsList = '';
 
-    if(name) {
+    if (name) {
         entry += url ? `<a href="${ noArrayUrl ? url : url[0] }" target="_blank">${ name }</a>` : name;
     }
     if (author) {
@@ -344,30 +344,30 @@ generateLibraryEntry({
         for (let i = 0; i < len; ++i) {
             childrenStr += this.generateLibraryEntry(children[i]);
         }
-        entry += ` <details><summary>${authorsList ? `by ${authorsList}` : 'Show/Hide songs'}</summary><div class="entry-children">${childrenStr}</div></details>`;
+        entry += ` <details><summary>${authorsList ? `by ${authorsList}` : 'Show/Hide songs'} ${date ? `(${date})` : ''}</summary><div class="entry-children">${childrenStr}</div></details>`;
     }
-    if(url && (!noArrayUrl || !name && !author)) {
-        if(noArrayUrl) {
+    if (url && (!noArrayUrl || !name && !author)) {
+        if (noArrayUrl) {
             entry += `[<a href="${ url }" target="_blank">link</a>]`;
         } else {
             const urlsList = [];
-            for(let i = name ? 1 : 0, len = url.length; i < len; ++i) {
+            for (let i = name ? 1 : 0, len = url.length; i < len; ++i) {
                 urlsList.push(`<a href="${ url[i] }" target="_blank">link${ i + 1 }</a>`);
             }
             entry += ` [${ urlsList.join(', ') }]`;
         }
     }
-    if(cover) {
+    if (cover) {
         const { url: cUrl, name: coverName } = cover;
         entry += ` <span class="code-remix">(cover of ${ cUrl ?
             `<a href="${ cUrl }" target="_blank">${ coverName }</a>` :
             `"${ coverName }"`
         })</span>`;
     }
-    if(remix) {
+    if (remix) {
         const arr = [];
         const remixArr = Array.isArray(remix) ? remix : [remix];
-        for(let i = 0, len = remixArr.length; i < len; ++i) {
+        for (let i = 0, len = remixArr.length; i < len; ++i) {
             const { url: rUrl, name: remixName, author: rAuthor } = remixArr[i];
             arr.push(`${ rUrl ? `<a href="${ rUrl }" target="_blank">${
                 remixName || rAuthor }</a>` : `"${ remixName }"`
@@ -376,9 +376,9 @@ generateLibraryEntry({
         entry += ` <span class="code-remix">(remix of ${ arr.join(', ') })</span>`;
     }
 
-    if(date || sampleRate || mode || stereo || drawing) {
+    if (date || sampleRate || mode || stereo || drawing) {
         let infoStr = date ? `(${ date })` : '';
-        if(date) {
+        if (date) {
             const dateDiff = new Date() - new Date(date);
             const secondsAgo = Math.floor(dateDiff / 1000);
             const minutesAgo = Math.floor(secondsAgo / 60);
@@ -386,80 +386,80 @@ generateLibraryEntry({
             const daysAgo = Math.floor(hoursAgo / 24);
             const monthsAgo = Math.floor(daysAgo / 30);
             const yearsAgo = Math.floor(monthsAgo / 12);
-            if(yearsAgo > 0) {
+            if (yearsAgo > 0) {
                 infoStr += ` (${yearsAgo} year${yearsAgo > 1 ? 's' : ''} ago)`;
-            } else if(monthsAgo > 0) {
+            } else if (monthsAgo > 0) {
                 infoStr += ` (${monthsAgo} month${monthsAgo > 1 ? 's' : ''} ago)`;
-            } else if(daysAgo > 0) {
+            } else if (daysAgo > 0) {
                 infoStr += ` (${daysAgo} day${daysAgo > 1 ? 's' : ''} ago)`;
-            } else if(hoursAgo > 0) {
+            } else if (hoursAgo > 0) {
                 infoStr += ` (${hoursAgo} hour${hoursAgo > 1 ? 's' : ''} ago)`;
-            } else if(minutesAgo > 0) {
+            } else if (minutesAgo > 0) {
                 infoStr += ` (${minutesAgo} minute${minutesAgo > 1 ? 's' : ''} ago)`;
             } else {
                 infoStr += ` (${secondsAgo} second${secondsAgo > 1 ? 's' : ''} ago)`;
             }
         }
-        if(sampleRate) {
+        if (sampleRate) {
             infoStr += `${ infoStr ? ' ' : '' }${ sampleRate }Hz`;
         }
-        if(mode) {
+        if (mode) {
             infoStr += (infoStr ? ' ' : '') + mode;
         }
-        if(stereo) {
+        if (stereo) {
             infoStr += `${ infoStr ? ' ' : '' }<span class="code-stereo">Stereo</span>`;
         }
-        if(drawing) {
+        if (drawing) {
             infoStr += `${ infoStr ? ' ' : '' } (${ drawing.mode } mode)`;
         }
         entry += ` <span class="code-info">${ infoStr }</span>`;
     }
     const songObj = { sampleRate, mode };
-    if(drawing) {
+    if (drawing) {
         songObj.drawMode = drawing.mode;
         songObj.scale = drawing.scale;
     }
     const songData = codeOriginal || codeMinified || file ? JSON.stringify(songObj) : '';
-    if(codeMinified) {
+    if (codeMinified) {
         entry += ` <span class="code-length" title="Size in characters">${
             this.formatBytes(codeMinified.length) }</span>` + (codeOriginal ? '<button class="code-button code-toggle"' +
                 ' title="Minified version shown. Click to view the original version.">+</button>' : '');
-    } else if(codeOriginal) {
+    } else if (codeOriginal) {
         entry += ` <span class="code-length" title="Size in characters">${ this.formatBytes(codeOriginal.length) }</span>`;
     }
-    if(file) {
+    if (file) {
         let codeBtn = '';
-        if(fileFormatted) {
+        if (fileFormatted) {
             codeBtn += `<button class="code-button code-load code-load-formatted" data-songdata='${
                 songData }' data-code-file="${ file
             }" title="Click to load and play the formatted code">formatted</button>`;
         }
-        if(fileOriginal) {
+        if (fileOriginal) {
             codeBtn += `<button class="code-button code-load code-load-original" data-songdata='${
                 songData }' data-code-file="${ file
             }" title="Click to load and play the original code">original</button>`;
         }
-        if(fileMinified) {
+        if (fileMinified) {
             codeBtn += `<button class="code-button code-load code-load-minified" data-songdata='${
                 songData }' data-code-file="${ file
             }" title="Click to load and play the minified code">minified</button>`;
         }
-        if(codeBtn) {
+        if (codeBtn) {
             entry += `<div class="code-buttons-container">${ codeBtn }</div>`;
         }
     }
-    if(description) {
+    if (description) {
         entry += (entry ? '<br>' : '') + description;
     }
-    if(codeOriginal) {
-        if(Array.isArray(codeOriginal)) {
+    if (codeOriginal) {
+        if (Array.isArray(codeOriginal)) {
             codeOriginal = codeOriginal.join('\n');
         }
         entry += `<br><button class="code-text code-text-original${
             codeMinified ? ' hidden' : '' }" data-songdata='${ songData }' code-length="${
             this.formatBytes(codeOriginal.length) }">${ this.escapeHTML(codeOriginal) }</button>`;
     }
-    if(codeMinified) {
+    if (codeMinified) {
         entry += `${ codeOriginal ? '' : '<br>' }<button class="code-text code-text-minified"` +
             ` data-songdata='${ songData }' code-length="${ this.formatBytes(codeMinified.length) }">${
                 this.escapeHTML(codeMinified) }</button>`;
