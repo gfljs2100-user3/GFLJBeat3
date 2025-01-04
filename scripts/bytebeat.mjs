@@ -344,7 +344,7 @@ generateLibraryEntry({
         for (let i = 0; i < len; ++i) {
             childrenStr += this.generateLibraryEntry(children[i]);
         }
-        entry += ` <details><summary>${authorsList ? `by ${authorsList}` : 'Show/Hide songs'} ${date ? `(${date})` : ''}</summary><div class="entry-children">${childrenStr}</div></details>`;
+        entry += ` <details><summary>${authorsList ? `by ${authorsList}` : 'Show/Hide songs'} ${date ? `(${ date })` : ''}</summary><div class="entry-children">${childrenStr}</div></details>`;
     }
     if (url && (!noArrayUrl || !name && !author)) {
         if (noArrayUrl) {
