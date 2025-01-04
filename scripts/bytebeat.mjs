@@ -462,14 +462,11 @@ generateLibraryEntry({
         for (let i = 0; i < len; ++i) {
             childrenStr += this.generateLibraryEntry(children[i]);
         }
-    }
-
-    // Ensure the <details> tag is properly closed and structured
-    if (childrenStr) {
-        entry += ` <details open><summary>${authorsList ? `by ${authorsList}` : 'Show/Hide songs'}</summary><div class="entry-children">${childrenStr}</div></details>`;
-    } else if (entry) {
-        // If there's only one song, use the details tag to hide/show it
-        entry = ` <details open><summary>${authorsList ? `by ${authorsList}` : 'Show/Hide song'}</summary>${entry}</details>`;
+        if (len > 1) {
+            entry += ` <details><summary>${authorsList ? `by ${authorsList}` : 'Show/Hide songs'}</summary><div class="entry-children">${childrenStr}</div></details>`;
+        } else {
+            entry += ` ${childrenStr}`;
+        }
     }
 
     return `<div class="${ codeOriginal || codeMinified || file || children ? 'entry' : 'entry-text' }${
