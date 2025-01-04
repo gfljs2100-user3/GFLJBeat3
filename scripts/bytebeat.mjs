@@ -466,7 +466,7 @@ generateLibraryEntry({
 
     // Ensure the <details> tag is properly closed and structured
     if (childrenStr) {
-        entry += ` <details><summary>${authorsList ? `by ${authorsList}` : 'Show/Hide songs'} ${date ? `(${date})` : ''}</summary><div class="entry-children">${childrenStr}</div></details>`;
+        entry += ` <details><summary>${authorsList ? `by ${authorsList}` : 'Show/Hide songs'}</summary><div class="entry-children">${childrenStr}</div></details>`;
     }
     
     return `<div class="${ codeOriginal || codeMinified || file || children ? 'entry' : 'entry-text' }${
