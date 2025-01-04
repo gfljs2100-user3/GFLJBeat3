@@ -463,13 +463,13 @@ generateLibraryEntry({
             childrenStr += this.generateLibraryEntry(children[i]);
         }
         if (len > 1) {
-            entry += ` <details><summary>${authorsList ? `by ${authorsList}` : 'Show/Hide songs'}</summary><div class="entry-children">${childrenStr}</div></details>`;
+            entry += ` <details open><summary>${authorsList ? `by ${authorsList}` : 'Show/Hide songs'}</summary><div class="entry-children">${childrenStr}</div></details>`;
         } else {
             entry += ` ${childrenStr}`;
         }
     } else if (entry) {
         // If there's only one song, use the details tag to hide/show it
-        entry = ` <details><summary>${authorsList ? `by ${authorsList}` : 'Show/Hide song'}</summary>${entry}</details>`;
+        entry = ` <details open><summary>${authorsList ? `by ${authorsList}` : 'Show/Hide song'}</summary>${entry}</details>`;
     }
 
     return `<div class="${ codeOriginal || codeMinified || file || children ? 'entry' : 'entry-text' }${
