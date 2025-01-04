@@ -467,6 +467,9 @@ generateLibraryEntry({
         } else {
             entry += ` ${childrenStr}`;
         }
+    } else if (entry) {
+        // If there's only one song, use the details tag to hide/show it
+        entry = ` <details><summary>${authorsList ? `by ${authorsList}` : 'Show/Hide song'}</summary>${entry}</details>`;
     }
 
     return `<div class="${ codeOriginal || codeMinified || file || children ? 'entry' : 'entry-text' }${
