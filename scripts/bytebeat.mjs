@@ -344,7 +344,7 @@ generateLibraryEntry({
         for (let i = 0; i < len; ++i) {
             childrenStr += this.generateLibraryEntry(children[i]);
         }
-        entry += ` <details><summary>${authorsList ? `by ${authorsList}` : 'Show/Hide songs'} ${date ? `(${ date })` : '' + dateDiff}</summary><div class="entry-children">${childrenStr}</div></details>`;
+        entry += ` <details><summary>${authorsList ? `by ${authorsList}` : 'Show/Hide songs'}${date ? ` (${date})` : ''}${date ? ` (${getTimeAgo(date)})` : ''}</summary><div class="entry-children">${childrenStr}</div></details>`;
     }
     if (url && (!noArrayUrl || !name && !author)) {
         if (noArrayUrl) {
@@ -379,26 +379,7 @@ generateLibraryEntry({
     if (date || sampleRate || mode || stereo || drawing) {
         let infoStr = date ? `(${ date })` : '';
         if (date) {
-            const dateDiff = new Date() - new Date(date);
-            const secondsAgo = Math.floor(dateDiff / 1000);
-            const minutesAgo = Math.floor(secondsAgo / 60);
-            const hoursAgo = Math.floor(minutesAgo / 60);
-            const daysAgo = Math.floor(hoursAgo / 24);
-            const monthsAgo = Math.floor(daysAgo / 30);
-            const yearsAgo = Math.floor(monthsAgo / 12);
-            if (yearsAgo > 0) {
-                infoStr += ` (${yearsAgo} year${yearsAgo > 1 ? 's' : ''} ago)`;
-            } else if (monthsAgo > 0) {
-                infoStr += ` (${monthsAgo} month${monthsAgo > 1 ? 's' : ''} ago)`;
-            } else if (daysAgo > 0) {
-                infoStr += ` (${daysAgo} day${daysAgo > 1 ? 's' : ''} ago)`;
-            } else if (hoursAgo > 0) {
-                infoStr += ` (${hoursAgo} hour${hoursAgo > 1 ? 's' : ''} ago)`;
-            } else if (minutesAgo > 0) {
-                infoStr += ` (${minutesAgo} minute${minutesAgo > 1 ? 's' : ''} ago)`;
-            } else {
-                infoStr += ` (${secondsAgo} second${secondsAgo > 1 ? 's' : ''} ago)`;
-            }
+            infoStr += ` (${getTimeAgo(date)})`;
         }
         if (sampleRate) {
             infoStr += `${ infoStr ? ' ' : '' }${ sampleRate }Hz`;
@@ -466,6 +447,29 @@ generateLibraryEntry({
     }
     return `<div class="${ codeOriginal || codeMinified || file || children ? 'entry' : 'entry-text' }${
         starred ? ' ' + ['star-1', 'star-2'][starred - 1] : '' }">${ entry }</div>`;
+}
+
+function getTimeAgo(date) {
+    const dateDiff = new Date() - new Date(date);
+    const secondsAgo = Math.floor(dateDiff / 1000);
+    const minutesAgo = Math.floor(secondsAgo / 60);
+    const hoursAgo = Math.floor(minutesAgo / 60);
+    const daysAgo = Math.floor(hoursAgo / 24);
+    const monthsAgo = Math.floor(daysAgo / 30);
+    const yearsAgo = Math.floor(monthsAgo / 12);
+    if (yearsAgo > 0) {
+        return `${yearsAgo} year${yearsAgo > 1 ? 's' : ''} ago`;
+    } else if (monthsAgo > 0) {
+        return `${monthsAgo} month${monthsAgo > 1 ? 's' : ''} ago`;
+    } else if (daysAgo > 0) {
+        return `${daysAgo} day${daysAgo > 1 ? 's' : ''} ago`;
+    } else if (hoursAgo > 0) {
+        return `${hoursAgo} hour${hoursAgo > 1 ? 's' : ''} ago`;
+    } else if (minutesAgo > 0) {
+        return `${minutesAgo} minute${minutesAgo > 1 ? 's' : ''} ago`;
+    } else {
+        return `${secondsAgo} second${secondsAgo > 1 ? 's' : ''} ago`;
+    }
 }
 	getColor(value) {
 		return [
