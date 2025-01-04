@@ -339,27 +339,6 @@ generateLibraryEntry({
         }
     }
     if (children && children.length > 0) {
-	    const dateDiff = new Date() - new Date(date);
-            const secondsAgo = Math.floor(dateDiff / 1000);
-            const minutesAgo = Math.floor(secondsAgo / 60);
-            const hoursAgo = Math.floor(minutesAgo / 60);
-            const daysAgo = Math.floor(hoursAgo / 24);
-            const monthsAgo = Math.floor(daysAgo / 30);
-            const yearsAgo = Math.floor(monthsAgo / 12);
-            if (yearsAgo > 0) {
-                entry += ` (${yearsAgo} year${yearsAgo > 1 ? 's' : ''} ago)`;
-            } else if (monthsAgo > 0) {
-                entry += ` (${monthsAgo} month${monthsAgo > 1 ? 's' : ''} ago)`;
-            } else if (daysAgo > 0) {
-                entry += ` (${daysAgo} day${daysAgo > 1 ? 's' : ''} ago)`;
-            } else if (hoursAgo > 0) {
-                entry += ` (${hoursAgo} hour${hoursAgo > 1 ? 's' : ''} ago)`;
-            } else if (minutesAgo > 0) {
-                entry += ` (${minutesAgo} minute${minutesAgo > 1 ? 's' : ''} ago)`;
-            } else {
-                entry += ` (${secondsAgo} second${secondsAgo > 1 ? 's' : ''} ago)`;
-            }
-        }
         let childrenStr = '';
         const len = children.length;
         for (let i = 0; i < len; ++i) {
