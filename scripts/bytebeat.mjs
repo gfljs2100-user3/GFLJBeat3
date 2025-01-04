@@ -312,6 +312,29 @@ drawGraphics(endTime) {
 	return (i ? (bytes / (1024 ** i)).toFixed(2) : bytes) + ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'][i];
 }
 
+function getTimeAgo(date) {
+    const dateDiff = new Date() - new Date(date);
+    const secondsAgo = Math.floor(dateDiff / 1000);
+    const minutesAgo = Math.floor(secondsAgo / 60);
+    const hoursAgo = Math.floor(minutesAgo / 60);
+    const daysAgo = Math.floor(hoursAgo / 24);
+    const monthsAgo = Math.floor(daysAgo / 30);
+    const yearsAgo = Math.floor(monthsAgo / 12);
+    if (yearsAgo > 0) {
+        return `${yearsAgo} year${yearsAgo > 1 ? 's' : ''} ago`;
+    } else if (monthsAgo > 0) {
+        return `${monthsAgo} month${monthsAgo > 1 ? 's' : ''} ago`;
+    } else if (daysAgo > 0) {
+        return `${daysAgo} day${daysAgo > 1 ? 's' : ''} ago`;
+    } else if (hoursAgo > 0) {
+        return `${hoursAgo} hour${hoursAgo > 1 ? 's' : ''} ago`;
+    } else if (minutesAgo > 0) {
+        return `${minutesAgo} minute${minutesAgo > 1 ? 's' : ''} ago`;
+    } else {
+        return `${secondsAgo} second${secondsAgo > 1 ? 's' : ''} ago`;
+    }
+}
+	
 generateLibraryEntry({
     author, children, codeMinified, codeOriginal, cover, date, description, drawing, file, fileFormatted,
     fileMinified, fileOriginal, mode, name, remix, sampleRate, starred, stereo, url
@@ -344,7 +367,7 @@ generateLibraryEntry({
         for (let i = 0; i < len; ++i) {
             childrenStr += this.generateLibraryEntry(children[i]);
         }
-        entry += ` <details><summary>${authorsList ? `by ${authorsList}` : 'Show/Hide songs'} ${date ? `(${date} ${getTimeAgo(date)})` : ''}</summary><div class="entry-children">${childrenStr}</div></details>`;
+        entry += ` <details><summary>${authorsList ? `by ${authorsList}` : 'Show/Hide songs'} ${date ? `(${date} ${this.getTimeAgo(date)})` : ''}</summary><div class="entry-children">${childrenStr}</div></details>`;
     }
     if (url && (!noArrayUrl || !name && !author)) {
         if (noArrayUrl) {
@@ -447,29 +470,6 @@ generateLibraryEntry({
     }
     return `<div class="${ codeOriginal || codeMinified || file || children ? 'entry' : 'entry-text' }${
         starred ? ' ' + ['star-1', 'star-2'][starred - 1] : '' }">${ entry }</div>`;
-}
-
-function getTimeAgo(date) {
-    const dateDiff = new Date() - new Date(date);
-    const secondsAgo = Math.floor(dateDiff / 1000);
-    const minutesAgo = Math.floor(secondsAgo / 60);
-    const hoursAgo = Math.floor(minutesAgo / 60);
-    const daysAgo = Math.floor(hoursAgo / 24);
-    const monthsAgo = Math.floor(daysAgo / 30);
-    const yearsAgo = Math.floor(monthsAgo / 12);
-    if (yearsAgo > 0) {
-        return `${yearsAgo} year${yearsAgo > 1 ? 's' : ''} ago`;
-    } else if (monthsAgo > 0) {
-        return `${monthsAgo} month${monthsAgo > 1 ? 's' : ''} ago`;
-    } else if (daysAgo > 0) {
-        return `${daysAgo} day${daysAgo > 1 ? 's' : ''} ago`;
-    } else if (hoursAgo > 0) {
-        return `${hoursAgo} hour${hoursAgo > 1 ? 's' : ''} ago`;
-    } else if (minutesAgo > 0) {
-        return `${minutesAgo} minute${minutesAgo > 1 ? 's' : ''} ago`;
-    } else {
-        return `${secondsAgo} second${secondsAgo > 1 ? 's' : ''} ago`;
-    }
 }
 	getColor(value) {
 		return [
