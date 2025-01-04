@@ -338,7 +338,7 @@ generateLibraryEntry({
             }
         }
     }
-    if (children) {
+    if (children && children.length > 0) {
         let childrenStr = '';
         const len = children.length;
         for (let i = 0; i < len; ++i) {
@@ -346,7 +346,7 @@ generateLibraryEntry({
         }
         entry += ` <details><summary>${authorsList ? `by ${authorsList}` : 'Show/Hide songs'}</summary><div class="entry-children">${childrenStr}</div></details>`;
     } else {
-        entry += ` <details><summary>${authorsList ? `by ${authorsList}` : 'Show/Hide song'}</summary><div class="entry-children">${entry}</div></details>`;
+        entry += ` <details><summary>${authorsList ? `by ${authorsList}` : 'Show/Hide song'}</summary><div class="entry-children">${name}</div></details>`;
     }
     if(url && (!noArrayUrl || !name && !author)) {
         if(noArrayUrl) {
