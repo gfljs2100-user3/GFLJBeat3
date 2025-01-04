@@ -345,8 +345,6 @@ generateLibraryEntry({
             childrenStr += this.generateLibraryEntry(children[i]);
         }
         entry += ` <details><summary>${authorsList ? `by ${authorsList}` : 'Show/Hide songs'}</summary><div class="entry-children">${childrenStr}</div></details>`;
-    } else {
-        entry += ` <details><summary>${authorsList ? `by ${authorsList}` : 'Show/Hide song'}</summary><div class="entry-children">${name}</div></details>`;
     }
     if(url && (!noArrayUrl || !name && !author)) {
         if(noArrayUrl) {
