@@ -321,32 +321,31 @@ generateLibraryEntry({
     if(name) {
         entry += url ? `<a href="${ noArrayUrl ? url : url[0] }" target="_blank">${ name }</a>` : name;
     }
-if (author) {
-    let authorsList = '';
-    const authorsArr = Array.isArray(author) ? author : [author];
-    for (let i = 0, len = authorsArr.length; i < len; ++i) {
-        const authorElem = authorsArr[i];
-        if (typeof authorElem === 'string') {
-            authorsList += name || !noArrayUrl ? '<b>' + authorElem + '</b>' :
-                `<a href="${url}" target="_blank">${authorElem}</a>`;
-        } else {
-            authorsList += `<a href="${authorElem[1]}" target="_blank">${authorElem[0]}</a>`;
+    if (author) {
+        let authorsList = '';
+        const authorsArr = Array.isArray(author) ? author : [author];
+        for (let i = 0, len = authorsArr.length; i < len; ++i) {
+            const authorElem = authorsArr[i];
+            if (typeof authorElem === 'string') {
+                authorsList += name || !noArrayUrl ? '<b>' + authorElem + '</b>' :
+                    `<a href="${url}" target="_blank">${authorElem}</a>`;
+            } else {
+                authorsList += `<a href="${authorElem[1]}" target="_blank">${authorElem[0]}</a>`;
+            }
+            if (i < len - 1) {
+                authorsList += ', ';
+            }
         }
-        if (i < len - 1) {
-            authorsList += ', ';
-        }
+        entry += ` <span>by ${authorsList}</span>`;
     }
-    entry += ` <details><summary>by ${authorsList}</summary>`;
     if (children) {
         let childrenStr = '';
         const len = children.length;
         for (let i = 0; i < len; ++i) {
             childrenStr += this.generateLibraryEntry(children[i]);
         }
-        entry += `<div class="entry-children">${childrenStr}</div>`;
+        entry += ` <details><summary>Show/Hide Songs</summary><div class="entry-children">${childrenStr}</div></details>`;
     }
-    entry += `</details>`;
-}
     if(url && (!noArrayUrl || !name && !author)) {
         if(noArrayUrl) {
             entry += `[<a href="${ url }" target="_blank">link</a>]`;
@@ -464,25 +463,6 @@ if (author) {
         entry += `${ codeOriginal ? '' : '<br>' }<button class="code-text code-text-minified"` +
             ` data-songdata='${ songData }' code-length="${ this.formatBytes(codeMinified.length) }">${
                 this.escapeHTML(codeMinified) }</button>`;
-    }
-    if(children) {
-        let childrenStr = '';
-        const len = children.length;
-        if(len > 8) {
-            childrenStr += `<details><summary class="code-button children-toggle">${
-                len - 5 } more bytebeats</summary>`;
-            for(let i = 0; i < len; ++i) {
-                if(i === len - 5) {
-                    childrenStr += '</details>';
-                }
-                childrenStr += this.generateLibraryEntry(children[i]);
-            }
-        } else {
-            for(let i = 0; i < len; ++i) {
-                childrenStr += this.generateLibraryEntry(children[i]);
-            }
-        }
-        entry += `<div class="entry-children">${ childrenStr }</div>`;
     }
     return `<div class="${ codeOriginal || codeMinified || file || children ? 'entry' : 'entry-text' }${
         starred ? ' ' + ['star-1', 'star-2'][starred - 1] : '' }">${ entry }</div>`;
