@@ -336,11 +336,7 @@ if (author) {
             authorsList += ', ';
         }
     }
-    if (authorsArr.length > 1) {
-        entry += ` <details><summary>by ${authorsList}</summary></details>`;
-    } else {
-        entry += ` <span>by ${authorsList}</span>`;
-    }
+    entry += ` <details><summary>by ${ authorsList }</summary></details>`;
 }
     if(url && (!noArrayUrl || !name && !author)) {
         if(noArrayUrl) {
