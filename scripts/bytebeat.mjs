@@ -336,6 +336,7 @@ generateLibraryEntry({
                 authorsList += ', ';
             }
         }
+        entry += ` <span>by ${authorsList}</span>`;
     }
     if (children) {
         let childrenStr = '';
