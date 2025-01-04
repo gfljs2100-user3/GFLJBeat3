@@ -456,14 +456,15 @@ generateLibraryEntry({
             ` data-songdata='${ songData }' code-length="${ this.formatBytes(codeMinified.length) }">${
                 this.escapeHTML(codeMinified) }</button>`;
     }
+    let childrenStr = '';
     if (children && children.length > 0) {
-        let childrenStr = '';
         const len = children.length;
         for (let i = 0; i < len; ++i) {
             childrenStr += this.generateLibraryEntry(children[i]);
         }
-        entry += ` <details><summary>${authorsList ? `by ${authorsList}` : 'Show/Hide songs'} ${date ? `(${date})` : ''}</summary><div class="entry-children">${childrenStr}</div></details>`;
     }
+    entry += ` <details><summary>${authorsList ? `by ${authorsList}` : 'Show/Hide songs'} ${date ? `(${date})` : ''}</summary><div class="entry-children">${childrenStr}</div></details>`;
+    
     return `<div class="${ codeOriginal || codeMinified || file || children ? 'entry' : 'entry-text' }${
         starred ? ' ' + ['star-1', 'star-2'][starred - 1] : '' }">${ entry }</div>`;
 }
