@@ -155,6 +155,7 @@ drawGraphics(endTime) {
         }
     }
     const { drawMode } = this.settings;
+    const isXYOscilloScope = drawMode === 'isXYOscilloScope';
     const isCombined = drawMode === 'Combined';
     const isDiagram = drawMode === 'Diagram';
     const isWaveform = drawMode === 'Waveform';
@@ -166,6 +167,26 @@ drawGraphics(endTime) {
         Math.floor(.6 * colorPoints[1] | 0),
         Math.floor(.6 * colorPoints[2] | 0)];
     let ch, drawDiagramPoint, drawPoint, drawWavePoint;
+
+    // XY Oscilloscope Logic
+    if (isXYOscilloScope) {
+        for (let i = 0; i < bufferLen - 1; ++i) {
+            const curValue = buffer[i].value;
+            const nextValue = buffer[i + 1].value;
+            if (!isNaN(curValue[0]) && !isNaN(curValue[1]) && !isNaN(nextValue[0]) && !isNaN(nextValue[1])) {
+                const curX = Math.floor(width * (curValue[0] + 1) / 2);
+                const curY = Math.floor(height * (1 - (curValue[1] + 1) / 2));
+                const nextX = Math.floor(width * (nextValue[0] + 1) / 2);
+                const nextY = Math.floor(height * (1 - (nextValue[1] + 1) / 2));
+                this.canvasCtx.beginPath();
+                this.canvasCtx.moveTo(curX, curY);
+                this.canvasCtx.lineTo(nextX, nextY);
+                this.canvasCtx.stroke();
+            }
+        }
+        return;
+    }
+
     for (let i = 0; i < bufferLen; ++i) {
         const curY = buffer[i].value;
         const prevY = buffer[i - 1]?.value ?? [NaN, NaN];
