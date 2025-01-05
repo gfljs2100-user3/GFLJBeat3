@@ -178,12 +178,15 @@ drawGraphics(endTime) {
                 const curY = Math.floor(height * (1 - (curValue[1] + 1) / 2));
                 const nextX = Math.floor(width * (nextValue[0] + 1) / 2);
                 const nextY = Math.floor(height * (1 - (nextValue[1] + 1) / 2));
-                this.canvasCtx.beginPath();
-                this.canvasCtx.moveTo(curX, curY);
-                this.canvasCtx.lineTo(nextX, nextY);
-                this.canvasCtx.stroke();
+                for (let dx = curX; dx !== nextX; dx = this.mod(dx + 1, width)) {
+                    for (let dy = curY; dy !== nextY; dy = this.mod(dy + 1, height)) {
+                        const idx = (drawWidth * (255 - dy) + dx) << 2;
+                        drawWavePoint(data, idx, colorWaveform, this.colorChannels, 0);
+                    }
+                }
             }
         }
+        this.canvasCtx.putImageData(imageData, startX, 0);
         return;
     }
 
