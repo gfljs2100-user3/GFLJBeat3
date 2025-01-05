@@ -13,8 +13,8 @@ class audioProcessor extends AudioWorkletProcessor {
 		this.isSignedFuncBytebeat = false;
 		this.isPlaying = false;
 		this.playbackSpeed = 1;
-		this.lastByteValue = [null, null, null, null];
-		this.lastFuncValue = [null, null, null, null];
+		this.lastByteValue = [null, null];
+		this.lastFuncValue = [null, null];
 		this.lastTime = -1;
 		this.outValue = [0, 0, 0, 0];
 		this.sampleRate = 8000;
@@ -100,7 +100,7 @@ class audioProcessor extends AudioWorkletProcessor {
 					}
 					funcValue = NaN;
 				}
-				funcValue = Array.isArray(funcValue) ? [funcValue[0], funcValue[1], funcValue[2], funcValue[3]] : [funcValue, funcValue, funcValue, funcValue];
+				funcValue = Array.isArray(funcValue) ? [funcValue[0], funcValue[1]] : [funcValue, funcValue];
 				let hasValue = false;
 				let ch = 4;
 				while(ch--) {
