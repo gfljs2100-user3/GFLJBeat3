@@ -155,7 +155,6 @@ drawGraphics(endTime) {
         }
     }
     const { drawMode } = this.settings;
-    const isXYOscilloScope = drawMode === 'XYOscilloScope';
     const isCombined = drawMode === 'Combined';
     const isDiagram = drawMode === 'Diagram';
     const isWaveform = drawMode === 'Waveform';
@@ -167,28 +166,6 @@ drawGraphics(endTime) {
         Math.floor(.6 * colorPoints[1] | 0),
         Math.floor(.6 * colorPoints[2] | 0)];
     let ch, drawDiagramPoint, drawPoint, drawWavePoint;
-
-    // XY Oscilloscope Logic
-    if (isXYOscilloScope) {
-        for (let i = 0; i < bufferLen - 1; ++i) {
-            const curValue = buffer[i].value;
-            const nextValue = buffer[i + 1].value;
-            if (!isNaN(curValue[0]) && !isNaN(curValue[1]) && !isNaN(nextValue[0]) && !isNaN(nextValue[1])) {
-                const curX = Math.floor(width * (curValue[0] + 1) / 2);
-                const curY = Math.floor(height * (1 - (curValue[1] + 1) / 2));
-                const nextX = Math.floor(width * (nextValue[0] + 1) / 2);
-                const nextY = Math.floor(height * (1 - (nextValue[1] + 1) / 2));
-                if (curValue.length === 1) {
-                    drawXYOscilloscopeMono(data, curX, curY, nextX, nextY, drawWidth, colorWaveform);
-                } else {
-                    drawXYOscilloscopeStereo(data, curX, curY, nextX, nextY, drawWidth, colorWaveform);
-                }
-            }
-        }
-        this.canvasCtx.putImageData(imageData, startX, 0);
-        return;
-    }
-
     for (let i = 0; i < bufferLen; ++i) {
         const curY = buffer[i].value;
         const prevY = buffer[i - 1]?.value ?? [NaN, NaN];
@@ -279,64 +256,47 @@ drawGraphics(endTime) {
     }
     this.drawBuffer = [{ t: endTime, value: buffer[bufferLen - 1].value }];
 }
-
-drawPointMono(data, i, color) {
-    data[i++] = color[0];
-    data[i++] = color[1];
-    data[i] = color[2];
-}
-drawPointStereo(data, i, color, colorCh, isRight) {
-    if(isRight) {
-        const c1 = colorCh[1];
-        const c2 = colorCh[2];
-        data[i + c1] = color[c1];
-        data[i + c2] = color[c2];
-    } else {
-        const c0 = colorCh[0];
-        data[i + c0] = color[c0];
-    }
-}
-drawSoftPointMono(data, i, color) {
-    if(data[i] || data[i + 1] || data[i + 2]) {
-        return;
-    }
-    data[i++] = color[0];
-    data[i++] = color[1];
-    data[i] = color[2];
-}
-drawSoftPointStereo(data, i, color, colorCh, isRight) {
-    if(isRight) {
-        let i1, i2, c1, c2;
-        if(data[i1 = i + (c1 = colorCh[1])] || data[i2 = i + (c2 = colorCh[2])]) {
-            return;
-        }
-        data[i1] = color[c1];
-        data[i2] = color[c2];
-        return;
-    }
-    const c0 = colorCh[0];
-    const i0 = i + c0;
-    if(data[i0]) {
-        return;
-    }
-    data[i0] = color[c0];
-}
-drawXYOscilloscopeMono(data, curX, curY, nextX, nextY, drawWidth, colorWaveform) {
-    for (let dx = curX; dx !== nextX; dx = this.mod(dx + 1, width)) {
-        for (let dy = curY; dy !== nextY; dy = this.mod(dy + 1, height)) {
-            const idx = (drawWidth * (255 - dy) + dx) << 2;
-            drawWavePoint(data, idx, colorWaveform, this.colorChannels, 0);
-        }
-    }
-}
-drawXYOscilloscopeStereo(data, curX, curY, nextX, nextY, drawWidth, colorWaveform) {
-    for (let dx = curX; dx !== nextX; dx = this.mod(dx + 1, width)) {
-        for (let dy = curY; dy !== nextY; dy = this.mod(dy + 1, height)) {
-            const idx = (drawWidth * (255 - dy) + dx) << 2;
-            drawWavePoint(data, idx, colorWaveform, this.colorChannels, 1);
-        }
-    }
-}
+	drawPointMono(data, i, color) {
+		data[i++] = color[0];
+		data[i++] = color[1];
+		data[i] = color[2];
+	}
+	drawPointStereo(data, i, color, colorCh, isRight) {
+		if(isRight) {
+			const c1 = colorCh[1];
+			const c2 = colorCh[2];
+			data[i + c1] = color[c1];
+			data[i + c2] = color[c2];
+		} else {
+			const c0 = colorCh[0];
+			data[i + c0] = color[c0];
+		}
+	}
+	drawSoftPointMono(data, i, color) {
+		if(data[i] || data[i + 1] || data[i + 2]) {
+			return;
+		}
+		data[i++] = color[0];
+		data[i++] = color[1];
+		data[i] = color[2];
+	}
+	drawSoftPointStereo(data, i, color, colorCh, isRight) {
+		if(isRight) {
+			let i1, i2, c1, c2;
+			if(data[i1 = i + (c1 = colorCh[1])] || data[i2 = i + (c2 = colorCh[2])]) {
+				return;
+			}
+			data[i1] = color[c1];
+			data[i2] = color[c2];
+			return;
+		}
+		const c0 = colorCh[0];
+		const i0 = i + c0;
+		if(data[i0]) {
+			return;
+		}
+		data[i0] = color[c0];
+	}
 	escapeHTML(text) {
 		this.cacheTextElem.nodeValue = text;
 		return this.cacheParentElem.innerHTML;
