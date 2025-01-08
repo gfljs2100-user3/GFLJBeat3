@@ -797,7 +797,11 @@ async onclickLibraryHeader(headerElem) {
         const entryHTML = this.generateLibraryEntry(libraryArr[i]);
         
         // Fetch the code file and get its size
-        const fileResponse = await fetch(`library/${libraryArr[i].fileOriginal}`, { cache: 'no-cache' });
+        const fileResponse = await fetch(`library/${
+        buttonElem.classList.contains('code-load-formatted') ? 'formatted' :
+        buttonElem.classList.contains('code-load-minified') ? 'minified' :
+        buttonElem.classList.contains('code-load-original') ? 'original' : ''
+    }/${ buttonElem.dataset.codeFile }`, { cache: 'no-cache' });
         const code = await fileResponse.text();
         const fileSize = this.formatBytes(new Blob([code]).size);
         
