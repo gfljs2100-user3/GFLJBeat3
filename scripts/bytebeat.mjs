@@ -802,23 +802,24 @@ async onclickCodeLoadButton(buttonElem) {
 	}
 async loadAllLibraryFiles() {
     const librarySections = ['formatted', 'minified', 'original'];
-    const libraryContainers = await fetch(`library/${
-                    buttonElem.classList.contains('code-load-formatted') ? 'formatted' :
-                    buttonElem.classList.contains('code-load-minified') ? 'minified' :
-                    buttonElem.classList.contains('code-load-original') ? 'original' : ''
-                }/${ buttonElem.dataset.codeFile }`, { cache: 'no-cache' });
 
     for (const section of librarySections) {
-        for (const container of libraryContainers) {
-            const response = await fetch(`library/${section}/${container}.js`, { cache: 'no-cache' });
+        const response = await fetch(`library/${section}`, { cache: 'no-cache' });
+        if (response.ok) {
+            const fileList = await response.json(); // Assuming the response is a JSON array of filenames
+            for (const file of fileList) {
+                const fileResponse = await fetch(`library/${section}/${file}`, { cache: 'no-cache' });
 
-            if (response.ok) {
-                const code = await response.text();
-                // You can handle the code here if needed.
-                console.log(`Loaded ${container} from ${section}`);
-            } else {
-                console.error(`Failed to load ${container} from ${section}`);
+                if (fileResponse.ok) {
+                    const code = await fileResponse.text();
+                    // Handle the code here if needed
+                    console.log(`Loaded ${file} from ${section}`);
+                } else {
+                    console.error(`Failed to load ${file} from ${section}`);
+                }
             }
+        } else {
+            console.error(`Failed to load file list from ${section}`);
         }
     }
 
