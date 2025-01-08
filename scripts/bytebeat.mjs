@@ -762,7 +762,7 @@ async onclickCodeLoadButton(buttonElem) {
 }
 async loadAllLibraryFiles(buttonElem) {
     const librarySections = ['formatted', 'minified', 'original'];
-    const libraryContainers = response;
+    const libraryContainers = [];
 
     for (const section of librarySections) {
         for (const container of libraryContainers) {
