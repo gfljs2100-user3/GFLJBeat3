@@ -800,7 +800,7 @@ async onclickCodeLoadButton(buttonElem) {
 		}
 		containerElem.insertAdjacentHTML('beforeend', libraryHTML);
 	}
-async loadAllLibraryFiles() {
+async loadAllLibraryFiles(buttonElem) {
     const librarySections = ['formatted', 'minified', 'original'];
 
     for (const section of librarySections) {
@@ -812,15 +812,15 @@ async loadAllLibraryFiles() {
                     const fileList = await response.json(); // JSON array of filenames
                     for (const file of fileList) {
                         try {
-                            const fileResponse = await fetch(`library/${section}/${file}`, { cache: 'no-cache' });
+                            const fileResponse = await fetch(`library/${section}/${buttonElem.dataset.codeFile}`, { cache: 'no-cache' });
                             if (fileResponse.ok) {
                                 const code = await fileResponse.text();
-                                console.log(`Loaded ${file} from ${section}`);
+                                console.log(`Loaded ${buttonElem.dataset.codeFile} from ${section}`);
                             } else {
-                                console.error(`Failed to load ${file} from ${section}: ${fileResponse.statusText}`);
+                                console.error(`Failed to load ${buttonElem.dataset.codeFile} from ${section}: ${fileResponse.statusText}`);
                             }
                         } catch (fileError) {
-                            console.error(`Error loading file ${file} from ${section}:`, fileError);
+                            console.error(`Error loading file ${buttonElem.dataset.codeFile} from ${section}:`, fileError);
                         }
                     }
                 } else {
