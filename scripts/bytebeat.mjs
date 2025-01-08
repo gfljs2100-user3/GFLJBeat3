@@ -760,6 +760,30 @@ async onclickCodeLoadButton(buttonElem) {
         buttonElem.innerText += ` (${this.formatBytes(fileSize)})`;
     }
 }
+async loadAllLibraryFiles(buttonElem) {
+    const librarySections = ['formatted', 'minified', 'original'];
+    const libraryContainers = response;
+
+    for (const section of librarySections) {
+        for (const container of libraryContainers) {
+            const response = await fetch(`library/${
+        buttonElem.classList.contains('code-load-formatted') ? 'formatted' :
+        buttonElem.classList.contains('code-load-minified') ? 'minified' :
+        buttonElem.classList.contains('code-load-original') ? 'original' : ''
+    }/${ buttonElem.dataset.codeFile }`, { cache: 'no-cache' });
+
+            if (response.ok) {
+                const code = await response.text();
+                // You can handle the code here if needed.
+                console.log(`Loaded ${container} from ${section}`);
+            } else {
+                console.error(`Failed to load ${container} from ${section}`);
+            }
+        }
+    }
+
+    alert('All library files have been loaded for offline use.');
+}
 	onclickCodeToggleButton(buttonElem) {
 		const parentElem = buttonElem.parentNode;
 		const origElem = parentElem.querySelector('.code-text-original');
@@ -800,31 +824,6 @@ async onclickCodeLoadButton(buttonElem) {
 		}
 		containerElem.insertAdjacentHTML('beforeend', libraryHTML);
 	}
-async loadAllLibraryFiles(buttonElem) {
-    const response = await fetch(`library/${
-        buttonElem.classList.contains('code-load-formatted') ? 'formatted' :
-        buttonElem.classList.contains('code-load-minified') ? 'minified' :
-        buttonElem.classList.contains('code-load-original') ? 'original' : ''
-    }/${ buttonElem.dataset.codeFile }`, { cache: 'no-cache' });
-    const librarySections = ['formatted', 'minified', 'original'];
-    const libraryContainers = response;
-
-    for (const section of librarySections) {
-        for (const container of libraryContainers) {
-            const response = await fetch(`library/${section}/${container}.js`, { cache: 'no-cache' });
-
-            if (response.ok) {
-                const code = await response.text();
-                // You can handle the code here if needed.
-                console.log(`Loaded ${container} from ${section}`);
-            } else {
-                console.error(`Failed to load ${container} from ${section}`);
-            }
-        }
-    }
-
-    alert('All library files have been loaded for offline use.');
-}
 	oninputCounter(e) {
 		if(e.key === 'Enter') {
 			this.controlTime.blur();
