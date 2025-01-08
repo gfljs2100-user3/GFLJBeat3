@@ -687,8 +687,6 @@ generateLibraryEntry({
 		this.setColorWaveform();
 		this.controlColorTimeCursor = document.getElementById('control-color-timecursor');
 		this.setColorTimeCursor();
-		this.controlLoadAll = document.getElementById('control-load-all');
-		this.controlLoadAll.addEventListener('click', () => this.loadAllLibraryFiles());
 		this.controlDrawMode = document.getElementById('control-drawmode');
 		this.controlDrawMode.value = this.settings.drawMode;
 		this.sendData({ drawMode: this.settings.drawMode });
@@ -744,46 +742,15 @@ generateLibraryEntry({
 	mod(a, b) {
 		return ((a % b) + b) % b;
 	}
-async onclickCodeLoadButton(buttonElem) {
-    const response = await fetch(`library/${
-        buttonElem.classList.contains('code-load-formatted') ? 'formatted' :
-        buttonElem.classList.contains('code-load-minified') ? 'minified' :
-        buttonElem.classList.contains('code-load-original') ? 'original' : ''
-    }/${ buttonElem.dataset.codeFile }`, { cache: 'no-cache' });
-
-    const code = await response.text();
-    const fileSize = new Blob([code]).size;
-
-    this.loadCode(Object.assign(JSON.parse(buttonElem.dataset.songdata), { code }));
-
-    if (!buttonElem.innerText.includes(`(${this.formatBytes(fileSize)})`)) {
-        buttonElem.innerText += ` (${this.formatBytes(fileSize)})`;
-    }
-}
-async loadAllLibraryFiles(buttonElem) {
-    const response = await fetch(`library/${
-        buttonElem.classList.contains('code-load-formatted') ? 'formatted' :
-        buttonElem.classList.contains('code-load-minified') ? 'minified' :
-        buttonElem.classList.contains('code-load-original') ? 'original' : ''
-    }/${ buttonElem.dataset.codeFile }`, { cache: 'no-cache' });
-    const librarySections = ['formatted', 'minified', 'original'];
-    const libraryContainers = response;
-
-    for (const section of librarySections) {
-        for (const container of libraryContainers) {
-
-            if (response.ok) {
-                const code = await response.text();
-                // You can handle the code here if needed.
-                console.log(`Loaded ${container} from ${section}`);
-            } else {
-                console.error(`Failed to load ${container} from ${section}`);
-            }
-        }
-    }
-
-    alert('All library files have been loaded for offline use.');
-}
+	async onclickCodeLoadButton(buttonElem) {
+		const response = await fetch(`library/${
+			buttonElem.classList.contains('code-load-formatted') ? 'formatted' :
+			buttonElem.classList.contains('code-load-minified') ? 'minified' :
+			buttonElem.classList.contains('code-load-original') ? 'original' : ''
+		}/${ buttonElem.dataset.codeFile }`, { cache: 'no-cache' });
+		this.loadCode(Object.assign(JSON.parse(buttonElem.dataset.songdata),
+			{ code: await response.text() }));
+	}
 	onclickCodeToggleButton(buttonElem) {
 		const parentElem = buttonElem.parentNode;
 		const origElem = parentElem.querySelector('.code-text-original');
