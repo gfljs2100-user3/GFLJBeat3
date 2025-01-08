@@ -804,22 +804,28 @@ async loadAllLibraryFiles() {
     const librarySections = ['formatted', 'minified', 'original'];
 
     for (const section of librarySections) {
-        const response = await fetch(`library/${section}`, { cache: 'no-cache' });
-        if (response.ok) {
-            const fileList = await response.json(); // Assuming the response is a JSON array of filenames
-            for (const file of fileList) {
-                const fileResponse = await fetch(`library/${section}/${file}`, { cache: 'no-cache' });
-
-                if (fileResponse.ok) {
-                    const code = await fileResponse.text();
-                    // Handle the code here if needed
-                    console.log(`Loaded ${file} from ${section}`);
-                } else {
-                    console.error(`Failed to load ${file} from ${section}`);
+        try {
+            const response = await fetch(`library/${section}`, { cache: 'no-cache' });
+            if (response.ok) {
+                const fileList = await response.json(); // JSON array of filenames
+                for (const file of fileList) {
+                    try {
+                        const fileResponse = await fetch(`library/${section}/${file}`, { cache: 'no-cache' });
+                        if (fileResponse.ok) {
+                            const code = await fileResponse.text();
+                            console.log(`Loaded ${file} from ${section}`);
+                        } else {
+                            console.error(`Failed to load ${file} from ${section}`);
+                        }
+                    } catch (fileError) {
+                        console.error(`Error loading file ${file} from ${section}:`, fileError);
+                    }
                 }
+            } else {
+                console.error(`Failed to load file list from ${section}`);
             }
-        } else {
-            console.error(`Failed to load file list from ${section}`);
+        } catch (sectionError) {
+            console.error(`Error loading section ${section}:`, sectionError);
         }
     }
 
