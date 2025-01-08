@@ -742,35 +742,33 @@ generateLibraryEntry({
 	mod(a, b) {
 		return ((a % b) + b) % b;
 	}
-async onclickLibraryHeader(headerElem) {
-    const containerElem = headerElem.nextElementSibling;
-    const state = containerElem.classList;
-    if (state.contains('loaded') || headerElem.parentNode.open) {
-        return;
-    }
-    state.add('loaded');
-    const waitElem = headerElem.querySelector('.loading-wait');
-    waitElem.classList.remove('hidden');
-    const response = await fetch(`./library/${containerElem.id.replace('library-', '')}.gz`, { cache: 'no-cache' });
-    const { status } = response;
-    waitElem.classList.add('hidden');
-    if (status !== 200 && status !== 304) {
-        state.remove('loaded');
-        containerElem.innerHTML = `<div class="loading-error">Unable to load the library: ${status} ${response.statusText}</div>`;
-        return;
-    }
-    const arrayBuffer = await response.arrayBuffer();
-    const libraryArr = JSON.parse(ungzip(arrayBuffer, { to: 'string' }));
-    let libraryHTML = '';
-    for (let i = 0, len = libraryArr.length; i < len; ++i) {
-        const codeFile = libraryArr[i].fileOriginal || libraryArr[i].fileMinified || libraryArr[i].fileFormatted;
-        const codeResponse = await fetch(`library/${codeFile}`, { cache: 'no-cache' });
-        const code = await codeResponse.text();
-        const fileSize = new Blob([code]).size;
-        libraryHTML += `<div class="entry-top">File size: ${this.formatBytes(fileSize)}<br>${this.generateLibraryEntry(libraryArr[i])}</div>`;
-    }
-    containerElem.innerHTML = libraryHTML;
-}
+	async onclickLibraryHeader(headerElem) {
+		const containerElem = headerElem.nextElementSibling;
+		const state = containerElem.classList;
+		if(state.contains('loaded') || headerElem.parentNode.open) {
+			return;
+		}
+		state.add('loaded');
+		const waitElem = headerElem.querySelector('.loading-wait');
+		waitElem.classList.remove('hidden');
+		const response = await fetch(`./library/${ containerElem.id.replace('library-', '') }.gz`,
+			{ cache: 'no-cache' });
+		const { status } = response;
+		waitElem.classList.add('hidden');
+		if(status !== 200 && status !== 304) {
+			state.remove('loaded');
+			containerElem.innerHTML = `<div class="loading-error">Unable to load the library: ${
+				status } ${ response.statusText }</div>`;
+			return;
+		}
+		containerElem.innerHTML = '';
+		let libraryHTML = '';
+		const libraryArr = JSON.parse(ungzip(await response.arrayBuffer(), { to: 'string' }));
+		for(let i = 0, len = libraryArr.length; i < len; ++i) {
+			libraryHTML += `<div class="entry-top">${ this.generateLibraryEntry(libraryArr[i]) }</div>`;
+		}
+		containerElem.insertAdjacentHTML('beforeend', libraryHTML);
+	}
 	onclickCodeToggleButton(buttonElem) {
 		const parentElem = buttonElem.parentNode;
 		const origElem = parentElem.querySelector('.code-text-original');
