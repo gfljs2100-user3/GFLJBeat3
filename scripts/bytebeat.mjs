@@ -754,7 +754,7 @@ async onclickCodeLoadButton(buttonElem) {
 
     this.loadCode(Object.assign(JSON.parse(buttonElem.dataset.songdata), { code }));
 
-    console.log(`File size: ${fileSize} bytes`);
+    buttonElem.innerText += ` (${this.formatBytes(fileSize)})`;
 }
 	onclickCodeToggleButton(buttonElem) {
 		const parentElem = buttonElem.parentNode;
