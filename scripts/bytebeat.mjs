@@ -761,16 +761,16 @@ async onclickCodeLoadButton(buttonElem) {
     }
 }
 async loadAllLibraryFiles(buttonElem) {
-    const librarySections = ['formatted', 'minified', 'original'];
-    const libraryContainers = [];
-
-    for (const section of librarySections) {
-        for (const container of libraryContainers) {
-            const response = await fetch(`library/${
+    const response = await fetch(`library/${
         buttonElem.classList.contains('code-load-formatted') ? 'formatted' :
         buttonElem.classList.contains('code-load-minified') ? 'minified' :
         buttonElem.classList.contains('code-load-original') ? 'original' : ''
     }/${ buttonElem.dataset.codeFile }`, { cache: 'no-cache' });
+    const librarySections = ['formatted', 'minified', 'original'];
+    const libraryContainers = response;
+
+    for (const section of librarySections) {
+        for (const container of libraryContainers) {
 
             if (response.ok) {
                 const code = await response.text();
