@@ -742,21 +742,34 @@ generateLibraryEntry({
 	mod(a, b) {
 		return ((a % b) + b) % b;
 	}
-async onclickCodeLoadButton(buttonElem) {
-    const response = await fetch(`library/${
-        buttonElem.classList.contains('code-load-formatted') ? 'formatted' :
-        buttonElem.classList.contains('code-load-minified') ? 'minified' :
-        buttonElem.classList.contains('code-load-original') ? 'original' : ''
-    }/${ buttonElem.dataset.codeFile }`, { cache: 'no-cache' });
-
-    const code = await response.text();
-    const fileSize = new Blob([code]).size;
-
-    this.loadCode(Object.assign(JSON.parse(buttonElem.dataset.songdata), { code }));
-
-    if (!buttonElem.innerText.includes(`(${this.formatBytes(fileSize)})`)) {
-        buttonElem.innerText += ` (${this.formatBytes(fileSize)})`;
+async onclickLibraryHeader(headerElem) {
+    const containerElem = headerElem.nextElementSibling;
+    const state = containerElem.classList;
+    if (state.contains('loaded') || headerElem.parentNode.open) {
+        return;
     }
+    state.add('loaded');
+    const waitElem = headerElem.querySelector('.loading-wait');
+    waitElem.classList.remove('hidden');
+    const response = await fetch(`./library/${containerElem.id.replace('library-', '')}.gz`, { cache: 'no-cache' });
+    const { status } = response;
+    waitElem.classList.add('hidden');
+    if (status !== 200 && status !== 304) {
+        state.remove('loaded');
+        containerElem.innerHTML = `<div class="loading-error">Unable to load the library: ${status} ${response.statusText}</div>`;
+        return;
+    }
+    const arrayBuffer = await response.arrayBuffer();
+    const libraryArr = JSON.parse(ungzip(arrayBuffer, { to: 'string' }));
+    let libraryHTML = '';
+    for (let i = 0, len = libraryArr.length; i < len; ++i) {
+        const codeFile = libraryArr[i].fileOriginal || libraryArr[i].fileMinified || libraryArr[i].fileFormatted;
+        const codeResponse = await fetch(`library/${codeFile}`, { cache: 'no-cache' });
+        const code = await codeResponse.text();
+        const fileSize = new Blob([code]).size;
+        libraryHTML += `<div class="entry-top">File size: ${this.formatBytes(fileSize)}<br>${this.generateLibraryEntry(libraryArr[i])}</div>`;
+    }
+    containerElem.innerHTML = libraryHTML;
 }
 	onclickCodeToggleButton(buttonElem) {
 		const parentElem = buttonElem.parentNode;
