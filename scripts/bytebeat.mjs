@@ -424,17 +424,17 @@ generateLibraryEntry({
         if (fileFormatted) {
             codeBtn += `<button class="code-button code-load code-load-formatted" data-songdata='${
                 songData }' data-code-file="${ file
-            }" title="Click to load and play the formatted code">formatted ${this.formatBytes(new Blob([file]).size)}</button>`;
+            }" title="Click to load and play the formatted code">formatted</button>`;
         }
         if (fileOriginal) {
             codeBtn += `<button class="code-button code-load code-load-original" data-songdata='${
                 songData }' data-code-file="${ file
-            }" title="Click to load and play the original code">original ${this.formatBytes(new Blob([file]).size)}</button>`;
+            }" title="Click to load and play the original code">original</button>`;
         }
         if (fileMinified) {
             codeBtn += `<button class="code-button code-load code-load-minified" data-songdata='${
                 songData }' data-code-file="${ file
-            }" title="Click to load and play the minified code">minified ${this.formatBytes(new Blob([file]).size)}</button>`;
+            }" title="Click to load and play the minified code">minified</button>`;
         }
         if (codeBtn) {
             entry += `<div class="code-buttons-container">${ codeBtn }</div>`;
@@ -742,15 +742,20 @@ generateLibraryEntry({
 	mod(a, b) {
 		return ((a % b) + b) % b;
 	}
-	async onclickCodeLoadButton(buttonElem) {
-		const response = await fetch(`library/${
-			buttonElem.classList.contains('code-load-formatted') ? 'formatted' :
-			buttonElem.classList.contains('code-load-minified') ? 'minified' :
-			buttonElem.classList.contains('code-load-original') ? 'original' : ''
-		}/${ buttonElem.dataset.codeFile }`, { cache: 'no-cache' });
-		this.loadCode(Object.assign(JSON.parse(buttonElem.dataset.songdata),
-			{ code: await response.text() }));
-	}
+async onclickCodeLoadButton(buttonElem) {
+    const response = await fetch(`library/${
+        buttonElem.classList.contains('code-load-formatted') ? 'formatted' :
+        buttonElem.classList.contains('code-load-minified') ? 'minified' :
+        buttonElem.classList.contains('code-load-original') ? 'original' : ''
+    }/${ buttonElem.dataset.codeFile }`, { cache: 'no-cache' });
+
+    const code = await response.text();
+    const fileSize = new Blob([code]).size;
+
+    this.loadCode(Object.assign(JSON.parse(buttonElem.dataset.songdata), { code }));
+
+    console.log(`File size: ${fileSize} bytes`);
+}
 	onclickCodeToggleButton(buttonElem) {
 		const parentElem = buttonElem.parentNode;
 		const origElem = parentElem.querySelector('.code-text-original');
