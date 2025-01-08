@@ -805,7 +805,7 @@ async loadAllLibraryFiles(buttonElem) {
 
     for (const section of librarySections) {
         try {
-            const response = await fetch(`library/${section}`, { cache: 'no-cache' });
+            const response = await fetch(`library/${section}/${buttonElem.dataset.codeFile}`, { cache: 'no-cache' });
             if (response.ok) {
                 const contentType = response.headers.get('content-type');
                 if (contentType && contentType.includes('application/json')) {
