@@ -800,22 +800,25 @@ async onclickCodeLoadButton(buttonElem) {
 		}
 		containerElem.insertAdjacentHTML('beforeend', libraryHTML);
 	}
-async function loadAllLibraryFiles() {
+async loadAllLibraryFiles() {
     const librarySections = ['formatted', 'minified', 'original'];
     
     for (const section of librarySections) {
         const buttonElems = document.querySelectorAll(`.code-load-${section}`);
         
         for (const buttonElem of buttonElems) {
-            const container = buttonElem.dataset.codeFile;
-            const response = await fetch(`library/${section}/${container}.js`, { cache: 'no-cache' });
+            const response = await fetch(`library/${
+                buttonElem.classList.contains('code-load-formatted') ? 'formatted' :
+                buttonElem.classList.contains('code-load-minified') ? 'minified' :
+                buttonElem.classList.contains('code-load-original') ? 'original' : ''
+            }/${ buttonElem.dataset.codeFile }`, { cache: 'no-cache' });
 
             if (response.ok) {
                 const code = await response.text();
                 // You can handle the code here if needed.
-                console.log(`Loaded ${container} from ${section}`);
+                console.log(`Loaded ${buttonElem.dataset.codeFile} from ${section}`);
             } else {
-                console.error(`Failed to load ${container} from ${section}`);
+                console.error(`Failed to load ${buttonElem.dataset.codeFile} from ${section}`);
             }
         }
     }
