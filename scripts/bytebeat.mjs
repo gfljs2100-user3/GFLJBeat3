@@ -800,29 +800,44 @@ async onclickCodeLoadButton(buttonElem) {
 		}
 		containerElem.insertAdjacentHTML('beforeend', libraryHTML);
 	}
-async loadAllLibraryFiles() {
+async function loadAllLibraryFiles() {
     const librarySections = ['formatted', 'minified', 'original'];
-    const libraryContainers = [
-        'library-classic', 'library-compact-js', 'library-big-js', 
-        'library-floatbeat', 'library-funcbeat', 'library-wavepot', 
-        'library-sthephanshi', 'library-gfljs2100'
-    ];
-
+    
     for (const section of librarySections) {
-        for (const container of libraryContainers) {
-            const response = await fetch(`library/${section}/${container}.js`, { cache: 'no-cache' });
+        // Assuming buttons are available in the DOM to get the dataset.codeFile
+        const buttons = document.querySelectorAll(`.code-load-${section}`);
+        for (const buttonElem of buttons) {
+            const response = await fetch(`library/${section}/${buttonElem.dataset.codeFile}`, { cache: 'no-cache' });
 
             if (response.ok) {
                 const code = await response.text();
                 // You can handle the code here if needed.
-                console.log(`Loaded ${container} from ${section}`);
+                console.log(`Loaded ${buttonElem.dataset.codeFile} from ${section}`);
             } else {
-                console.error(`Failed to load ${container} from ${section}`);
+                console.error(`Failed to load ${buttonElem.dataset.codeFile} from ${section}`);
             }
         }
     }
 
     alert('All library files have been loaded for offline use.');
+}
+async function loadLibraryFile(buttonElem) {
+    const section = 
+        buttonElem.classList.contains('code-load-formatted') ? 'formatted' :
+        buttonElem.classList.contains('code-load-minified') ? 'minified' :
+        buttonElem.classList.contains('code-load-original') ? 'original' : '';
+
+    if (section) {
+        const response = await fetch(`library/${section}/${buttonElem.dataset.codeFile}`, { cache: 'no-cache' });
+
+        if (response.ok) {
+            const code = await response.text();
+            // You can handle the code here if needed.
+            console.log(`Loaded ${buttonElem.dataset.codeFile} from ${section}`);
+        } else {
+            console.error(`Failed to load ${buttonElem.dataset.codeFile} from ${section}`);
+        }
+    }
 }
 	oninputCounter(e) {
 		if(e.key === 'Enter') {
