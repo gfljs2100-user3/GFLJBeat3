@@ -807,30 +807,13 @@ async loadAllLibraryFiles(buttonElem) {
         try {
             const response = await fetch(`library/${section}/${buttonElem.dataset.codeFile}`, { cache: 'no-cache' });
             if (response.ok) {
-                const contentType = response.headers.get('content-type');
-                if (contentType && contentType.includes('application/json')) {
-                    const fileList = await response.json(); // JSON array of filenames
-                    for (const file of fileList) {
-                        try {
-                            const fileResponse = await fetch(`library/${section}/${buttonElem.dataset.codeFile}`, { cache: 'no-cache' });
-                            if (fileResponse.ok) {
-                                const code = await fileResponse.text();
-                                console.log(`Loaded ${buttonElem.dataset.codeFile} from ${section}`);
-                            } else {
-                                console.error(`Failed to load ${buttonElem.dataset.codeFile} from ${section}: ${fileResponse.statusText}`);
-                            }
-                        } catch (fileError) {
-                            console.error(`Error loading file ${buttonElem.dataset.codeFile} from ${section}:`, fileError);
-                        }
-                    }
-                } else {
-                    console.error(`Unexpected content type: ${contentType}`);
-                }
+                const code = await response.text();
+                console.log(`Loaded ${buttonElem.dataset.codeFile} from ${section}`);
             } else {
-                console.error(`Failed to load file list from ${section}: ${response.statusText}`);
+                console.error(`Failed to load ${buttonElem.dataset.codeFile} from ${section}`);
             }
-        } catch (sectionError) {
-            console.error(`Error loading section ${section}:`, sectionError);
+        } catch (error) {
+            console.error(`Error loading ${buttonElem.dataset.codeFile} from ${section}:`, error);
         }
     }
 
