@@ -687,6 +687,8 @@ generateLibraryEntry({
 		this.setColorWaveform();
 		this.controlColorTimeCursor = document.getElementById('control-color-timecursor');
 		this.setColorTimeCursor();
+		this.controlLoadAll = document.getElementById('control-load-all');
+		this.controlLoadAll.addEventListener('click', () => this.loadAllLibraryFiles());
 		this.controlDrawMode = document.getElementById('control-drawmode');
 		this.controlDrawMode.value = this.settings.drawMode;
 		this.sendData({ drawMode: this.settings.drawMode });
@@ -798,6 +800,30 @@ async onclickCodeLoadButton(buttonElem) {
 		}
 		containerElem.insertAdjacentHTML('beforeend', libraryHTML);
 	}
+async loadAllLibraryFiles() {
+    const librarySections = ['formatted', 'minified', 'original'];
+    const libraryContainers = [
+        'library-classic', 'library-compact-js', 'library-big-js', 
+        'library-floatbeat', 'library-funcbeat', 'library-wavepot', 
+        'library-sthephanshi', 'library-gfljs2100'
+    ];
+
+    for (const section of librarySections) {
+        for (const container of libraryContainers) {
+            const response = await fetch(`library/${section}/${container}.js`, { cache: 'no-cache' });
+
+            if (response.ok) {
+                const code = await response.text();
+                // You can handle the code here if needed.
+                console.log(`Loaded ${container} from ${section}`);
+            } else {
+                console.error(`Failed to load ${container} from ${section}`);
+            }
+        }
+    }
+
+    alert('All library files have been loaded for offline use.');
+}
 	oninputCounter(e) {
 		if(e.key === 'Enter') {
 			this.controlTime.blur();
