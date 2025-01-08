@@ -1083,6 +1083,9 @@ setSampleRate(sampleRate, isSendData = true) {
         case 32000:
         case 44100:
         case 48000:
+	case 64000:
+	case 88200:
+	case 96000:
             this.controlSampleRateSelect.value = sampleRate;
             break;
         default:
