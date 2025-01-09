@@ -363,13 +363,13 @@ class audioProcessor extends AudioWorkletProcessor {
 				this.func(0, 44100);
 			} else if(this.isFuncBytebeat) {
 				this.func = this.func();
-				this.func(0, 44100);
+				this.func(0, this.sampleRate);
 			} else if(this.isSignedFuncBytebeat) {
 				this.func = this.func();
-				this.func(0, 44100);
+				this.func(0, this.sampleRate);
 			} else if(this.isRAW) {
 				this.func = this.func();
-				this.func(0);
+				this.func(0, this.sampleRate);
 			} else {
 				this.func(0);
 			}
