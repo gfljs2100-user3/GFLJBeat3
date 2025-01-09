@@ -341,14 +341,14 @@ class audioProcessor extends AudioWorkletProcessor {
 			/*cos that loops every 128 "steps", instead of every pi steps*/"cosf": function (x) { return Math.cos(x / (128 / Math.PI)) },
 			/*tan that loops every 128 "steps", instead of every pi steps*/"tanf": function (x) { return Math.tan(x / (128 / Math.PI)) },
 			/*converts t into a string composed of it's bits, regex's that*/"regG": function (t, X) { return X.test(t.toString(2)) },
-			/*corrupt sound*/"crpt": function(x,y=8) { return chyx.br(chyx.br(x,y)+t,y)^chyx.br(t,y)},
-			/*decorrupt sound*/"decrpt": function(x,y=8) { return chyx.br(chyx.br(x^chyx.br(t,y),y)-t,y)}
+			/*corrupt sound*/"crpt": function(x,y=8) { return gfjs.br(chyx.br(x,y)+t,y)^chyx.br(t,y)},
+			/*decorrupt sound*/"decrpt": function(x,y=8) { return gfjs.br(chyx.br(x^chyx.br(t,y),y)-t,y)}
 		}
 		// Create shortened Math functions
 		const params = Object.getOwnPropertyNames(Math);
 		const values = params.map(k => Math[k]);
-		const chyxNames = Object.getOwnPropertyNames(gfjs);
-		const chyxFuncs = gfjsNames.map(k => gfjs[k]);
+		const gfjsNames = Object.getOwnPropertyNames(gfjs);
+		const gfjsFuncs = gfjsNames.map(k => gfjs[k]);
 		params.push('int', 'window', ...gfjsNames);
 		values.push(Math.floor, globalThis, ...gfjsFuncs);
 		audioProcessor.deleteGlobals();
