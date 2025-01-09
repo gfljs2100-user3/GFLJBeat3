@@ -17,7 +17,7 @@ class audioProcessor extends AudioWorkletProcessor {
 		this.lastByteValue = [null, null];
 		this.lastFuncValue = [null, null];
 		this.lastTime = -1;
-		this.outValue = [0, 0, 0, 0];
+		this.outValue = [0, 0];
 		this.sampleRate = 8000;
 		this.sampleRatio = 1;
 		Object.seal(this);
