@@ -345,7 +345,7 @@ class audioProcessor extends AudioWorkletProcessor {
 			} else if(this.isSignedFuncBytebeat) {
 				this.func = new Function(...params, codeText).bind(globalThis, ...values);
 			} else if(this.isRAW) {
-				this.func = new Function(...params, `function(t) {${codeText}}`).bind(globalThis, ...values);
+				this.func = new Function(...params, `return function(t) {${codeText}}`).bind(globalThis, ...values);
 			} else {
 				// Optimize code like eval(unescape(escape`XXXX`.replace(/u(..)/g,"$1%")))
 				codeText = codeText.trim().replace(
