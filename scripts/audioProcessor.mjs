@@ -8,6 +8,7 @@ class audioProcessor extends AudioWorkletProcessor {
 		this.func = null;
 		this.getValues = null;
 		this.isFuncbeat = false;
+		this.isRAW = false;
 		this.isWavePot = false;
 		this.isFuncBytebeat = false;
 		this.isSignedFuncBytebeat = false;
@@ -85,6 +86,8 @@ class audioProcessor extends AudioWorkletProcessor {
 						funcValue = this.func(currentSample / this.sampleRate, this.sampleRate);
 					} else if(this.isSignedFuncBytebeat) {
 						funcValue = this.func(currentSample / this.sampleRate, this.sampleRate);
+					} else if(this.isRAW) {
+						funcValue = this.func(currentSample);
 					} else {
 						funcValue = this.func(currentSample);
 					}
@@ -179,6 +182,7 @@ class audioProcessor extends AudioWorkletProcessor {
 			this.isFuncBytebeat = data.mode === 'FuncBytebeat';
 			this.isSignedFuncBytebeat = data.mode === 'Signed FuncBytebeat';
 			this.isWavePot = data.mode === 'WavePot';
+			this.isRAW = data.mode === 'RAW';
 			switch(data.mode) {
 			case 'Bytebeat':
 				this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = funcValue & 255) / 127.5 - 1;
@@ -285,6 +289,9 @@ class audioProcessor extends AudioWorkletProcessor {
 					return outValue;
 				};
 				break;
+			case 'RAW':
+				this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = funcValue & 255) / 127.5 - 1;
+				break;
 			default: this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = NaN);
 			}
 		}
@@ -337,6 +344,8 @@ class audioProcessor extends AudioWorkletProcessor {
 				this.func = new Function(...params, codeText).bind(globalThis, ...values);
 			} else if(this.isSignedFuncBytebeat) {
 				this.func = new Function(...params, codeText).bind(globalThis, ...values);
+			} else if(this.isRAW) {
+				this.func = new Function(...params, codeText).bind(globalThis, ...values);
 			} else {
 				// Optimize code like eval(unescape(escape`XXXX`.replace(/u(..)/g,"$1%")))
 				codeText = codeText.trim().replace(
@@ -358,6 +367,9 @@ class audioProcessor extends AudioWorkletProcessor {
 			} else if(this.isSignedFuncBytebeat) {
 				this.func = this.func();
 				this.func(0, 44100);
+			} else if(this.isRAW) {
+				this.func = this.func();
+				this.func(0);
 			} else {
 				this.func(0);
 			}
