@@ -9,6 +9,8 @@ class audioProcessor extends AudioWorkletProcessor {
 		this.getValues = null;
 		this.isFuncbeat = false;
 		this.isRAW = false;
+		this.isSignedRAW = false;
+		this.isFloatRAW = false;
 		this.isWavePot = false;
 		this.isFuncBytebeat = false;
 		this.isSignedFuncBytebeat = false;
@@ -87,6 +89,10 @@ class audioProcessor extends AudioWorkletProcessor {
 					} else if(this.isSignedFuncBytebeat) {
 						funcValue = this.func(currentSample / this.sampleRate, this.sampleRate);
 					} else if(this.isRAW) {
+						funcValue = this.func(currentSample);
+					} else if(this.isSignedRAW) {
+						funcValue = this.func(currentSample);
+					} else if(this.isFloatRAW) {
 						funcValue = this.func(currentSample);
 					} else {
 						funcValue = this.func(currentSample);
@@ -183,6 +189,8 @@ class audioProcessor extends AudioWorkletProcessor {
 			this.isSignedFuncBytebeat = data.mode === 'Signed FuncBytebeat';
 			this.isWavePot = data.mode === 'WavePot';
 			this.isRAW = data.mode === 'RAW';
+			this.isSignedRAW = data.mode === 'Signed RAW';
+			this.isFloatRAW = data.mode === 'FloatRAW';
 			switch(data.mode) {
 			case 'Bytebeat':
 				this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = funcValue & 255) / 127.5 - 1;
@@ -292,6 +300,16 @@ class audioProcessor extends AudioWorkletProcessor {
 			case 'RAW':
 				this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = funcValue & 255) / 127.5 - 1;
 				break;
+			case 'Signed RAW':
+				this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = funcValue + 128 & 255) / 127.5 - 1;
+				break;
+			case 'FloatRAW':
+				this.getValues = (funcValue, ch) => {
+					const outValue = Math.max(Math.min(funcValue, 1), -1);
+					this.lastByteValue[ch] = Math.round((outValue + 1) * 127.5);
+					return outValue;
+				};
+				break;
 			default: this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = NaN);
 			}
 		}
@@ -371,6 +389,20 @@ class audioProcessor extends AudioWorkletProcessor {
 					(match, m1) => unescape(escape(m1).replace(/u(..)/g, '$1%')));
 				this.func = new Function(...params, `return function (t) {${ codeText || 0 }};`)
 					.bind(globalThis, ...values);
+			} else if(this.isSignedRAW) {
+				// Optimize code like eval(unescape(escape`XXXX`.replace(/u(..)/g,"$1%")))
+				codeText = codeText.trim().replace(
+					/^eval\(unescape\(escape(?:`|\('|\("|\(`)(.*?)(?:`|'\)|"\)|`\)).replace\(\/u\(\.\.\)\/g,["'`]\$1%["'`]\)\)\)$/,
+					(match, m1) => unescape(escape(m1).replace(/u(..)/g, '$1%')));
+				this.func = new Function(...params, `return function (t) {${ codeText || 0 }};`)
+					.bind(globalThis, ...values);
+			} else if(this.isFloatRAW) {
+				// Optimize code like eval(unescape(escape`XXXX`.replace(/u(..)/g,"$1%")))
+				codeText = codeText.trim().replace(
+					/^eval\(unescape\(escape(?:`|\('|\("|\(`)(.*?)(?:`|'\)|"\)|`\)).replace\(\/u\(\.\.\)\/g,["'`]\$1%["'`]\)\)\)$/,
+					(match, m1) => unescape(escape(m1).replace(/u(..)/g, '$1%')));
+				this.func = new Function(...params, `return function (t) {${ codeText || 0 }};`)
+					.bind(globalThis, ...values);
 			} else {
 				// Optimize code like eval(unescape(escape`XXXX`.replace(/u(..)/g,"$1%")))
 				codeText = codeText.trim().replace(
@@ -393,6 +425,12 @@ class audioProcessor extends AudioWorkletProcessor {
 				this.func = this.func();
 				this.func(0, this.sampleRate);
 			} else if(this.isRAW) {
+				this.func = this.func();
+				this.func(0);
+			} else if(this.isSignedRAW) {
+				this.func = this.func();
+				this.func(0);
+			} else if(this.isFloatRAW) {
 				this.func = this.func();
 				this.func(0);
 			} else {
