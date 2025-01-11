@@ -359,8 +359,7 @@ class audioProcessor extends AudioWorkletProcessor {
 			/*cos that loops every 128 "steps", instead of every pi steps*/"cosf": function (x) { return Math.cos(x / (128 / Math.PI)) },
 			/*tan that loops every 128 "steps", instead of every pi steps*/"tanf": function (x) { return Math.tan(x / (128 / Math.PI)) },
 			/*converts t into a string composed of it's bits, regex's that*/"regG": function (t, X) { return X.test(t.toString(2)) },
-			/*corrupt sound*/"crpt": function(x,y=8,t) { return gfjs.br(gfjs.br(x,y)+t,y)^gfjs.br(t,y)},
-			/*decorrupt sound*/"decrpt": function(x,y=8,t) { return gfjs.br(gfjs.br(x^gfjs.br(t,y),y)-t,y)}
+			"mod": function (x,y) { return x % y }
 		}
 		// Create shortened Math functions
 		const params = Object.getOwnPropertyNames(Math);
