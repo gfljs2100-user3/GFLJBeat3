@@ -310,6 +310,12 @@ class audioProcessor extends AudioWorkletProcessor {
 					return outValue;
 				};
 				break;
+			case 'Pseudo PWM':
+				this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = funcValue & (funcValue >> 7) - (funcValue) & 255) / 127.5 - 1;
+				break;
+			case 'Signed Pseudo PWM':
+				this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = (funcValue & (funcValue >> 7) - funcValue) + 128 & 255) / 127.5 - 1;
+				break;
 			default: this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = NaN);
 			}
 		}
