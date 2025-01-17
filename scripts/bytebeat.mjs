@@ -762,7 +762,7 @@ generateLibraryEntry({
 			`${ (isMinified ? minElem : origElem).getAttribute('code-length') }`;
 		buttonElem.title = isMinified ? 'Minified version shown. Click to view the original version.' :
 			'Original version shown. Click to view the minified version.';
-		buttonElem.textContent = isMinified ? '+' : '-';
+		buttonElem.textContent = isMinified ? '+' : '–';
 	}
 	async onclickLibraryHeader(headerElem) {
 		const containerElem = headerElem.nextElementSibling;
