@@ -415,7 +415,7 @@ generateLibraryEntry({
     if (codeMinified) {
         entry += ` <span class="code-length" title="Size in characters">${
             this.formatBytes(codeMinified.length) }</span>` + (codeOriginal ? '<button class="code-button code-toggle"' +
-                ' title="Minified version shown. Click to view the original version.">view original</button>' : '');
+                ' title="Minified version shown. Click to view the original version.">show original</button>' : '');
     } else if (codeOriginal) {
         entry += ` <span class="code-length" title="Size in characters">${ this.formatBytes(codeOriginal.length) }</span>`;
     }
@@ -762,7 +762,7 @@ generateLibraryEntry({
 			`${ (isMinified ? minElem : origElem).getAttribute('code-length') }`;
 		buttonElem.title = isMinified ? 'Minified version shown. Click to view the original version.' :
 			'Original version shown. Click to view the minified version.';
-		buttonElem.textContent = isMinified ? '+' : '–';
+		buttonElem.textContent = isMinified ? 'show original' : 'show minified';
 	}
 	async onclickLibraryHeader(headerElem) {
 		const containerElem = headerElem.nextElementSibling;
