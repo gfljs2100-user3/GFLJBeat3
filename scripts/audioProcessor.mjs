@@ -11,6 +11,9 @@ class audioProcessor extends AudioWorkletProcessor {
 		this.isRAW = false;
 		this.isSignedRAW = false;
 		this.isFloatRAW = false;
+		this.isFuncBytebeatnotdividedsamplerate = false;
+		this.isSignedFuncBytebeatnotdividedsamplerate = false;
+		this.isFuncbeatbutnotdividedbysamplerate = false;
 		this.isWavePot = false;
 		this.isFuncBytebeat = false;
 		this.isSignedFuncBytebeat = false;
@@ -88,6 +91,12 @@ class audioProcessor extends AudioWorkletProcessor {
 						funcValue = this.func(currentSample / this.sampleRate, this.sampleRate);
 					} else if(this.isSignedFuncBytebeat) {
 						funcValue = this.func(currentSample / this.sampleRate, this.sampleRate);
+					} else if(this.isFuncBytebeatnotdividedsamplerate) {
+						funcValue = this.func(currentSample, this.sampleRate);
+					} else if(this.isSignedFuncBytebeatnotdividedsamplerate) {
+						funcValue = this.func(currentSample, this.sampleRate);
+					} else if(this.isFuncbeatbutnotdividedbysamplerate) {
+						funcValue = this.func(currentSample, this.sampleRate);
 					} else if(this.isRAW) {
 						funcValue = this.func(currentSample);
 					} else if(this.isSignedRAW) {
@@ -186,7 +195,10 @@ class audioProcessor extends AudioWorkletProcessor {
 		if(data.mode !== undefined) {
 			this.isFuncbeat = data.mode === 'Funcbeat';
 			this.isFuncBytebeat = data.mode === 'FuncBytebeat';
+			this.isFuncBytebeatnotdividedsamplerate = data.mode === 'FuncBytebeat not divided by samplerate';
 			this.isSignedFuncBytebeat = data.mode === 'Signed FuncBytebeat';
+			this.isSignedFuncBytebeatnotdividedsamplerate = data.mode === 'Signed FuncBytebeat not divided by samplerate';
+			this.isFuncbeatbutnotdividedbysamplerate = data.mode === 'Funcbeat but not divided by samplerate';
 			this.isWavePot = data.mode === 'WavePot';
 			this.isRAW = data.mode === 'RAW';
 			this.isSignedRAW = data.mode === 'Signed RAW';
@@ -198,6 +210,9 @@ class audioProcessor extends AudioWorkletProcessor {
 			case 'FuncBytebeat':
 				this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = funcValue & 255) / 127.5 - 1;
 				break;
+			case 'FuncBytebeat not divided by samplerate':
+				this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = funcValue & 255) / 127.5 - 1;
+				break;
 			case 'Signed Bytebeat':
 				this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = funcValue + 128 & 255) / 127.5 - 1;
 				break;
@@ -205,8 +220,19 @@ class audioProcessor extends AudioWorkletProcessor {
 				this.getValues = (funcValue, ch) =>
 					(this.lastByteValue[ch] = (funcValue + 128) & 255) / 127.5 - 1;
 				break;
+			case 'Signed FuncBytebeat not divided by samplerate':
+				this.getValues = (funcValue, ch) =>
+					(this.lastByteValue[ch] = (funcValue + 128) & 255) / 127.5 - 1;
+				break;
 			case 'Floatbeat':
 			case 'Funcbeat':
+				this.getValues = (funcValue, ch) => {
+					const outValue = Math.max(Math.min(funcValue, 1), -1);
+					this.lastByteValue[ch] = Math.round((outValue + 1) * 127.5);
+					return outValue;
+				};
+				break;
+			case 'Funcbeat but not divided by samplerate':
 				this.getValues = (funcValue, ch) => {
 					const outValue = Math.max(Math.min(funcValue, 1), -1);
 					this.lastByteValue[ch] = Math.round((outValue + 1) * 127.5);
@@ -408,6 +434,27 @@ class audioProcessor extends AudioWorkletProcessor {
 					(match, m1) => unescape(escape(m1).replace(/u(..)/g, '$1%')));
 				this.func = new Function(...params, `return function (t) {${ codeText || 0 }};`)
 					.bind(globalThis, ...values);
+			} else if(this.isFuncBytebeatnotdividedsamplerate) {
+				// Optimize code like eval(unescape(escape`XXXX`.replace(/u(..)/g,"$1%")))
+				codeText = codeText.trim().replace(
+					/^eval\(unescape\(escape(?:`|\('|\("|\(`)(.*?)(?:`|'\)|"\)|`\)).replace\(\/u\(\.\.\)\/g,["'`]\$1%["'`]\)\)\)$/,
+					(match, m1) => unescape(escape(m1).replace(/u(..)/g, '$1%')));
+				this.func = new Function(...params, `return function (t) {${ codeText || 0 }};`)
+					.bind(globalThis, ...values);
+			} else if(this.isSignedFuncBytebeatnotdividedsamplerate) {
+				// Optimize code like eval(unescape(escape`XXXX`.replace(/u(..)/g,"$1%")))
+				codeText = codeText.trim().replace(
+					/^eval\(unescape\(escape(?:`|\('|\("|\(`)(.*?)(?:`|'\)|"\)|`\)).replace\(\/u\(\.\.\)\/g,["'`]\$1%["'`]\)\)\)$/,
+					(match, m1) => unescape(escape(m1).replace(/u(..)/g, '$1%')));
+				this.func = new Function(...params, `return function (t) {${ codeText || 0 }};`)
+					.bind(globalThis, ...values);
+			} else if(this.isFuncbeatbutnotdividedbysamplerate) {
+				// Optimize code like eval(unescape(escape`XXXX`.replace(/u(..)/g,"$1%")))
+				codeText = codeText.trim().replace(
+					/^eval\(unescape\(escape(?:`|\('|\("|\(`)(.*?)(?:`|'\)|"\)|`\)).replace\(\/u\(\.\.\)\/g,["'`]\$1%["'`]\)\)\)$/,
+					(match, m1) => unescape(escape(m1).replace(/u(..)/g, '$1%')));
+				this.func = new Function(...params, `return function (t) {${ codeText || 0 }};`)
+					.bind(globalThis, ...values);
 			} else {
 				// Optimize code like eval(unescape(escape`XXXX`.replace(/u(..)/g,"$1%")))
 				codeText = codeText.trim().replace(
@@ -438,6 +485,15 @@ class audioProcessor extends AudioWorkletProcessor {
 			} else if(this.isFloatRAW) {
 				this.func = this.func();
 				this.func(0);
+			} else if(this.isFuncBytebeatnotdividedsamplerate) {
+				this.func = this.func();
+				this.func(0, this.sampleRate);
+			} else if(this.isSignedFuncBytebeatnotdividedsamplerate) {
+				this.func = this.func();
+				this.func(0, this.sampleRate);
+			} else if(this.isFuncbeatbutnotdividedbysamplerate) {
+				this.func = this.func();
+				this.func(0, this.sampleRate);
 			} else {
 				this.func(0);
 			}
