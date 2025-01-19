@@ -404,7 +404,6 @@ footer {
 }
 
 .canvas-pause > #svg-canvas-play, .canvas-play > #svg-canvas-pause {
-	content: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAAWAQMAAAAcpuUBAAAABlBMVEUAAAD///+l2Z/dAAAAAXRSTlMAQObYZgAAABBJREFUCNdjgAE7O6pgGAAAhGMIudWId/YAAAAASUVORK5CYII=");
 	display: none;
 }
 
