@@ -403,7 +403,7 @@ footer {
 	background-image: var(--canvas-button);
 }
 
-.canvas-pause > #svg-canvas-play, .canvas-play > #svg-canvas-pause {
+.canvas-pause > .canvas-play {
 	content: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAAWAQMAAAAcpuUBAAAABlBMVEUAAAD///+l2Z/dAAAAAXRSTlMAQObYZgAAABBJREFUCNdjgAE7O6pgGAAAhGMIudWId/YAAAAASUVORK5CYII=");
 	display: none;
 }
@@ -419,12 +419,6 @@ footer {
 	color: var(--canvas-button-color);
 	line-height: 0;
 	transform: translate(-50%, -50%);
-}
-
-#canvas-play > svg {
-	width: 46px;
-	height: 46px;
-	fill: currentColor;
 }
 
 .canvas-play-backward > #svg-canvas-play {
