@@ -256,6 +256,9 @@ class audioProcessor extends AudioWorkletProcessor {
 			case '2048':
 				this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = Math.floor(funcValue / 8 & 255)) / 127.5 - 1;
 				break;
+			case '1024':
+				this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = Math.floor(funcValue / 4 & 255)) / 127.5 - 1;
+				break;
 			case 'LogHack':
 				this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = (Math.log2(Math.abs(funcValue)) * (((funcValue) < 0) ? -32 : 32)) & 255) / 127.5 - 1;
 				break;
