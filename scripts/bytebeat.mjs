@@ -608,7 +608,7 @@ generateLibraryEntry({
 	    loadScript('./scripts/codemirror.min.mjs?version=2024090100');
 	}
 	async initAudioContext() {
-		this.audioCtx = new AudioContext({ latencyHint: 'balanced', sampleRate: this.settingsaudiorate});
+		this.audioCtx = new AudioContext({ latencyHint: 'balanced', sampleRate: 1572864000});
 		this.audioGain = new GainNode(this.audioCtx);
 		this.audioGain.connect(this.audioCtx.destination);
 		await this.audioCtx.audioWorklet.addModule('./scripts/audioProcessor.mjs?version=2024090100');
@@ -697,7 +697,6 @@ generateLibraryEntry({
 		this.controlThemeStyle.value = this.settings.themeStyle;
 		this.controlCodeStyle = document.getElementById('control-code-style');
 		this.controlCodeStyle.value = this.settings.codeStyle;
-		this.settingsaudiorate = document.getElementById('settings-audiorate');
 	}
 	loadCode({ code, sampleRate, mode, drawMode, scale }, isPlay = true) {
 		this.songData.mode = this.controlPlaybackMode.value = mode = mode || 'Bytebeat';
