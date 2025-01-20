@@ -1,3 +1,5 @@
+import { formatBytes } from './utils.mjs';
+
 export class UI {
   constructor() {
 		this.audioCtx = null;
