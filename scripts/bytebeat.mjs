@@ -62,7 +62,8 @@ globalThis.bytebeat = new class {
 			drawScale: 5,
 			isSeconds: false,
 			themeStyle: 'Default',
-			volume: .5
+			volume: .5,
+			audioSampleRate: 48000
 		};
 		this.drawBuffer = [];
 		this.drawEndBuffer = [];
@@ -73,6 +74,7 @@ globalThis.bytebeat = new class {
 		this.isPlaying = false;
 		this.isRecording = false;
 		this.playbackSpeed = 1;
+		this.settingsAudioRate.value = this.settings.audioSampleRate;
 		this.settings = this.defaultSettings;
 		this.songData = { mode: 'Bytebeat', sampleRate: 8000 };
 		this.init();
@@ -556,6 +558,7 @@ generateLibraryEntry({
 			case 'control-scaleup': this.setScale(1); break;
 			case 'control-stop': this.playbackStop(); break;
 			case 'control-counter-units': this.toggleCounterUnits(); break;
+			case 'settings-audiorate-apply': this.setAudioSampleRate(this.settingsAudioRate.value ?? 48000); break;
 			default:
 				if(elem.classList.contains('code-text')) {
 					this.loadCode(Object.assign({ code: elem.innerText },
@@ -614,7 +617,7 @@ generateLibraryEntry({
 	    loadScript('./scripts/codemirror.min.mjs?version=2024090100');
 	}
 	async initAudioContext() {
-		this.audioCtx = new AudioContext({ latencyHint: 'balanced', samplerate: '96000'});
+		this.audioCtx = new AudioContext({ latencyHint: 'balanced', samplerate: this.settings.audioSampleRate});
 		this.audioGain = new GainNode(this.audioCtx);
 		this.audioGain.connect(this.audioCtx.destination);
 		await this.audioCtx.audioWorklet.addModule('./scripts/audioProcessor.mjs?version=2024090100');
@@ -703,6 +706,8 @@ generateLibraryEntry({
 		this.controlThemeStyle.value = this.settings.themeStyle;
 		this.controlCodeStyle = document.getElementById('control-code-style');
 		this.controlCodeStyle.value = this.settings.codeStyle;
+		this.settingsAudioRate = document.getElementById('settings-audiorate');
+		this.settingsAudioRateApplyButton = document.getElementById('settings-audiorate-apply');
 	}
 	loadCode({ code, sampleRate, mode, drawMode, scale }, isPlay = true) {
 		this.songData.mode = this.controlPlaybackMode.value = mode = mode || 'Bytebeat';
