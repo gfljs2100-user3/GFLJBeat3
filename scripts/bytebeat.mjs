@@ -1087,7 +1087,7 @@ generateLibraryEntry({
 setSampleRate(sampleRate, isSendData = true) {
     if (this.songData.mode === 'WavePot') {
         sampleRate = 44100;
-    } else if (!sampleRate || !isFinite(sampleRate)) {
+    } else if (!sampleRate || !isFinite(sampleRate) || (sampleRate = Number(parseFloat(Math.abs(sampleRate)).toFixed(4))) > 3.4028234663852886E+38) {
         sampleRate = 8000;
     }
     switch(sampleRate) {
