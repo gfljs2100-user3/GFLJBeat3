@@ -15,8 +15,6 @@ const loadScript = src => new Promise(resolve => {
 	}
 });
 
-const ui = new UI();
-
 globalThis.bytebeat = new class {
 	constructor() {
 		this.audioCtx = null;
