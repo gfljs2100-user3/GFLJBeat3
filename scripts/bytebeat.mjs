@@ -63,8 +63,7 @@ globalThis.bytebeat = new class {
 			drawScale: 5,
 			isSeconds: false,
 			themeStyle: 'Default',
-			volume: .5,
-			audioSampleRate: 48000
+			volume: .5
 		};
 		this.drawBuffer = [];
 		this.drawEndBuffer = [];
@@ -75,7 +74,6 @@ globalThis.bytebeat = new class {
 		this.isPlaying = false;
 		this.isRecording = false;
 		this.playbackSpeed = 1;
-		ui.settingsAudioRate.value = this.settings.audioSampleRate;
 		this.settings = this.defaultSettings;
 		this.songData = { mode: 'Bytebeat', sampleRate: 8000 };
 		this.init();
@@ -307,13 +305,6 @@ drawGraphics(endTime) {
 	expandEditor() {
 		this.containerFixedElem.classList.toggle('container-expanded');
 	}
-	formatBytes(bytes) {
-	if(bytes < 1E4) {
-		return bytes + 'B';
-	}
-	const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)), 10);
-	return (i ? (bytes / (1024 ** i)).toFixed(2) : bytes) + ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'][i];
-}
 
 generateLibraryEntry({
     author, children, codeMinified, codeOriginal, cover, date, description, drawing, file, fileFormatted,
@@ -559,7 +550,6 @@ generateLibraryEntry({
 			case 'control-scaleup': this.setScale(1); break;
 			case 'control-stop': this.playbackStop(); break;
 			case 'control-counter-units': this.toggleCounterUnits(); break;
-			case 'settings-audiorate-apply': this.setAudioSampleRate(ui.settingsAudioRate.value ?? 48000); break;
 			default:
 				if(elem.classList.contains('code-text')) {
 					this.loadCode(Object.assign({ code: elem.innerText },
@@ -602,7 +592,6 @@ generateLibraryEntry({
 			this.saveSettings();
 		}
 		this.setThemeStyle();
-		this.setAudioSampleRate();
 		await this.initAudioContext();
 		if(!window.location.hostname.includes(`gfljbeat3`) & (`gfljs2100-user3`)) {
 			return;
@@ -619,7 +608,7 @@ generateLibraryEntry({
 	    loadScript('./scripts/codemirror.min.mjs?version=2024090100');
 	}
 	async initAudioContext() {
-		this.audioCtx = new AudioContext({ latencyHint: 'balanced', samplerate: this.settings.audioSampleRate});
+		this.audioCtx = new AudioContext({ latencyHint: 'balanced', samplerate: '96000'});
 		this.audioGain = new GainNode(this.audioCtx);
 		this.audioGain.connect(this.audioCtx.destination);
 		await this.audioCtx.audioWorklet.addModule('./scripts/audioProcessor.mjs?version=2024090100');
@@ -708,8 +697,6 @@ generateLibraryEntry({
 		this.controlThemeStyle.value = this.settings.themeStyle;
 		this.controlCodeStyle = document.getElementById('control-code-style');
 		this.controlCodeStyle.value = this.settings.codeStyle;
-		this.settingsAudioRate = document.getElementById('settings-audiorate');
-		this.settingsAudioRateApplyButton = document.getElementById('settings-audiorate-apply');
 	}
 	loadCode({ code, sampleRate, mode, drawMode, scale }, isPlay = true) {
 		this.songData.mode = this.controlPlaybackMode.value = mode = mode || 'Bytebeat';
@@ -1033,16 +1020,6 @@ generateLibraryEntry({
 		this.controlColorWaveformInfo.innerHTML =
 			this.getColorTest(this.colorWaveform = this.getColor(value));
 	}
-	setAudioSampleRate(value) {
-		if(value !== undefined) {
-			this.settings.audioSampleRate = value;
-			this.saveSettings();
-			window.location.reload();
-		} else if((value = this.settings.audioSampleRate) === undefined) {
-			value = this.settings.audioSampleRate = this.defaultSettings.audioSampleRate;
-			this.saveSettings();
-		}
-	}
 	setCounterUnits() {
 		this.controlTimeUnits.textContent = this.settings.isSeconds ? 'sec' : 't';
 		this.setCounterValue(this.byteSample);
@@ -1089,7 +1066,7 @@ generateLibraryEntry({
 setSampleRate(sampleRate, isSendData = true) {
     if (this.songData.mode === 'WavePot') {
         sampleRate = 44100;
-    } else if (!sampleRate || !isFinite(sampleRate) || (sampleRate = Number(parseFloat(Math.abs(sampleRate)).toFixed(4))) > 3.4028234663852886E+38) {
+    } else if (!sampleRate || !isFinite(sampleRate)) {
         sampleRate = 8000;
     }
     switch(sampleRate) {
