@@ -1031,6 +1031,16 @@ generateLibraryEntry({
 		this.controlColorWaveformInfo.innerHTML =
 			this.getColorTest(this.colorWaveform = this.getColor(value));
 	}
+	setAudioSampleRate(value) {
+		if(value !== undefined) {
+			this.settings.audioSampleRate = value;
+			this.saveSettings();
+			window.location.reload();
+		} else if((value = this.settings.audioSampleRate) === undefined) {
+			value = this.settings.audioSampleRate = this.defaultSettings.audioSampleRate;
+			this.saveSettings();
+		}
+	}
 	setCounterUnits() {
 		this.controlTimeUnits.textContent = this.settings.isSeconds ? 'sec' : 't';
 		this.setCounterValue(this.byteSample);
