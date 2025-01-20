@@ -408,10 +408,10 @@ generateLibraryEntry({
     const songData = codeOriginal || codeMinified || file ? JSON.stringify(songObj) : '';
     if (codeMinified) {
         entry += ` <span class="code-length" title="Size in characters">${
-            this.formatBytes(codeMinified.length) }</span>` + (codeOriginal ? '<button class="code-button code-toggle"' +
+            formatBytes(codeMinified.length) }</span>` + (codeOriginal ? '<button class="code-button code-toggle"' +
                 ' title="Minified version shown. Click to view the original version.">+</button>' : '');
     } else if (codeOriginal) {
-        entry += ` <span class="code-length" title="Size in characters">${ this.formatBytes(codeOriginal.length) }</span>`;
+        entry += ` <span class="code-length" title="Size in characters">${ formatBytes(codeOriginal.length) }</span>`;
     }
     if (file) {
         let codeBtn = '';
@@ -443,12 +443,12 @@ generateLibraryEntry({
         }
         entry += `<br><button class="code-text code-text-original${
             codeMinified ? ' hidden' : '' }" data-songdata='${ songData }' code-length="${
-            this.formatBytes(codeOriginal.length) }">${ this.escapeHTML(codeOriginal) }</button>`;
+            formatBytes(codeOriginal.length) }">${ this.escapeHTML(codeOriginal) }</button>`;
     }
     if (codeMinified) {
         entry += `${ codeOriginal ? '' : '<br>' }<button class="code-text code-text-minified"` +
             ` data-songdata='${ songData }' code-length="${ this.formatBytes(codeMinified.length) }">${
-                this.escapeHTML(codeMinified) }</button>`;
+                escapeHTML(codeMinified) }</button>`;
     }
     let childrenStr = '';
     if (children && children.length > 0) {
@@ -1025,7 +1025,7 @@ generateLibraryEntry({
 		this.setCounterValue(this.byteSample);
 	}
 	setCodeSize(value) {
-		this.controlCodeSize.textContent = `${this.formatBytes(new Blob([value]).size)} (${this.formatBytes(String(window.location).length)})`;
+		this.controlCodeSize.textContent = `${formatBytes(new Blob([value]).size)} (${formatBytes(String(window.location).length)})`;
 	}
 	setCounterValue(value) {
 		this.controlTime.value = this.settings.isSeconds ?
