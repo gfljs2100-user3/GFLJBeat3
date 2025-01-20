@@ -607,54 +607,36 @@ generateLibraryEntry({
 	    this.parseUrl();
 	    loadScript('./scripts/codemirror.min.mjs?version=2024090100');
 	}
-async initAudioContext() {
-    try {
-        // Set a desired sample rate (use 192000 Hz as the maximum for safety)
-        const desiredSampleRate = Infinity; // This is a placeholder
-        const maxSampleRate = 192000; // Adjust based on what browsers typically support
-        const sampleRate = Math.min(desiredSampleRate, maxSampleRate);
-
-        // Initialize AudioContext with the computed sample rate
-        this.audioCtx = new AudioContext({ latencyHint: 'balanced', sampleRate });
-        console.log(`AudioContext initialized with sample rate: ${this.audioCtx.sampleRate}`);
-
-        // Create gain node and connect to destination
-        this.audioGain = new GainNode(this.audioCtx);
-        this.audioGain.connect(this.audioCtx.destination);
-
-        // Load audio worklet module
-        await this.audioCtx.audioWorklet.addModule('./scripts/audioProcessor.mjs?version=2024090100');
-
-        // Create and configure AudioWorkletNode
-        this.audioWorkletNode = new AudioWorkletNode(this.audioCtx, 'audioProcessor', {
-            outputChannelCount: [2],
-        });
-        this.audioWorkletNode.port.addEventListener('message', (e) => this.receiveData(e.data));
-        this.audioWorkletNode.port.start();
-        this.audioWorkletNode.connect(this.audioGain);
-
-        // Setup MediaStreamDestination and MediaRecorder
-        const mediaDest = this.audioCtx.createMediaStreamDestination();
-        const audioRecorder = (this.audioRecorder = new MediaRecorder(mediaDest.stream));
-        audioRecorder.addEventListener('dataavailable', (e) => this.audioRecordChunks.push(e.data));
-        audioRecorder.addEventListener('stop', () => {
-            let file, type;
-            const types = ['audio/mpeg', 'audio/ogg'];
-            const files = ['track.mp3', 'track.ogg'];
-            while ((file = files.pop()) && !MediaRecorder.isTypeSupported((type = types.pop()))) {
-                if (types.length === 0) {
-                    console.error('Recording is not supported in this browser!');
-                    break;
-                }
-            }
-            this.saveData(new Blob(this.audioRecordChunks, { type }), file);
-        });
-        this.audioGain.connect(mediaDest);
-
-    } catch (error) {
-        console.error('Failed to initialize AudioContext:', error);
-    }
-}
+	async initAudioContext() {
+		const samplerate = 384000;
+		const samplerate2 = 192000;
+		const samplerate3 = Math.min(samplerate, samplerate2);
+		this.audioCtx = new AudioContext({ latencyHint: 'balanced', sampleRate: samplerate3});
+		this.audioGain = new GainNode(this.audioCtx);
+		this.audioGain.connect(this.audioCtx.destination);
+		await this.audioCtx.audioWorklet.addModule('./scripts/audioProcessor.mjs?version=2024090100');
+		this.audioWorkletNode = new AudioWorkletNode(this.audioCtx, 'audioProcessor',
+			{ outputChannelCount: [2] });
+		this.audioWorkletNode.port.addEventListener('message', e => this.receiveData(e.data));
+		this.audioWorkletNode.port.start();
+		this.audioWorkletNode.connect(this.audioGain);
+		const mediaDest = this.audioCtx.createMediaStreamDestination();
+		const audioRecorder = this.audioRecorder = new MediaRecorder(mediaDest.stream);
+		audioRecorder.addEventListener('dataavailable', e => this.audioRecordChunks.push(e.data));
+		audioRecorder.addEventListener('stop', () => {
+			let file, type;
+			const types = ['audio/mpeg', 'audio/ogg'];
+			const files = ['track.mp3', 'track.ogg'];
+			while((file = files.pop()) && !MediaRecorder.isTypeSupported(type = types.pop())) {
+				if(types.length === 0) {
+					console.error('Recording is not supported in this browser!');
+					break;
+				}
+			}
+			this.saveData(new Blob(this.audioRecordChunks, { type }), file);
+		});
+		this.audioGain.connect(mediaDest);
+	}
 	initElements() {
 		// Containers
 		this.cacheParentElem = document.createElement('div');
