@@ -74,7 +74,7 @@ globalThis.bytebeat = new class {
 		this.isPlaying = false;
 		this.isRecording = false;
 		this.playbackSpeed = 1;
-		this.settingsAudioRate.value = this.settings.audioSampleRate;
+		ui.settingsAudioRate.value = this.settings.audioSampleRate;
 		this.settings = this.defaultSettings;
 		this.songData = { mode: 'Bytebeat', sampleRate: 8000 };
 		this.init();
@@ -558,7 +558,7 @@ generateLibraryEntry({
 			case 'control-scaleup': this.setScale(1); break;
 			case 'control-stop': this.playbackStop(); break;
 			case 'control-counter-units': this.toggleCounterUnits(); break;
-			case 'settings-audiorate-apply': this.setAudioSampleRate(this.settingsAudioRate.value ?? 48000); break;
+			case 'settings-audiorate-apply': this.setAudioSampleRate(ui.settingsAudioRate.value ?? 48000); break;
 			default:
 				if(elem.classList.contains('code-text')) {
 					this.loadCode(Object.assign({ code: elem.innerText },
