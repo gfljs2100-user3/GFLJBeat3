@@ -608,10 +608,7 @@ generateLibraryEntry({
 	    loadScript('./scripts/codemirror.min.mjs?version=2024090100');
 	}
 	async initAudioContext() {
-		const samplerate = 384000;
-		const samplerate2 = 192000;
-		const samplerate3 = Math.min(samplerate, samplerate2);
-		this.audioCtx = new AudioContext({ latencyHint: 'balanced', sampleRate: samplerate3});
+		this.audioCtx = new AudioContext({ latencyHint: 'balanced', sampleRate: 384000});
 		this.audioGain = new GainNode(this.audioCtx);
 		this.audioGain.connect(this.audioCtx.destination);
 		await this.audioCtx.audioWorklet.addModule('./scripts/audioProcessor.mjs?version=2024090100');
