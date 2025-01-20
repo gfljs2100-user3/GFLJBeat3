@@ -1,4 +1,5 @@
 import { deflateRaw, inflateRaw, ungzip } from './pako.esm.min.mjs';
+import { UI } from './ui.mjs';
 
 const loadScript = src => new Promise(resolve => {
 	try {
@@ -13,6 +14,8 @@ const loadScript = src => new Promise(resolve => {
 		console.error(err.message);
 	}
 });
+
+const ui = new UI();
 
 globalThis.bytebeat = new class {
 	constructor() {
