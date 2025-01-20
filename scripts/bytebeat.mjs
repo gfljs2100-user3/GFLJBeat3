@@ -74,7 +74,7 @@ globalThis.bytebeat = new class {
 		this.isPlaying = false;
 		this.isRecording = false;
 		this.playbackSpeed = 1;
-		this.settingsAudioRate.value = this.settings.audioSampleRate;
+		ui.settingsAudioRate.value = this.settings.audioSampleRate;
 		this.settings = this.defaultSettings;
 		this.songData = { mode: 'Bytebeat', sampleRate: 8000 };
 		this.init();
