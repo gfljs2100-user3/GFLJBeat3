@@ -447,7 +447,7 @@ generateLibraryEntry({
     }
     if (codeMinified) {
         entry += `${ codeOriginal ? '' : '<br>' }<button class="code-text code-text-minified"` +
-            ` data-songdata='${ songData }' code-length="${ this.formatBytes(codeMinified.length) }">${
+            ` data-songdata='${ songData }' code-length="${ formatBytes(codeMinified.length) }">${
                 escapeHTML(codeMinified) }</button>`;
     }
     let childrenStr = '';
