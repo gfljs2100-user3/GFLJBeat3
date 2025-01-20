@@ -38,19 +38,6 @@ export class UI {
 		this.colorChannels = null;
 		this.colorDiagram = null;
 		this.colorWaveform = null;
-		this.defaultSettings = {
-			codeStyle: 'GFLJS2100',
-			colorDiagram: '#ffa200',
-			colorStereo: 1,
-			colorTimeCursor: '#fbff00',
-			colorWaveform: '#ffffff',
-			drawMode: 'Combined',
-			drawScale: 5,
-			isSeconds: false,
-			themeStyle: 'Default',
-			volume: .5,
-			audioSampleRate: 48000
-		};
 		this.drawBuffer = [];
 		this.drawEndBuffer = [];
 		this.editorElem = null;
