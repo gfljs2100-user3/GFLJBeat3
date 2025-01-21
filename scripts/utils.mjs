@@ -1,6 +1,6 @@
 export function formatBytes (bytes, unit) {
-	const unit1024 = unit || 1E4
-	  if (bytes < (unit = unit || 1E4)) 
+	const unit1024 = unit || (1E3 + 24)
+	  if (bytes < (unit = unit || 1E3)) 
 	    return bytes + "B";
 		  var exp = parseInt(Math.floor(Math.log(bytes) / Math.log(unit)), 10);
 		  var pre = '' + (unit === 1000 ? "kMGTPE" : "KMGTPE").charAt(exp - 1) + (unit === 1000 ? "" : "i") + 'B';
