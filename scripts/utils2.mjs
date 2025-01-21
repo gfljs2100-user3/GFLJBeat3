@@ -1,4 +1,4 @@
-export function formatBytes (bytes, unit) {
+export function formatBytes2 (bytes, unit) {
 	  if (bytes < (unit = unit || 1000)) 
 	    return bytes + "B";
 		  var exp = Math.floor(Math.log(bytes) / Math.log(unit));
