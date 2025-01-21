@@ -1,7 +1,7 @@
 export function formatBytes (bytes, unit) {
 	const unit1000 = unit || 1000
 	const unit1024 = unit || 1024
-	  if (bytes < (unit1000 & unit1024)) 
+	  if (bytes < (unit1000)) 
 	    return bytes + "B";
 		  var exp1000 = Math.floor(Math.log(bytes) / Math.log(unit1000));
 		  var exp1024 = Math.floor(Math.log(bytes) / Math.log(unit1024));
