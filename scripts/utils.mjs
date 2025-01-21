@@ -4,5 +4,5 @@ export function formatBytes (bytes, unit) {
 	    return bytes + "B";
 		  var exp = Math.floor(Math.log(bytes) / Math.log(unit));
 		  var pre = '' + (unit === 1000 ? "kMGTPE" : "KMGTPE").charAt(exp - 1) + (unit === 1000 ? "" : "i") + 'B';
-	    return (bytes / (Math.pow(unit, exp))).toFixed(2) + pre + ((bytes / (Math.pow(unit1024, exp))).toFixed(2) + (unit1024 === 1024 ? "kMGTPE" : "KMGTPE").charAt(exp - 1) + (unit1024 === 1024 ? "" : "i") + 'B');
+	    return (bytes / (Math.pow(unit, exp))).toFixed(2) + pre + ((bytes / (Math.pow(unit1024, exp))).toFixed(2) + (unit1024 === 1000 ? "kMGTPE" : "KMGTPE").charAt(exp - 1) + (unit1024 === 1000 ? "" : "i") + 'B');
 }
