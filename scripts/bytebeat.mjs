@@ -1,5 +1,6 @@
 import { deflateRaw, inflateRaw, ungzip } from './pako.esm.min.mjs';
 import { formatBytes } from './utils.mjs';
+import { formatBytes2 } from './utils2.mjs';
 
 const loadScript = src => new Promise(resolve => {
 	try {
@@ -1025,7 +1026,7 @@ generateLibraryEntry({
 		this.setCounterValue(this.byteSample);
 	}
 	setCodeSize(value) {
-		this.controlCodeSize.textContent = `${formatBytes(new Blob([value]).size)} (${formatBytes(String(window.location).length)})`;
+		this.controlCodeSize.textContent = `${formatBytes(new Blob([value]).size)} (${formatBytes2(String(window.location).length)})`;
 	}
 	setCounterValue(value) {
 		this.controlTime.value = this.settings.isSeconds ?
