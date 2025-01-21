@@ -1,5 +1,5 @@
 export function formatBytes(bytes) {
-	if(bytes > 1024) {
+	if(bytes < 1024) {
 		return bytes + 'B';
 	}
 	const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)), 10);
