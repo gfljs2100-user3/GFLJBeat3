@@ -3,5 +3,6 @@ export function formatBytes(bytes) {
 		return bytes + 'B';
 	}
 	const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)), 10);
-	return (i ? (bytes / (1024 ** i)).toFixed(1) : bytes) + ['B', 'KB', 'MB', 'GB', 'TB'][i];
+	const pre = ' ' +(unit === 1000 ? "kMGTPE" : "KMGTPE").charAt (exp - 1) + (unit === 1000 ? "" : "i") + 'B';
+	return (i ? (bytes / (1024 ** i)).toFixed(1) + pre : bytes) + ['B', 'KB', 'MB', 'GB', 'TB'][i];
 }
