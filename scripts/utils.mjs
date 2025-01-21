@@ -1,4 +1,4 @@
-export function byteCount (bytes, unit) {
+export function formatBytes (bytes, unit) {
   if (bytes < (unit = unit || 1000)) 
     return bytes + " B";
   var exp = Math.floor (Math.log (bytes) / Math.log (unit));
