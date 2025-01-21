@@ -4,5 +4,5 @@ export function formatBytes(bytes) {
 	}
 	const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)), 10);
 	const pre = ' ' +(bytes === 1000 ? "kMGTPE" : "KMGTPE").charAt (i - 1) + (bytes === 1000 ? "" : "i") + 'B';
-	return (bytes / Math.pow (unit, exp)).toFixed (1) + pre;
+	return (bytes / Math.pow (bytes, i)).toFixed (1) + pre;
 }
