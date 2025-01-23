@@ -8,3 +8,11 @@ export function formatBytes(bytes) {
 	const a1024 = (i1024 ? (bytes / (1024 ** i1024)).toFixed(2) : bytes) + ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'][i1024];
 	return 0?`${a1000}/(${a1024})`:`${a1000} (${a1024})`;
 }
+
+function formatBytes2(bytes) {
+	if(bytes < 1024) {
+		return bytes + 'B';
+	}
+	const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)), 10);
+	return (i1000 ? (bytes / (1024 ** i)).toFixed(2) : bytes) + ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'][i];;
+}
