@@ -9,7 +9,7 @@ export function formatBytes(bytes) {
 	return 0?`${a1000}/(${a1024})`:`${a1000} (${a1024})`;
 }
 
-function formatBytes2(bytes) {
+export function formatBytes2(bytes) {
 	if(bytes < 1024) {
 		return bytes + 'B';
 	}
