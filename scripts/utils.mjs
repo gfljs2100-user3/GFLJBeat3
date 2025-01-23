@@ -14,5 +14,5 @@ export function formatBytes2(bytes) {
 		return bytes + 'B';
 	}
 	const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)), 10);
-	return (i1000 ? (bytes / (1024 ** i)).toFixed(2) : bytes) + ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'][i];;
+	return (i ? (bytes / (1024 ** i)).toFixed(2) : bytes) + ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'][i];
 }
