@@ -408,10 +408,10 @@ generateLibraryEntry({
     const songData = codeOriginal || codeMinified || file ? JSON.stringify(songObj) : '';
     if (codeMinified) {
         entry += ` <span class="code-length" title="Size in characters">${
-            formatBytes(codeMinified.length) }</span>` + (codeOriginal ? '<button class="code-button code-toggle"' +
+            formatBytes2(codeMinified.length) }</span>` + (codeOriginal ? '<button class="code-button code-toggle"' +
                 ' title="Minified version shown. Click to view the original version.">+</button>' : '');
     } else if (codeOriginal) {
-        entry += ` <span class="code-length" title="Size in characters">${ formatBytes(codeOriginal.length) }</span>`;
+        entry += ` <span class="code-length" title="Size in characters">${ formatBytes2(codeOriginal.length) }</span>`;
     }
     if (file) {
         let codeBtn = '';
@@ -443,11 +443,11 @@ generateLibraryEntry({
         }
         entry += `<br><button class="code-text code-text-original${
             codeMinified ? ' hidden' : '' }" data-songdata='${ songData }' code-length="${
-            formatBytes(codeOriginal.length) }">${ this.escapeHTML(codeOriginal) }</button>`;
+            formatBytes2(codeOriginal.length) }">${ this.escapeHTML(codeOriginal) }</button>`;
     }
     if (codeMinified) {
         entry += `${ codeOriginal ? '' : '<br>' }<button class="code-text code-text-minified"` +
-            ` data-songdata='${ songData }' code-length="${ formatBytes(codeMinified.length) }">${
+            ` data-songdata='${ songData }' code-length="${ formatBytes2(codeMinified.length) }">${
                 this.escapeHTML(codeMinified) }</button>`;
     }
     let childrenStr = '';
@@ -1025,7 +1025,7 @@ generateLibraryEntry({
 		this.setCounterValue(this.byteSample);
 	}
 	setCodeSize(value) {
-		this.controlCodeSize.textContent = `${formatBytes(new Blob([value]).size)} (${formatBytes(String(window.location).length)})`;
+		this.controlCodeSize.textContent = `${formatBytes(new Blob([value]).size)} (${formatBytes2(String(window.location).length)})`;
 	}
 	setCounterValue(value) {
 		this.controlTime.value = this.settings.isSeconds ?
