@@ -1,5 +1,5 @@
 import { deflateRaw, inflateRaw, ungzip } from './pako.esm.min.mjs';
-import { formatBytes } from './utils.mjs';
+import { formatBytes, formatBytes2 } from './utils.mjs';
 
 const loadScript = src => new Promise(resolve => {
 	try {
