@@ -1102,7 +1102,7 @@ setSampleRate(sampleRate, isSendData = true) {
 
   const options = this.controlSampleRateSelect.options;
   for (let i = 0; i < options.length; i++) {
-    options[i].style.display = this.songData.mode === 'WavePot' && options[i].value !== "44100" ? 'none' : ''; 
+    options[i].style.display = options[i].value === "44100" ? "" : "none"; 
   }
 }
 	setScale(amount, buttonElem) {
