@@ -18,7 +18,7 @@
 	<main id="content">
 		<section id="container-fixed">
 			<div id="editor-container">
-				<textarea id="editor-default" spellcheck="false">((((((((((t<<t/128^t)^t>>7|t>>4|t>>8)+(t<<t/256)+(t<<t/64))|t>>11|t>>8)^(t>>6))>>((t*((t>>9|t>>2|t)%16))/65536))+(t>>(t>>8))+(t<<(t>>8))|t>>10|t>>8|t>>4)))+((((t<<t/512)+(t<<t/256)+(t<<t/128)+(t<<t/64)+(t<<t/32)+(t<<t/16)))%256/4+128))+(t<<t/128)</textarea>
+				<textarea id="editor-default" spellcheck="false">a=((t>>t/8)|t>>4|t>>t/128<<t/32),((((((a^t>>8)&255)/2+((t>>t/256<<t/64|t>>t/64<<t/16)&255)/2)|t>>t/256<<t/32)|t>>t/512<<t/256)&255)/2+(((t*((t>>10&7^t>>13&3|t>>11&7)^t>>15&3|t>>11&3^t>>14&3)|t>>4|t>>11)^t>>4)&255)/2</textarea>
 			</div>
 			<div class="controls">
 				<div class="controls-group controls-grow">
