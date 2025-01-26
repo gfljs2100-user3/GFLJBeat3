@@ -75,7 +75,7 @@ globalThis.bytebeat = new class {
 		this.isRecording = false;
 		this.playbackSpeed = 1;
 		this.settings = this.defaultSettings;
-		this.songData = { mode: 'Bytebeat', sampleRate: 8000 };
+		this.songData = { mode: 'Bytebeat', sampleRate: 32000 };
 		this.init();
 	}
 	get editorValue() {
