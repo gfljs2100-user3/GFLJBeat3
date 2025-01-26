@@ -1070,32 +1070,23 @@ setSampleRate(sampleRate, isSendData = true) {
         sampleRate = 8000;
     }
 
-if (typeof sampleRate === 'string') {
-    sampleRate = sampleRate.replace(/,/g, ''); 
-  }
+    // Allow commas in sampleRate string
+    sampleRate = sampleRate.toString().replace(/,/g, '');
 
-sampleRate = parseFloat(sampleRate);
-
-    switch(sampleRate) {
-        case 8000:
-        case 11025:
-        case 16000:
-        case 22050:
-        case 32000:
-        case 44100:
-        case 48000:
-	case 64000:
-	case 88200:
-	case 96000:
-            this.controlSampleRateSelect.value = sampleRate;
-            break;
-        default:
-            this.controlSampleRateSelect.selectedIndex = -1;
-    }
     this.controlSampleRate.value = this.songData.sampleRate = sampleRate;
     this.controlSampleRate.blur();
+
+    // Update select box based on valid sample rates
+    const validSampleRates = [8000, 11025, 16000, 22050, 32000, 44100, 48000, 64000, 88200, 96000];
+    if (validSampleRates.includes(Number(sampleRate))) {
+        this.controlSampleRateSelect.value = sampleRate;
+    } else {
+        this.controlSampleRateSelect.selectedIndex = -1; 
+    }
+
     this.controlSampleRateSelect.blur();
     this.toggleTimeCursor();
+
     if(isSendData) {
         this.updateUrl();
         this.sendData({
