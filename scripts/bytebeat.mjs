@@ -1100,9 +1100,12 @@ setSampleRate(sampleRate, isSendData = true) {
     });
   }
 
-  const options = this.controlSampleRateSelect.options;
-  for (let i = 0; i < options.length; i++) {
-    options[i].disabled = (this.songData.mode === 'WavePot' && options[i].value !== "44100"); 
+for (let i = 0; i < options.length; i++) {
+    if (this.songData.mode === 'WavePot' && options[i].value !== "44100") {
+      options[i].style.display = 'none'; 
+    } else {
+      options[i].style.display = '';
+    }
   }
 }
 	setScale(amount, buttonElem) {
