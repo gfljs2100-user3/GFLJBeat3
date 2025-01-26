@@ -1064,38 +1064,46 @@ generateLibraryEntry({
 		buttonElem.title = `Play ${ isFast ? `fast ${ direction } x${ speed } speed` : direction }`;
 	}
 setSampleRate(sampleRate, isSendData = true) {
-    if (this.songData.mode === 'WavePot') {
-        sampleRate = 44100;
-    } else if (!sampleRate || !isFinite(sampleRate)) {
-        sampleRate = 8000;
-    }
-    switch(sampleRate) {
-        case 8000:
-        case 11025:
-        case 16000:
-        case 22050:
-        case 32000:
-        case 44100:
-        case 48000:
-	case 64000:
-	case 88200:
-	case 96000:
-            this.controlSampleRateSelect.value = sampleRate;
-            break;
-        default:
-            this.controlSampleRateSelect.selectedIndex = -1;
-    }
-    this.controlSampleRate.value = this.songData.sampleRate = sampleRate;
-    this.controlSampleRate.blur();
-    this.controlSampleRateSelect.blur();
-    this.toggleTimeCursor();
-    if(isSendData) {
-        this.updateUrl();
-        this.sendData({
-            sampleRate: this.songData.sampleRate,
-            sampleRatio: this.songData.sampleRate / this.audioCtx.sampleRate
-        });
-    }
+  if (this.songData.mode === 'WavePot') {
+    sampleRate = 44100; 
+  } else if (!sampleRate || !isFinite(sampleRate)) {
+    sampleRate = 8000; 
+  }
+
+  switch(sampleRate) {
+    case 8000:
+    case 11025:
+    case 16000:
+    case 22050:
+    case 32000:
+    case 44100:
+    case 48000:
+    case 64000:
+    case 88200:
+    case 96000:
+      this.controlSampleRateSelect.value = sampleRate; 
+      break;
+    default:
+      this.controlSampleRateSelect.selectedIndex = -1; 
+  }
+
+  this.controlSampleRate.value = this.songData.sampleRate = sampleRate;
+  this.controlSampleRate.blur();
+  this.controlSampleRateSelect.blur();
+  this.toggleTimeCursor();
+
+  if(isSendData) {
+    this.updateUrl();
+    this.sendData({
+      sampleRate: this.songData.sampleRate,
+      sampleRatio: this.songData.sampleRate / this.audioCtx.sampleRate
+    });
+  }
+
+  const options = this.controlSampleRateSelect.options;
+  for (let i = 0; i < options.length; i++) {
+    options[i].disabled = (this.songData.mode === 'WavePot' && options[i].value !== "44100"); 
+  }
 }
 	setScale(amount, buttonElem) {
 		if(buttonElem?.getAttribute('disabled')) {
