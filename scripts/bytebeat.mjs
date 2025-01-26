@@ -177,7 +177,7 @@ drawGraphics(endTime) {
         const nextX = this.mod(Math.ceil(this.getX(isReverse ? curTime + 1 : nextTime)) - startX, width);
         let diagramSize, diagramStart;
         if (isCombined || isDiagram) {
-            diagramSize = Math.max(1, 8192 >> scale);
+            diagramSize = Math.max(1, 256 >> scale);
             diagramStart = diagramSize * this.mod(curTime, 1 << scale);
         } else if (isNaNCurY[0] || isNaNCurY[1]) {
             for (let x = curX; x !== nextX; x = this.mod(x + 1, width)) {
