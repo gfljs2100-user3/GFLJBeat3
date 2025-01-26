@@ -1069,6 +1069,13 @@ setSampleRate(sampleRate, isSendData = true) {
     } else if (!sampleRate || !isFinite(sampleRate)) {
         sampleRate = 8000;
     }
+
+if (typeof sampleRate === 'string') {
+    sampleRate = sampleRate.replace(/,/g, ''); 
+  }
+
+sampleRate = parseFloat(sampleRate);
+
     switch(sampleRate) {
         case 8000:
         case 11025:
