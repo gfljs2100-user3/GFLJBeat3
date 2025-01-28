@@ -1102,9 +1102,10 @@ setSampleRate(sampleRate, isSendData = true) {
 
 const options = this.controlSampleRateSelect.options;
 for (let i = 0; i < options.length; i++) {
-  options[i].disabled = false; // Enable all options by default
   if (this.songData.mode === 'WavePot' && options[i].value !== "44100") {
     options[i].disabled = true; // Disable options that are not 44100 if mode is 'WavePot'
+  } else {
+    options[i].disabled = false; // Enable all other options
   }
 }
 }
