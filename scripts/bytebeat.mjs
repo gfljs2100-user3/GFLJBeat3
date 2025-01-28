@@ -607,33 +607,34 @@ generateLibraryEntry({
 	    this.parseUrl();
 	    loadScript('./scripts/codemirror.min.mjs?version=2024090100');
 	}
-	async initAudioContext() {
-		this.audioCtx = new AudioContext({ latencyHint: 'balanced', sampleRate: 48000});
-		this.audioGain = new GainNode(this.audioCtx);
-		this.audioGain.connect(this.audioCtx.destination);
-		await this.audioCtx.audioWorklet.addModule('./scripts/audioProcessor.mjs?version=2024090100');
-		this.audioWorkletNode = new AudioWorkletNode(this.audioCtx, 'audioProcessor',
-			{ outputChannelCount: [2] });
-		this.audioWorkletNode.port.addEventListener('message', e => this.receiveData(e.data));
-		this.audioWorkletNode.port.start();
-		this.audioWorkletNode.connect(this.audioGain);
-		const mediaDest = this.audioCtx.createMediaStreamDestination();
-		const audioRecorder = this.audioRecorder = new MediaRecorder(mediaDest.stream);
-		audioRecorder.addEventListener('dataavailable', e => this.audioRecordChunks.push(e.data));
-		audioRecorder.addEventListener('stop', () => {
-			let file, type;
-			const types = ['audio/mpeg', 'audio/ogg'];
-			const files = ['track.mp3', 'track.ogg'];
-			while((file = files.pop()) && !MediaRecorder.isTypeSupported(type = types.pop())) {
-				if(types.length === 0) {
-					console.error('Recording is not supported in this browser!');
-					break;
-				}
-			}
-			this.saveData(new Blob(this.audioRecordChunks, { type }), file);
-		});
-		this.audioGain.connect(mediaDest);
-	}
+async initAudioContext() {
+    const sampleRate = this.controlSampleRate ? parseFloat(this.controlSampleRate.value) : 48000;
+    this.audioCtx = new AudioContext({ latencyHint: 'balanced', sampleRate });
+    this.audioGain = new GainNode(this.audioCtx);
+    this.audioGain.connect(this.audioCtx.destination);
+    await this.audioCtx.audioWorklet.addModule('./scripts/audioProcessor.mjs?version=2024090100');
+    this.audioWorkletNode = new AudioWorkletNode(this.audioCtx, 'audioProcessor',
+        { outputChannelCount: [2] });
+    this.audioWorkletNode.port.addEventListener('message', e => this.receiveData(e.data));
+    this.audioWorkletNode.port.start();
+    this.audioWorkletNode.connect(this.audioGain);
+    const mediaDest = this.audioCtx.createMediaStreamDestination();
+    const audioRecorder = this.audioRecorder = new MediaRecorder(mediaDest.stream);
+    audioRecorder.addEventListener('dataavailable', e => this.audioRecordChunks.push(e.data));
+    audioRecorder.addEventListener('stop', () => {
+        let file, type;
+        const types = ['audio/mpeg', 'audio/ogg'];
+        const files = ['track.mp3', 'track.ogg'];
+        while ((file = files.pop()) && !MediaRecorder.isTypeSupported(type = types.pop())) {
+            if (types.length === 0) {
+                console.error('Recording is not supported in this browser!');
+                break;
+            }
+        }
+        this.saveData(new Blob(this.audioRecordChunks, { type }), file);
+    });
+    this.audioGain.connect(mediaDest);
+}
 	initElements() {
 		// Containers
 		this.cacheParentElem = document.createElement('div');
@@ -697,6 +698,9 @@ generateLibraryEntry({
 		this.controlThemeStyle.value = this.settings.themeStyle;
 		this.controlCodeStyle = document.getElementById('control-code-style');
 		this.controlCodeStyle.value = this.settings.codeStyle;
+		// Sample rate controls
+   		this.controlSampleRate = document.getElementById('control-samplerate');
+    		this.controlSampleRateSelect = document.getElementById('control-samplerate-select');
 	}
 	loadCode({ code, sampleRate, mode, drawMode, scale }, isPlay = true) {
 		this.songData.mode = this.controlPlaybackMode.value = mode = mode || 'Bytebeat';
