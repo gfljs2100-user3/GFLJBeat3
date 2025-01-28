@@ -17,6 +17,7 @@ class audioProcessor extends AudioWorkletProcessor {
 		this.isWavePot = false;
 		this.isFuncBytebeat = false;
 		this.isSignedFuncBytebeat = false;
+		this.isSupersawBytebeat = false;
 		this.isPlaying = false;
 		this.playbackSpeed = 1;
 		this.lastByteValue = [null, null];
@@ -102,6 +103,8 @@ class audioProcessor extends AudioWorkletProcessor {
 					} else if(this.isSignedRAW) {
 						funcValue = this.func(currentSample);
 					} else if(this.isFloatRAW) {
+						funcValue = this.func(currentSample);
+					} else if(this.isSupersawBytebeat) {
 						funcValue = this.func(currentSample);
 					} else {
 						funcValue = this.func(currentSample);
@@ -203,6 +206,7 @@ class audioProcessor extends AudioWorkletProcessor {
 			this.isRAW = data.mode === 'RAW';
 			this.isSignedRAW = data.mode === 'Signed RAW';
 			this.isFloatRAW = data.mode === 'FloatRAW';
+			this.isSupersawBytebeat = data.mode === 'Supersaw Bytebeat';
 			switch(data.mode) {
 			case 'Bytebeat':
 				this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = funcValue & 255) / 127.5 - 1;
@@ -345,6 +349,9 @@ class audioProcessor extends AudioWorkletProcessor {
 			case 'Signed Pseudo PWM':
 				this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = (funcValue & (funcValue >> 7) - funcValue) + 128 & 255) / 127.5 - 1;
 				break;
+			case 'Supersaw Bytebeat':
+				this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = funcValue & 255) / 127.5 - 1;
+				break;
 			default: this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = NaN);
 			}
 		}
@@ -393,8 +400,7 @@ class audioProcessor extends AudioWorkletProcessor {
 			/*sin that loops every 128 "steps", instead of every pi steps*/"sinf": function (x) { return Math.sin(x / (128 / Math.PI)) },
 			/*cos that loops every 128 "steps", instead of every pi steps*/"cosf": function (x) { return Math.cos(x / (128 / Math.PI)) },
 			/*tan that loops every 128 "steps", instead of every pi steps*/"tanf": function (x) { return Math.tan(x / (128 / Math.PI)) },
-			/*converts t into a string composed of it's bits, regex's that*/"regG": function (t, X) { return X.test(t.toString(2)) },
-			"supersaw": function (x,b) { function a(t) {return (x)&255}; return a(b/1.03)/8+a(b*1.01/1.03)/8+a(b*1.02/1.03)/8+a(b*1.03/1.03)/8+a(b*1.04/1.03)/8+a(b*1.05/1.03)/8+a(b*1.06/1.03)/8+a(b*1.07/1.03)/8 }
+			/*converts t into a string composed of it's bits, regex's that*/"regG": function (t, X) { return X.test(t.toString(2)) }
 		}
 		// Create shortened Math functions
 		const params = Object.getOwnPropertyNames(Math);
@@ -443,12 +449,20 @@ class audioProcessor extends AudioWorkletProcessor {
 				this.func = new Function(...params, codeText).bind(globalThis, ...values);
 			} else if(this.isFuncbeatbutnotdividedbysamplerate) {
 				this.func = new Function(...params, codeText).bind(globalThis, ...values);
-			} else {
+			} else if(this.isFuncbeatbutnotdividedbysamplerate) {
 				// Optimize code like eval(unescape(escape`XXXX`.replace(/u(..)/g,"$1%")))
 				codeText = codeText.trim().replace(
 					/^eval\(unescape\(escape(?:`|\('|\("|\(`)(.*?)(?:`|'\)|"\)|`\)).replace\(\/u\(\.\.\)\/g,["'`]\$1%["'`]\)\)\)$/,
 					(match, m1) => unescape(escape(m1).replace(/u(..)/g, '$1%')));
 				this.func = new Function(...params, 't', `return 0,\n${ codeText || 0 };`)
+					.bind(globalThis, ...values);
+			} else {
+				// Optimize code like eval(unescape(escape`XXXX`.replace(/u(..)/g,"$1%")))
+				codeText = codeText.trim().replace(
+					/^eval\(unescape\(escape(?:`|\('|\("|\(`)(.*?)(?:`|'\)|"\)|`\)).replace\(\/u\(\.\.\)\/g,["'`]\$1%["'`]\)\)\)$/,
+					(match, m1) => unescape(escape(m1).replace(/u(..)/g, '$1%')));
+				this.func = new Function(...params, 't', `return 0,\n(a=t=>(
+${codetext})&255,a(t/1.03)/8+a(t*1.01/1.03)/8+a(t*1.02/1.03)/8+a(t*1.03/1.03)/8+a(t*1.04/1.03)/8+a(t*1.05/1.03)/8+a(t*1.06/1.03)/8+a(t*1.07/1.03)/8) || 0;`)
 					.bind(globalThis, ...values);
 			}
 			isCompiled = true;
@@ -482,6 +496,9 @@ class audioProcessor extends AudioWorkletProcessor {
 			} else if(this.isFuncbeatbutnotdividedbysamplerate) {
 				this.func = this.func();
 				this.func(0, this.sampleRate);
+			} else if(this.isSupersawBytebeat) {
+				this.func = this.func();
+				this.func(0);
 			} else {
 				this.func(0);
 			}
