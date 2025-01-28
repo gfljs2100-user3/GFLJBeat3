@@ -454,8 +454,8 @@ class audioProcessor extends AudioWorkletProcessor {
 				codeText = codeText.trim().replace(
 					/^eval\(unescape\(escape(?:`|\('|\("|\(`)(.*?)(?:`|'\)|"\)|`\)).replace\(\/u\(\.\.\)\/g,["'`]\$1%["'`]\)\)\)$/,
 					(match, m1) => unescape(escape(m1).replace(/u(..)/g, '$1%')));
-				this.func = new Function(...params, 't', `return 0,\n(a=t=>(
-${codetext})&255,a(t/1.03)/8+a(t*1.01/1.03)/8+a(t*1.02/1.03)/8+a(t*1.03/1.03)/8+a(t*1.04/1.03)/8+a(t*1.05/1.03)/8+a(t*1.06/1.03)/8+a(t*1.07/1.03)/8) || 0;`)
+				this.func = new Function(...params, 't', `return 0,\n${(a=t=>(
+codetext)&255,a(t/1.03)/8+a(t*1.01/1.03)/8+a(t*1.02/1.03)/8+a(t*1.03/1.03)/8+a(t*1.04/1.03)/8+a(t*1.05/1.03)/8+a(t*1.06/1.03)/8+a(t*1.07/1.03)/8) || 0};`)
 					.bind(globalThis, ...values);
 			} else {
 				// Optimize code like eval(unescape(escape`XXXX`.replace(/u(..)/g,"$1%")))
