@@ -1100,10 +1100,13 @@ setSampleRate(sampleRate, isSendData = true) {
     });
   }
 
-  const options = this.controlSampleRateSelect.options;
-  for (let i = 0; i < options.length; i++) {
-    options[i].disabled = (this.songData.mode === 'WavePot' && options[i].value !== "44100"); 
-  }
+	const options = this.controlSampleRateSelect.options;
+	for (let i = 0; i < options.length; i++) {
+	  options[i].disabled = (this.songData.mode === 'WavePot' && options[i].value !== "44100"); 
+	  if (this.songData.mode !== 'WavePot') {
+	    options[i].disabled = false; // Enable the option if the mode is not 'WavePot'
+	  }
+	}
 }
 	setScale(amount, buttonElem) {
 		if(buttonElem?.getAttribute('disabled')) {
