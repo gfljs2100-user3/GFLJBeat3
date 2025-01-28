@@ -1099,15 +1099,6 @@ setSampleRate(sampleRate, isSendData = true) {
       sampleRatio: this.songData.sampleRate / this.audioCtx.sampleRate
     });
   }
-
-const options = this.controlSampleRateSelect.options;
-for (let i = 0; i < options.length; i++) {
-  if (this.songData.mode === 'WavePot' && options[i].value !== "44100") {
-    options[i].disabled = true; // Disable options that are not 44100 if mode is 'WavePot'
-  } else {
-    options[i].disabled = false; // Enable all other options
-  }
-}
 }
 	setScale(amount, buttonElem) {
 		if(buttonElem?.getAttribute('disabled')) {
