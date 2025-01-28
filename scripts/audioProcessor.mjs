@@ -345,9 +345,6 @@ class audioProcessor extends AudioWorkletProcessor {
 			case 'Signed Pseudo PWM':
 				this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = (funcValue & (funcValue >> 7) - funcValue) + 128 & 255) / 127.5 - 1;
 				break;
-			case 'Supersaw Bytebeat':
-				this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = (funcValue & 255/1.03)/8+(funcValue & 255*1.01/1.03)/8+(funcValue & 255*1.02/1.03)/8+(funcValue & 255*1.03/1.03)/8+(funcValue & 255*1.04/1.03)/8+(funcValue & 255*1.05/1.03)/8+(funcValue & 255*1.06/1.03)/8+(funcValue & 255*1.07/1.03)/8 & 255) / 127.5 - 1;
-				break;
 			default: this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = NaN);
 			}
 		}
