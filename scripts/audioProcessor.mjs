@@ -501,15 +501,11 @@ class audioProcessor extends AudioWorkletProcessor {
 		this.errorDisplayed = false;
 		this.sendData({ error: { message: '', isCompiled }, updateUrl: true });
 	}
-setSampleRatio(sampleRatio) {
-    if (this.isFuncbeat) {
-        const timeOffset = Math.floor(this.sampleRatio * this.audioSample) - this.lastTime;
-        this.sampleRatio = sampleRatio / this.playbackSpeed;
-        this.lastTime = Math.floor(this.sampleRatio * this.audioSample) - timeOffset;
-    } else {
-        this.sampleRatio = sampleRatio * this.playbackSpeed;
-    }
-}
+	setSampleRatio(sampleRatio) {
+	        const timeOffset = Math.floor(this.sampleRatio * this.audioSample) - this.lastTime;
+	        this.sampleRatio = sampleRatio * this.playbackSpeed;
+	        this.lastTime = Math.floor(this.sampleRatio * this.audioSample) - timeOffset;
+	}
 }
 
 registerProcessor('audioProcessor', audioProcessor);
