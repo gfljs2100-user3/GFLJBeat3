@@ -503,9 +503,9 @@ class audioProcessor extends AudioWorkletProcessor {
 	}
 setSampleRatio(sampleRatio) {
     if (this.isFuncbeat) {
-        const timeOffset = Math.floor(this.sampleRatio * this.audioSample) - this.lastTime;
+        const timeOffset = Math.floor(this.sampleRatio / this.audioSample) - this.lastTime;
         this.sampleRatio = sampleRatio * this.playbackSpeed;
-        this.lastTime = Math.floor(this.sampleRatio * this.audioSample) - timeOffset;
+        this.lastTime = Math.floor(this.sampleRatio / this.audioSample) - timeOffset;
     } else {
         this.sampleRatio = sampleRatio * this.playbackSpeed;
     }
