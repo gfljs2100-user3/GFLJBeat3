@@ -1025,7 +1025,7 @@ generateLibraryEntry({
 		this.setCounterValue(this.byteSample);
 	}
 	setCodeSize(value) {
-		this.controlCodeSize.textContent = `${formatBytes(new Blob([value]).size)} (${formatBytes2(String(window.location.href.substring(window.location.origin).length)})`;
+		this.controlCodeSize.textContent = `${formatBytes(new Blob([value]).size)} (${formatBytes2(String(window.location.length))})`;
 	}
 	setCounterValue(value) {
 		this.controlTime.value = this.settings.isSeconds ?
