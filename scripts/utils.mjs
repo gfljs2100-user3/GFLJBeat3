@@ -10,9 +10,9 @@ export function formatBytes(bytes) {
 }
 
 export function formatBytes2(bytes) {
-	if(bytes < 1024) {
+	if(bytes < 1000) {
 		return bytes + 'B';
 	}
-	const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)), 10);
-	return (i ? (bytes / (1024 ** i)).toFixed(2) : bytes) + ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'][i];
+	const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1000)), 10);
+	return (i ? (bytes / (1000 ** i)).toFixed(2) : bytes) + ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'][i];
 }
