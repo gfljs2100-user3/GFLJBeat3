@@ -309,8 +309,14 @@ class audioProcessor extends AudioWorkletProcessor {
 			case 'Triangle Bytebeat':
 				this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = ((funcValue << 1) ^ - (funcValue >> 7 & 1)) & 255) / 127.5 - 1;
 				break;
+			case 'NES Triangle Bytebeat':
+				this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = (((funcValue | 7) << 1) ^ - ((funcValue | 7) >> 7 & 1)) & 255) / 127.5 - 1;
+				break;
 			case 'Triangle Bytebeat 2':
 				this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = ((Math.asin(Math.sin((funcValue) * Math.PI / 128)) / 1.57) * 127 + 127) & 255) / 127.5 - 1;
+				break;
+			case 'NES Triangle Bytebeat 2':
+				this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = ((Math.asin(Math.sin(((funcValue | 7)) * Math.PI / 128)) / 1.57) * 127 + 127) & 255) / 127.5 - 1;
 				break;
 			case 'Cbrtsinmode':
 				this.getValues = (funcValue, ch) => {
