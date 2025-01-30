@@ -1,4 +1,5 @@
 import { deflateRaw, inflateRaw, ungzip } from './pako.esm.min.mjs';
+
 export function parseUrl() {
 		let { hash } = window.location;
 		if(!hash) {
