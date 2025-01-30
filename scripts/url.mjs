@@ -1,6 +1,6 @@
-import { deflateRaw, inflateRaw, ungzip } from './pako.esm.min.mjs';
+import { inflateRaw } from './pako.esm.min.mjs';
 
-export function parseUrl() {
+export parseUrl() {
 		let { hash } = window.location;
 		if(!hash) {
 			this.updateUrl();
