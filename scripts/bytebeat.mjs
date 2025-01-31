@@ -611,7 +611,7 @@ generateLibraryEntry({
 	    loadScript('./scripts/codemirror.min.mjs?version=2024090100');
 	}
 	async initAudioContext() {
-		this.audioCtx = new AudioContext({ latencyHint: 'balanced', sampleRate: 96000 });
+		this.audioCtx = new AudioContext({ latencyHint: 'balanced', sampleRate: this.settings.audioSampleRate });
 		this.audioGain = new GainNode(this.audioCtx);
 		this.audioGain.connect(this.audioCtx.destination);
 		await this.audioCtx.audioWorklet.addModule('./scripts/audioProcessor.mjs?version=2024090100');
@@ -684,6 +684,7 @@ generateLibraryEntry({
 		this.setColorWaveform();
 		this.controlColorTimeCursor = document.getElementById('control-color-timecursor');
 		this.setColorTimeCursor();
+		audiosr.settingsAudioRate.value = this.settings.audioSampleRate;
 		this.controlDrawMode = document.getElementById('control-drawmode');
 		this.controlDrawMode.value = this.settings.drawMode;
 		this.sendData({ drawMode: this.settings.drawMode });
@@ -1023,6 +1024,19 @@ generateLibraryEntry({
 		this.controlColorWaveform.value = value;
 		this.controlColorWaveformInfo.innerHTML =
 			this.getColorTest(this.colorWaveform = this.getColor(value));
+	}
+	setAudioSampleRate(value) {
+		if(value !== undefined) {
+			if(value < 8000 || value > 384000) {
+				value = 96000;
+			}
+			this.settings.audioSampleRate = value;
+			this.saveSettings();
+			window.location.reload();
+		} else if((value = this.settings.audioSampleRate) === undefined) {
+			value = this.settings.audioSampleRate = this.defaultSettings.audioSampleRate;
+			this.saveSettings();
+		}
 	}
 	setCounterUnits() {
 		this.controlTimeUnits.textContent = this.settings.isSeconds ? 'sec' : 't';
