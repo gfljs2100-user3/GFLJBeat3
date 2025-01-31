@@ -405,12 +405,12 @@ class audioProcessor extends AudioWorkletProcessor {
 			"fract": function (x) { return ((x%1)+1)%1 },
 			"mix": function (a,b,c) { return (a*(1-c))+(b*c) },
 			"mod": function (a,b) { return a%b },
-			"clamp": function(a,b,c) { return Math.max(Math.min(a,c),b) },
-			"tri": function(x) { return Math.asin(Math.sin(x))/(Math.PI/2.) },
-			"puls": function(x) { return (Math.floor(Math.sin(x))+0.5)*2. },
-			"saw": function(x) { return (gfjs.fract((x/2.)/Math.PI)-0.5)*2. },
-			"hash": function(x) { return gfjs.fract(Math.sin(x*1342.874+Math.sin(5212.42*x))*414.23) },
-			"noise": function(x) { return Math.sin((x+10)*Math.sin(Math.pow((x+10),gfjs.fract(x)+10))) }
+			"clamp": function (a,b,c) { return Math.max(Math.min(a,c),b) },
+			"tri": function (x) { return Math.asin(Math.sin(x))/(Math.PI/2.) },
+			"puls": function (x) { return (Math.floor(Math.sin(x))+0.5)*2. },
+			"saw": function (x) { return (gfjs.fract((x/2.)/Math.PI)-0.5)*2. },
+			"hash": function (x) { return gfjs.fract(Math.sin(x*1342.874+Math.sin(5212.42*x))*414.23) },
+			"noise": function (x) { return Math.sin((x+10)*Math.sin(Math.pow((x+10),gfjs.fract(x)+10))) }
 		}
 		// Create shortened Math functions
 		const params = Object.getOwnPropertyNames(Math);
