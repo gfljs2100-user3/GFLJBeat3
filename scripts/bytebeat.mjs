@@ -1,8 +1,6 @@
 import { deflateRaw, inflateRaw, ungzip } from './pako.esm.min.mjs';
 import { formatBytes, formatBytes2 } from './utils.mjs';
-import { AudioSampleRate } from './audiosamplerate.mjs';
 
-const audiosr = new AudioSampleRate();
 const loadScript = src => new Promise(resolve => {
 	try {
 		const scriptElem = document.createElement('script');
@@ -65,8 +63,7 @@ globalThis.bytebeat = new class {
 			drawScale: 5,
 			isSeconds: false,
 			themeStyle: 'Default',
-			volume: .5,
-			audioSampleRate: 48000
+			volume: .5
 		};
 		this.drawBuffer = [];
 		this.drawEndBuffer = [];
@@ -553,7 +550,6 @@ generateLibraryEntry({
 			case 'control-scaleup': this.setScale(1); break;
 			case 'control-stop': this.playbackStop(); break;
 			case 'control-counter-units': this.toggleCounterUnits(); break;
-			case 'settings-audiorate-apply': this.setAudioSampleRate(audiosr.settingsAudioRate.value ?? 48000); break;
 			default:
 				if(elem.classList.contains('code-text')) {
 					this.loadCode(Object.assign({ code: elem.innerText },
@@ -596,7 +592,6 @@ generateLibraryEntry({
 			this.saveSettings();
 		}
 		this.setThemeStyle();
-		this.setAudioSampleRate();
 		await this.initAudioContext();
 		if(!window.location.hostname.includes(`gfljbeat3`) & (`gfljs2100-user3`)) {
 			return;
@@ -613,7 +608,7 @@ generateLibraryEntry({
 	    loadScript('./scripts/codemirror.min.mjs?version=2024090100');
 	}
 	async initAudioContext() {
-		this.audioCtx = new AudioContext({ latencyHint: 'balanced', sampleRate: this.settings.audioSampleRate });
+		this.audioCtx = new AudioContext({ latencyHint: 'balanced', sampleRate: 96000 });
 		this.audioGain = new GainNode(this.audioCtx);
 		this.audioGain.connect(this.audioCtx.destination);
 		await this.audioCtx.audioWorklet.addModule('./scripts/audioProcessor.mjs?version=2024090100');
@@ -698,7 +693,6 @@ generateLibraryEntry({
 		this.controlScale = document.getElementById('control-scale');
 		this.controlScaleDown = document.getElementById('control-scaledown');
 		this.setScale(0);
-		audiosr.settingsAudioRate.value = this.settings.audioSampleRate;
 		this.controlThemeStyle = document.getElementById('control-theme-style');
 		this.controlThemeStyle.value = this.settings.themeStyle;
 		this.controlCodeStyle = document.getElementById('control-code-style');
@@ -1026,19 +1020,6 @@ generateLibraryEntry({
 		this.controlColorWaveform.value = value;
 		this.controlColorWaveformInfo.innerHTML =
 			this.getColorTest(this.colorWaveform = this.getColor(value));
-	}
-	setAudioSampleRate(value) {
-		if(value !== undefined) {
-			if(value < 8000 || value > 192000) {
-				value = 48000;
-			}
-			this.settings.audioSampleRate = value;
-			this.saveSettings();
-			window.location.reload();
-		} else if((value = this.settings.audioSampleRate) === undefined) {
-			value = this.settings.audioSampleRate = this.defaultSettings.audioSampleRate;
-			this.saveSettings();
-		}
 	}
 	setCounterUnits() {
 		this.controlTimeUnits.textContent = this.settings.isSeconds ? 'sec' : 't';
