@@ -1,6 +1,6 @@
 import { deflateRaw, inflateRaw, ungzip } from './pako.esm.min.mjs';
 import { formatBytes, formatBytes2 } from './utils.mjs';
-import { AudioSampleRate } from './audiosamplerate';
+import { AudioSampleRate } from './audiosamplerate.mjs';
 
 const audiosr = new AudioSampleRate();
 const loadScript = src => new Promise(resolve => {
