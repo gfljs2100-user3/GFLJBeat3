@@ -553,7 +553,7 @@ generateLibraryEntry({
 			case 'control-scaleup': this.setScale(1); break;
 			case 'control-stop': this.playbackStop(); break;
 			case 'control-counter-units': this.toggleCounterUnits(); break;
-			case 'settings-audiorate-apply': this.setAudioSampleRate(audiosr.settingsAudioRate.value ?? 96000); break;
+			case 'settings-audiorate-apply': this.setAudioSampleRate(ui.settingsAudioRate.value ?? 48000); break;
 			default:
 				if(elem.classList.contains('code-text')) {
 					this.loadCode(Object.assign({ code: elem.innerText },
@@ -609,6 +609,7 @@ generateLibraryEntry({
 	}
 	initAfterDom() {
 	    this.initElements();
+	    ui.settingsAudioRate.value = this.settings.audioSampleRate;
 	    this.parseUrl();
 	    loadScript('./scripts/codemirror.min.mjs?version=2024090100');
 	}
@@ -686,7 +687,6 @@ generateLibraryEntry({
 		this.setColorWaveform();
 		this.controlColorTimeCursor = document.getElementById('control-color-timecursor');
 		this.setColorTimeCursor();
-		audiosr.settingsAudioRate.value = this.settings.audioSampleRate;
 		this.controlDrawMode = document.getElementById('control-drawmode');
 		this.controlDrawMode.value = this.settings.drawMode;
 		this.sendData({ drawMode: this.settings.drawMode });
@@ -1029,8 +1029,8 @@ generateLibraryEntry({
 	}
 	setAudioSampleRate(value) {
 		if(value !== undefined) {
-			if(value < 8000 || value > 384000) {
-				value = 96000;
+			if(value < 8000 || value > 192000) {
+				value = 48000;
 			}
 			this.settings.audioSampleRate = value;
 			this.saveSettings();
