@@ -63,7 +63,8 @@ globalThis.bytebeat = new class {
 			drawScale: 5,
 			isSeconds: false,
 			themeStyle: 'Default',
-			volume: .5
+			volume: .5,
+			audioSampleRate: 48000
 		};
 		this.drawBuffer = [];
 		this.drawEndBuffer = [];
