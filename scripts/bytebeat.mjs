@@ -609,7 +609,6 @@ generateLibraryEntry({
 	}
 	initAfterDom() {
 	    this.initElements();
-	    audiosr.settingsAudioRate.value = this.settings.audioSampleRate;
 	    this.parseUrl();
 	    loadScript('./scripts/codemirror.min.mjs?version=2024090100');
 	}
@@ -699,6 +698,7 @@ generateLibraryEntry({
 		this.controlScale = document.getElementById('control-scale');
 		this.controlScaleDown = document.getElementById('control-scaledown');
 		this.setScale(0);
+		audiosr.settingsAudioRate.value = this.settings.audioSampleRate;
 		this.controlThemeStyle = document.getElementById('control-theme-style');
 		this.controlThemeStyle.value = this.settings.themeStyle;
 		this.controlCodeStyle = document.getElementById('control-code-style');
