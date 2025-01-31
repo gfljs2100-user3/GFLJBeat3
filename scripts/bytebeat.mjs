@@ -553,7 +553,7 @@ generateLibraryEntry({
 			case 'control-scaleup': this.setScale(1); break;
 			case 'control-stop': this.playbackStop(); break;
 			case 'control-counter-units': this.toggleCounterUnits(); break;
-			case 'settings-audiorate-apply': this.setAudioSampleRate(ui.settingsAudioRate.value ?? 48000); break;
+			case 'settings-audiorate-apply': this.setAudioSampleRate(audiosr.settingsAudioRate.value ?? 48000); break;
 			default:
 				if(elem.classList.contains('code-text')) {
 					this.loadCode(Object.assign({ code: elem.innerText },
@@ -609,7 +609,7 @@ generateLibraryEntry({
 	}
 	initAfterDom() {
 	    this.initElements();
-	    ui.settingsAudioRate.value = this.settings.audioSampleRate;
+	    audiosr.settingsAudioRate.value = this.settings.audioSampleRate;
 	    this.parseUrl();
 	    loadScript('./scripts/codemirror.min.mjs?version=2024090100');
 	}
