@@ -553,7 +553,7 @@ generateLibraryEntry({
 			case 'control-scaleup': this.setScale(1); break;
 			case 'control-stop': this.playbackStop(); break;
 			case 'control-counter-units': this.toggleCounterUnits(); break;
-			case 'settings-audiorate-apply': this.setAudioSampleRate(audiosr.settingsAudioRate.value ?? 48000); break;
+			case 'settings-audiorate-apply': this.setAudioSampleRate(audiosr.settingsAudioRate.value ?? 96000); break;
 			default:
 				if(elem.classList.contains('code-text')) {
 					this.loadCode(Object.assign({ code: elem.innerText },
