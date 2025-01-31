@@ -402,7 +402,7 @@ class audioProcessor extends AudioWorkletProcessor {
 			/*converts t into a string composed of it's bits, regex's that*/"regG": function (t, X) { return X.test(t.toString(2)) },
 			
 			/*lehandsomeguy's function*/
-			"fract": function (x) { return ((x%1)+1)%1 },
+			/*"fract": function (x) { return ((x%1)+1)%1 },
 			"mix": function (a,b,c) { return (a*(1-c))+(b*c) },
 			"mod": function (a,b) { return a%b },
 			"clamp": function (a,b,c) { return Math.max(Math.min(a,c),b) },
@@ -410,7 +410,7 @@ class audioProcessor extends AudioWorkletProcessor {
 			"puls": function (x) { return (Math.floor(Math.sin(x))+0.5)*2. },
 			"saw": function (x) { return (fract((x/2.)/Math.PI)-0.5)*2. },
 			"hash": function (x) { return fract(Math.sin(x*1342.874+Math.sin(5212.42*x))*414.23) },
-			"noise": function (x) { return Math.sin((x+10)*Math.sin(Math.pow((x+10),fract(x)+10))) }
+			"noise": function (x) { return Math.sin((x+10)*Math.sin(Math.pow((x+10),fract(x)+10))) }*/
 		}
 		// Create shortened Math functions
 		const params = Object.getOwnPropertyNames(Math);
