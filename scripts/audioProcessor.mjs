@@ -17,6 +17,7 @@ class audioProcessor extends AudioWorkletProcessor {
 		this.isWavePot = false;
 		this.isFuncBytebeat = false;
 		this.isSignedFuncBytebeat = false;
+		this.isPostfixRPN = false;
 		this.isPlaying = false;
 		this.playbackSpeed = 1;
 		this.lastByteValue = [null, null];
@@ -102,6 +103,8 @@ class audioProcessor extends AudioWorkletProcessor {
 					} else if(this.isSignedRAW) {
 						funcValue = this.func(currentSample);
 					} else if(this.isFloatRAW) {
+						funcValue = this.func(currentSample);
+					} else if(this.isPostfixRPN) {
 						funcValue = this.func(currentSample);
 					} else {
 						funcValue = this.func(currentSample);
@@ -196,6 +199,7 @@ class audioProcessor extends AudioWorkletProcessor {
 			this.isFuncbeat = data.mode === 'Funcbeat';
 			this.isFuncBytebeat = data.mode === 'FuncBytebeat';
 			this.isFuncBytebeatnotdividedsamplerate = data.mode === 'FuncBytebeat not divided by samplerate';
+			this.isPostfixRPN = data.mode === 'Postfix (RPN)';
 			this.isSignedFuncBytebeat = data.mode === 'Signed FuncBytebeat';
 			this.isSignedFuncBytebeatnotdividedsamplerate = data.mode === 'Signed FuncBytebeat not divided by samplerate';
 			this.isFuncbeatbutnotdividedbysamplerate = data.mode === 'Funcbeat but not divided by samplerate';
@@ -211,6 +215,9 @@ class audioProcessor extends AudioWorkletProcessor {
 				this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = funcValue & 255) / 127.5 - 1;
 				break;
 			case 'FuncBytebeat not divided by samplerate':
+				this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = funcValue & 255) / 127.5 - 1;
+				break;
+			case 'Postfix (RPN)':
 				this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = funcValue & 255) / 127.5 - 1;
 				break;
 			case 'Signed Bytebeat':
@@ -448,6 +455,240 @@ class audioProcessor extends AudioWorkletProcessor {
 				this.func = new Function(...params, codeText).bind(globalThis, ...values);
 			} else if(this.isFuncbeatbutnotdividedbysamplerate) {
 				this.func = new Function(...params, codeText).bind(globalThis, ...values);
+			} else if(this.isPostfixRPN) {
+				// Optimize code like eval(unescape(escape`XXXX`.replace(/u(..)/g,"$1%")))
+				codeText = codeText.trim().replace(
+					/^eval\(unescape\(escape(?:`|\('|\("|\(`)(.*?)(?:`|'\)|"\)|`\)).replace\(\/u\(\.\.\)\/g,["'`]\$1%["'`]\)\)\)$/,
+					(match, m1) => unescape(escape(m1).replace(/u(..)/g, '$1%')));
+				this.func = new Function(...params, `var output_type = "bytebeat"; //types: "bytebeat", "floatbeat", "signed bytebeat"
+var code_type = "postfix"; //types: "infix", "postfix"
+var sample_rate = 1; //be sure to set this when you try a new bytebeat
+var interpolate = true; //gives it fractional input values
+ 
+//ignore all the warnings, because the syntax highlighter is outdated
+ 
+var code = String.raw`
+$ { codeText || 0} // put code here
+`;
+ 
+ 
+var time_to_t = interpolate?"t = t*sample_rate;":`
+var current = t*sample_rate%2;
+var last=((t-(1/sampleRate))*sample_rate)%2;
+if(!(last^current)) {
+  return hold_sample;
+} else {
+  t=Math.floor(t*sample_rate);
+}
+`;
+hold_sample = 0;
+//stolen postfix to infix code from greggman's code
+class WrappingStack {
+  constructor(stackSize = 256) {
+    let sp = 0;
+    const stack = [];
+    for (let ii = 0; ii < stackSize; ++ii) {
+      stack.push(0);
+    }
+ 
+    const push = function(v) {
+      stack[sp++] = v;
+      sp = sp % stackSize;
+    };
+ 
+    const pop = function() {
+      sp = (sp === 0) ? (stackSize - 1) : (sp - 1);
+      return stack[sp];
+    };
+ 
+    const pick = function(index) {
+      let i = sp - Math.floor(index) - 1;
+      while (i < 0) {
+        i += stackSize;
+      }
+      return stack[i % stackSize];
+    };
+ 
+    const put = function(index, value) {
+      let i = sp - Math.floor(index);
+      while (i < 0) {
+        i += stackSize;
+      }
+      stack[i % stackSize] = value;
+    };
+ 
+    const getSP = function() {
+      return sp;
+    };
+ 
+    return {
+      pop: pop,
+      push: push,
+      pick: pick,
+      put: put,
+      sp: getSP,
+    };
+  }
+}
+var stack = new WrappingStack();
+function strip(s) {
+    return s.replace(/^\s+/, '').replace(/\s+$/, '');
+}
+function removeCommentsAndLineBreaks(x) {
+    // remove comments (hacky)
+    x = x.replace(/\/\/.*/g, ' ');
+    x = x.replace(/\n/g, ' ');
+    x = x.replace(/\/\*.*?\*\//g, ' ');
+    return x;
+}
+function applyPostfixTemplate(params) {
+    return `
+      function bytebeat(t) {
+        ${time_to_t}
+        ${params.exp}
+      }
+    `;
+}
+function postfixToInfix(x) {
+    x = removeCommentsAndLineBreaks(x);
+    // compress space
+    x = x.replace(/(\r\n|\r|\n|\t| )+/gm, ' ');
+    const tokens = strip(x).split(' ');
+    const steps = [];
+    for (let i = 0; i < tokens.length; ++i) {
+      const token = tokens[i];
+      switch (token.toLowerCase()) {
+      case '>':
+        steps.push('var v1 = stack.pop();');
+        steps.push('var v2 = stack.pop();');
+        steps.push('stack.push((v1 < v2) ? 0xFFFFFFFF : 0);');
+        break;
+      case '<':
+        steps.push('var v1 = stack.pop();');
+        steps.push('var v2 = stack.pop();');
+        steps.push('stack.push((v1 > v2) ? 0xFFFFFFFF : 0);');
+        break;
+      case '=':
+        steps.push('var v1 = stack.pop();');
+        steps.push('var v2 = stack.pop();');
+        steps.push('stack.push((v2 == v1) ? 0xFFFFFFFF : 0);');
+        break;
+      case 'drop':
+        steps.push('stack.pop();');
+        break;
+      case 'dup':
+        steps.push('stack.push(stack.pick(0));');
+        break;
+      case 'swap':
+        steps.push('var a1 = stack.pop();');
+        steps.push('var a0 = stack.pop();');
+        steps.push('stack.push(a1);');
+        steps.push('stack.push(a0);');
+        break;
+      case 'pick':
+        steps.push('var a0 = stack.pop();');
+        steps.push('stack.push(stack.pick(a0));');
+        break;
+      case 'put':
+        steps.push('var a0 = stack.pop();');
+        steps.push('var a1 = stack.pick(0);');
+        steps.push('stack.put(a0, a1);');
+        break;
+      case 'abs':
+      case 'sqrt':
+      case 'round':
+      case 'tan':
+      case 'log':
+      case 'exp':
+      case 'sin':
+      case 'cos':
+      case 'floor':
+      case 'ceil':
+        steps.push('var a0 = stack.pop();');
+        steps.push('stack.push(' + token + '(a0));');
+        break;
+      case 'int':
+        steps.push('var a0 = stack.pop();');
+        steps.push('stack.push(floor(a0));');
+        break;
+      case 'max':
+      case 'min':
+      case 'pow':
+        steps.push('var a0 = stack.pop();');
+        steps.push('var a1 = stack.pop();');
+        steps.push('stack.push(' + token + '(a1, a0));');
+        break;
+      case 'random':
+        steps.push('stack.push(' + token + '());');
+        break;
+      case '/':
+      case '+':
+      case '-':
+      case '*':
+      case '%':
+      case '>>':
+      case '<<':
+      case '|':
+      case '&':
+      case '^':
+      case '&&':
+      case '||':
+        steps.push('var a1 = stack.pop();');
+        steps.push('var a0 = stack.pop();');
+        steps.push('stack.push((a0 ' + token + ' a1) | 0);');
+        break;
+      case '~':
+        steps.push('var a0 = stack.pop();');
+        steps.push('stack.push(~a0);');
+        break;
+      default:
+        steps.push('stack.push(' + token + ');');
+        break;
+      }
+    }
+ 
+    steps.push('return hold_sample=stack.pop();');
+ 
+    const exp = applyPostfixTemplate({
+      exp: steps.join('\n'),
+    });
+    return exp;
+}
+if(code_type == "postfix") {
+  code = postfixToInfix(code);
+}
+code = code.replaceAll(/(Math\.)?(abs|acos|acosh|asin|asinh|atan|atanh|atan2|ceil|cbrt|expm1|clz32|cos|cosh|exp|floor|fround|hypot|imul|log|log1p|log2|log10|max|min|pow|random|round|sign|sin|sinh|sqrt|tan|tanh|trunc|E|LN10|LN2|LOG10E|LOG2E|PI|SQRT1_2|SQRT2)/g,"Math.$2");//behold, mount error
+ 
+var compiledCode = code_type=="infix"?`
+function bytebeat(t) {
+  ${time_to_t}
+  return hold_sample=(
+    ${code}
+  );
+}
+`:code
+console.log(compiledCode)
+eval(compiledCode)
+ 
+function dsp(t) {
+  var byte_output = bytebeat(t);
+  
+  switch(output_type) {
+    case "signed bytebeat":
+      byte_output += 128;
+      //no break, because it gets converted to a bytebeat, not a floatbeat
+    case "bytebeat":
+      byte_output = byte_output & 255; //modulo doesn't like negative values
+      byte_output /= 128;
+      byte_output -= 1;
+      //no break, because all of them need to be flipped,
+    case "floatbeat":
+      byte_output *= 1; //because the visualizer is upside down
+  }
+  
+  return min(max(byte_output,-1),1)*127+127;
+}`)
+					.bind(globalThis, ...values);
 			} else {
 				// Optimize code like eval(unescape(escape`XXXX`.replace(/u(..)/g,"$1%")))
 				codeText = codeText.trim().replace(
@@ -487,6 +728,9 @@ class audioProcessor extends AudioWorkletProcessor {
 			} else if(this.isFuncbeatbutnotdividedbysamplerate) {
 				this.func = this.func();
 				this.func(0, this.sampleRate);
+			} else if(this.isPostfixRPN) {
+				this.func = this.func();
+				this.func(0);
 			} else {
 				this.func(0);
 			}
