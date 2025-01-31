@@ -400,6 +400,8 @@ class audioProcessor extends AudioWorkletProcessor {
 			/*cos that loops every 128 "steps", instead of every pi steps*/"cosf": function (x) { return Math.cos(x / (128 / Math.PI)) },
 			/*tan that loops every 128 "steps", instead of every pi steps*/"tanf": function (x) { return Math.tan(x / (128 / Math.PI)) },
 			/*converts t into a string composed of it's bits, regex's that*/"regG": function (t, X) { return X.test(t.toString(2)) },
+
+			/*lehandsomeguy's functions*/
 			"fract": function (x) { return ((x%1)+1)%1 },
 			"mix": function (a,b,c) { return (a*(1-c))+(b*c) },
 			"mod": function (a,b) { return a%b },
