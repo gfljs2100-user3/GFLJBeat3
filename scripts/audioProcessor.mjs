@@ -406,7 +406,7 @@ class audioProcessor extends AudioWorkletProcessor {
 			"mix": function (a,b,c) { return (a*(1-c))+(b*c) },
 			"mod": function (a,b) { return a%b },
 			"clamp": function(a,b,c) { return Math.max(Math.min(a,c),b) },
-			"tri": function(x) { return Math.asin(Math.sin(x))/(PI/2.) },
+			"tri": function(x) { return Math.asin(Math.sin(x))/(Math.PI/2.) },
 			"puls": function(x) { return (Math.floor(Math.sin(x))+0.5)*2. },
 			"saw": function(x) { return (gfjs.fract((x/2.)/Math.PI)-0.5)*2. },
 			"hash": function(x) { return gfjs.fract(Math.sin(x*1342.874+Math.sin(5212.42*x))*414.23) },
