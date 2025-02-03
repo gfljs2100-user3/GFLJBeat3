@@ -42,6 +42,7 @@ globalThis.bytebeat = new class {
 		this.controlDrawMode = null;
 		this.controlPlaybackMode = null;
 		this.controlRecord = null;
+		this.controlSampleDivisor = null;
 		this.controlSampleRate = null;
 		this.controlSampleRateSelect = null;
 		this.controlScale = null;
@@ -521,6 +522,7 @@ generateLibraryEntry({
 			case 'control-samplerate':
 			case 'control-samplerate-select': this.setSampleRate(+elem.value); break;
 			case 'control-theme-style': this.setThemeStyle(elem.value); break;
+			case 'control-divisor': this.setSampleDivisor(elem.value); break;
 			}
 			return;
 		case 'click':
@@ -690,6 +692,7 @@ generateLibraryEntry({
 		this.controlRecord = document.getElementById('control-rec');
 		this.controlSampleRate = document.getElementById('control-samplerate');
 		this.controlSampleRateSelect = document.getElementById('control-samplerate-select');
+		this.controlSampleDivisor = document.getElementById('control-divisor');
 		this.controlScale = document.getElementById('control-scale');
 		this.controlScaleDown = document.getElementById('control-scaledown');
 		this.setScale(0);
@@ -1101,6 +1104,12 @@ setSampleRate(sampleRate, isSendData = true) {
     });
   }
 }
+	setSampleDivisor(x) {
+		if (x != 0) {
+			x = Math.abs(x)
+			this.sendData({ divisor: x })
+		}
+	}
 	setScale(amount, buttonElem) {
 		if(buttonElem?.getAttribute('disabled')) {
 			return;
