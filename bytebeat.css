@@ -828,12 +828,12 @@ button[name="close"] {
 	border: 1px solid #808080;
 }
 
-#control-counter, #control-divisor {
+#control-counter {
 	width: 80px;
 	border-radius: 0 var(--control-corners) var(--control-corners) 0;
 }
 
-#control-counter:hover, #control-samplerate:hover, #control-divisor:hover {
+#control-counter:hover, #control-samplerate:hover {
 	background-image: var(--control-text-hover);
 }
 
