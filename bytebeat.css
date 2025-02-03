@@ -906,6 +906,11 @@ button[name="close"] {
 	border-radius: var(--control-corners) 0 0 var(--control-corners);
 }
 
+#control-divisor {
+	width: 40px;
+	border-radius: var(--control-corners) var(--control-corners) var(--control-corners) var(--control-corners);
+}
+
 #control-samplerate-select {
 	width: 20px;
 	font-size: 0;
