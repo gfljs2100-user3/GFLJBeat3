@@ -19,6 +19,7 @@ class audioProcessor extends AudioWorkletProcessor {
 		this.isSignedFuncBytebeat = false;
 		this.isPlaying = false;
 		this.playbackSpeed = 1;
+		this.divisorStorage = 0;
 		this.lastByteValue = [null, null];
 		this.lastFuncValue = [null, null];
 		this.lastTime = -1;
