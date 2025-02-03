@@ -25,6 +25,7 @@ class audioProcessor extends AudioWorkletProcessor {
 		this.outValue = [0, 0];
 		this.sampleRate = 8000;
 		this.sampleRatio = 1;
+		this.sampleDivisor = 1;
 		Object.seal(this);
 		audioProcessor.deleteGlobals();
 		audioProcessor.freezeGlobals();
@@ -73,6 +74,7 @@ class audioProcessor extends AudioWorkletProcessor {
 			return true;
 		}
 		let time = this.sampleRatio * this.audioSample;
+		let divisor = this.sampleDivisor;
 		let { byteSample } = this;
 		const drawBuffer = [];
 		const isDiagram = this.drawMode === 'Combined' || this.drawMode === 'Diagram';
@@ -82,29 +84,52 @@ class audioProcessor extends AudioWorkletProcessor {
 			if(this.lastTime !== currentTime) {
 				let funcValue;
 				const currentSample = Math.floor(byteSample);
+				const DivisorMet = (((currentTime % divisor) + divisor) % divisor) == 0
 				try {
 					if(this.isFuncbeat) {
 						funcValue = this.func(currentSample / this.sampleRate, this.sampleRate);
+						if (!DivisorMet) funcValue = this.divisorStorage;
+						else this.divisorStorage = funcValue;
 					} else if(this.isWavePot) {
 						funcValue = this.func(currentSample / 44100, 44100);
+						if (!DivisorMet) funcValue = this.divisorStorage;
+						else this.divisorStorage = funcValue;
 					} else if(this.isFuncBytebeat) {
 						funcValue = this.func(currentSample / this.sampleRate, this.sampleRate);
+						if (!DivisorMet) funcValue = this.divisorStorage;
+						else this.divisorStorage = funcValue;
 					} else if(this.isSignedFuncBytebeat) {
 						funcValue = this.func(currentSample / this.sampleRate, this.sampleRate);
+						if (!DivisorMet) funcValue = this.divisorStorage;
+						else this.divisorStorage = funcValue;
 					} else if(this.isFuncBytebeatnotdividedsamplerate) {
 						funcValue = this.func(currentSample, this.sampleRate);
+						if (!DivisorMet) funcValue = this.divisorStorage;
+						else this.divisorStorage = funcValue;
 					} else if(this.isSignedFuncBytebeatnotdividedsamplerate) {
 						funcValue = this.func(currentSample, this.sampleRate);
+						if (!DivisorMet) funcValue = this.divisorStorage;
+						else this.divisorStorage = funcValue;
 					} else if(this.isFuncbeatbutnotdividedbysamplerate) {
 						funcValue = this.func(currentSample, this.sampleRate);
+						if (!DivisorMet) funcValue = this.divisorStorage;
+						else this.divisorStorage = funcValue;
 					} else if(this.isRAW) {
 						funcValue = this.func(currentSample);
+						if (!DivisorMet) funcValue = this.divisorStorage;
+						else this.divisorStorage = funcValue;
 					} else if(this.isSignedRAW) {
 						funcValue = this.func(currentSample);
+						if (!DivisorMet) funcValue = this.divisorStorage;
+						else this.divisorStorage = funcValue;
 					} else if(this.isFloatRAW) {
 						funcValue = this.func(currentSample);
+						if (!DivisorMet) funcValue = this.divisorStorage;
+						else this.divisorStorage = funcValue;
 					} else {
 						funcValue = this.func(currentSample);
+						if (!DivisorMet) funcValue = this.divisorStorage;
+						else this.divisorStorage = funcValue;
 					}
 				} catch(err) {
 					if(this.errorDisplayed) {
@@ -368,6 +393,9 @@ class audioProcessor extends AudioWorkletProcessor {
 		}
 		if(data.sampleRatio !== undefined) {
 			this.setSampleRatio(data.sampleRatio);
+		}
+		if (data.divisor !== undefined) {
+			this.sampleDivisor = data.divisor;
 		}
 	}
 	sendData(data) {
