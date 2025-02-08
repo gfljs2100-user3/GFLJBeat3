@@ -443,7 +443,7 @@ class audioProcessor extends AudioWorkletProcessor {
 			"noise": function (x) { return Math.sin((x+10)*Math.sin(Math.pow((x+10),gfjs.fract(x)+10))) },
 			
 			/*GFLJS2100's functions*/
-			"supersaw": function (x, t) { function a(t) {return (x)&255}; return a(t/1.03)/8+a(t*1.01/1.03)/8+a(t*1.02/1.03)/8+a(t*1.03/1.03)/8+a(t*1.04/1.03)/8+a(t*1.05/1.03)/8+a(t*1.06/1.03)/8+a(t*1.07/1.03)/8 }
+			"supersaw": function (x) { return ((t/1.03)&255)/8+((t*1.01/1.03)&255)/8+((t*1.02/1.03)&255)/8+((t*1.03/1.03)&255)/8+((t*1.01/1.04)&255)/8+((t*1.05/1.03)&255)/8+((t*1.06/1.03)&255)/8+((t*1.07/1.03)&255)/8 }
 		}
 		// Create shortened Math functions
 		const params = Object.getOwnPropertyNames(Math);
