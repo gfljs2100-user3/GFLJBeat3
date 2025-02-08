@@ -12,15 +12,12 @@ class GZFileEditor {
         this.compressBtn = document.getElementById('compressBtn');
         this.downloadBtn = document.getElementById('downloadBtn');
         this.updateBtn = document.getElementById('updateBtn');
-        this.fetchLibraryBtn = document.getElementById('fetchLibraryBtn');
-        this.libraryFiles = document.getElementById('libraryFiles');
 
         this.currentFile = null;
         this.currentFileData = null;
 
         this.initEventListeners();
         this.updateControlsVisibility();
-        this.populateLibraryFiles();
     }
 
     initEventListeners() {
@@ -31,55 +28,6 @@ class GZFileEditor {
         this.compressBtn.addEventListener('click', this.compressFile.bind(this));
         this.downloadBtn.addEventListener('click', this.downloadFile.bind(this));
         this.updateBtn.addEventListener('click', this.updateFileContent.bind(this));
-        this.fetchLibraryBtn.addEventListener('click', this.showLibraryFiles.bind(this));
-        this.libraryFiles.addEventListener('change', this.fetchLibraryFile.bind(this));
-    }
-
-    async populateLibraryFiles() {
-        try {
-            const response = await fetch('./library');
-            const text = await response.text();
-            
-            // Create a temporary div to parse the HTML
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = text;
-            
-            // Find all .gz files in the directory listing
-            const links = Array.from(tempDiv.querySelectorAll('a'))
-                .filter(a => a.href.endsWith('.gz'))
-                .map(a => a.href.split('/').pop());
-            
-            // Populate the select element
-            this.libraryFiles.innerHTML = links.map(file => 
-                `<option value="${file}">${file}</option>`
-            ).join('');
-        } catch (error) {
-            console.error('Error fetching library files:', error);
-            this.libraryFiles.innerHTML = '<option>Error loading files</option>';
-        }
-    }
-
-    showLibraryFiles() {
-        this.libraryFiles.style.display = 'block';
-        this.libraryFiles.focus();
-    }
-
-    async fetchLibraryFile() {
-        const selectedFile = this.libraryFiles.value;
-        if (!selectedFile) return;
-
-        try {
-            const response = await fetch(`./library/${selectedFile}`);
-            const arrayBuffer = await response.arrayBuffer();
-            
-            this.currentFileData = arrayBuffer;
-            this.currentFile = new File([arrayBuffer], selectedFile, { type: 'application/gzip' });
-            this.displayFileContent(arrayBuffer);
-            this.updateControlsVisibility();
-            this.libraryFiles.style.display = 'none';
-        } catch (error) {
-            alert('Error fetching library file: ' + error.message);
-        }
     }
 
     updateControlsVisibility() {
@@ -133,6 +81,7 @@ class GZFileEditor {
         }
     }
 
+    // New method to normalize URL to HTTPS
     normalizeUrl(url) {
         // Trim whitespace
         url = url.trim();
@@ -144,6 +93,7 @@ class GZFileEditor {
         return 'https://' + url;
     }
 
+    // New method to extract filename from URL
     extractFilenameFromUrl(url) {
         // Remove protocol and any query parameters
         const cleanUrl = url.replace(/^https?:\/\//, '').split('?')[0];
