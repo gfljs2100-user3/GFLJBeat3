@@ -10,14 +10,17 @@
         <input type="file" id="fileInput" accept=".gz">
         <div id="noFileControls">
             <button id="fetchInitialBtn">Fetch GZ File</button>
+            <button id="fetchLibraryBtn">Select from Library</button>
         </div>
         <div id="fileControls" style="display:none;">
             <button id="fetchBtn">Fetch GZ File</button>
+            <button id="fetchLibraryBtn">Select from Library</button>
             <button id="decompressBtn">Decompress</button>
             <button id="compressBtn">Compress</button>
             <button id="downloadBtn">Download</button>
             <button id="updateBtn">Update Content</button>
         </div>
+        <select id="libraryFiles" style="display:none; width: 100%; margin: 10px 0;"></select>
         <textarea id="fileContent" rows="20"></textarea>
     </div>
     <footer>
