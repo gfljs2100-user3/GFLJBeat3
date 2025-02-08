@@ -441,6 +441,7 @@ class audioProcessor extends AudioWorkletProcessor {
 			"saw": function (x) { return (gfjs.fract((x/2.)/Math.PI)-0.5)*2. },
 			"hash": function (x) { return gfjs.fract(Math.sin(x*1342.874+Math.sin(5212.42*x))*414.23) },
 			"noise": function (x) { return Math.sin((x+10)*Math.sin(Math.pow((x+10),gfjs.fract(x)+10))) },
+			
 			/*GFLJS2100's functions*/
 			"supersaw": function (x, t) { return function a(a) {return x}; a(t/1.03)/8+a(t*1.01/1.03)/8+a(t*1.02/1.03)/8+a(t*1.03/1.03)/8+a(t*1.04/1.03)/8+a(t*1.05/1.03)/8+a(t*1.06/1.03)/8+a(t*1.07/1.03)/8 }
 		}
