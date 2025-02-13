@@ -18,12 +18,10 @@ const loadScript = src => new Promise(resolve => {
 globalThis.bytebeat = new class {
 	constructor() {
 		this.audioCtx = null;
-		this.micMedia = null;
 		this.audioGain = null;
 		this.audioRecordChunks = [];
 		this.audioRecorder = null;
 		this.audioWorkletNode = null;
-		this.mediaInputSourceNode = null;
 		this.byteSample = 0;
 		this.cacheParentElem = null;
 		this.cacheTextElem = null;
@@ -554,8 +552,6 @@ generateLibraryEntry({
 			case 'control-scaleup': this.setScale(1); break;
 			case 'control-stop': this.playbackStop(); break;
 			case 'control-counter-units': this.toggleCounterUnits(); break;
-			case 'activate-mic': this.activateMic(); break;
-			case 'deactivate-mic': this.deactivateMic(); break;
 			default:
 				if(elem.classList.contains('code-text')) {
 					this.loadCode(Object.assign({ code: elem.innerText },
@@ -639,30 +635,6 @@ generateLibraryEntry({
 			this.saveData(new Blob(this.audioRecordChunks, { type }), file);
 		});
 		this.audioGain.connect(mediaDest);
-	}
-	async activateMic() {
-		if(this.mediaInputSourceNode !== null) return;
-		try {
-			this.micMedia ??= await navigator.mediaDevices.getUserMedia({
-				audio: {
-					echoCancellation: false,
-					noiseSuppression: false,
-					autoGainControl: false,
-					sampleRate: this.settings.audioSampleRate
-				},
-				video: false
-			});
-			console.log(this.micMedia.getAudioTracks()[0].getSettings());
-			this.mediaInputSourceNode = this.audioCtx.createMediaStreamSource(this.micMedia);
-			this.mediaInputSourceNode.connect(this.audioWorkletNode);
-		} catch(e) {
-		}
-	}
-	deactivateMic() {
-		if(this.mediaInputSourceNode == null) return;
-		this.mediaInputSourceNode.disconnect();
-		this.mediaInputSourceNode = null;
-		this.micMedia = null;
 	}
 	initElements() {
 		// Containers
