@@ -656,10 +656,6 @@ generateLibraryEntry({
 			this.mediaInputSourceNode = this.audioCtx.createMediaStreamSource(this.micMedia);
 			this.mediaInputSourceNode.connect(this.audioWorkletNode);
 		} catch(e) {
-			ui.yesNoAlert('Failed to activate mic. See error?', () => {
-				ui.okAlert(e + '\n\nRun the mic test to get the right samplerate.' +
-					'\nI\'d fix this internally if i had the chance. I\'m sorry.');
-			}, () => { });
 		}
 	}
 	deactivateMic() {
