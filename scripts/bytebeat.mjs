@@ -18,10 +18,12 @@ const loadScript = src => new Promise(resolve => {
 globalThis.bytebeat = new class {
 	constructor() {
 		this.audioCtx = null;
+		this.micMedia = null;
 		this.audioGain = null;
 		this.audioRecordChunks = [];
 		this.audioRecorder = null;
 		this.audioWorkletNode = null;
+		this.mediaInputSourceNode = null;
 		this.byteSample = 0;
 		this.cacheParentElem = null;
 		this.cacheTextElem = null;
