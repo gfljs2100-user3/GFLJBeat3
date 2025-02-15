@@ -375,6 +375,7 @@ footer {
 	border-image: var(--canvas-border);
 	overflow: hidden;
 	cursor: pointer;
+	image-rendering: pixelated;
 }
 
 #canvas-main {
