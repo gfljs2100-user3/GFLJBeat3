@@ -1075,6 +1075,7 @@ setSampleRate(sampleRate, isSendData = true) {
   }
 
   switch(sampleRate) {
+	case 4000:
     case 8000:
     case 11025:
     case 16000:
