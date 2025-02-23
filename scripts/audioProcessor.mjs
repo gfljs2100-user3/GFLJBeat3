@@ -415,6 +415,8 @@ class audioProcessor extends AudioWorkletProcessor {
 	}
 	setFunction(codeText) {
 		const gfjs = {
+			/*Chasyxx's exotic functions*/
+			
 			/*bit*/        "bitC": function (x, y, z) { return x & y ? z : 0 },
 			/*bit reverse*/"br": function (x, size = 8) {
 				if (size > 32) { throw new Error("br() Size cannot be greater than 32") } else {
@@ -425,7 +427,6 @@ class audioProcessor extends AudioWorkletProcessor {
 					return result
 				}
 			},
-			/*Chasyxx's exotic functions*/
 			/*sin that loops every 128 "steps", instead of every pi steps*/"sinf": function (x) { return Math.sin(x / (128 / Math.PI)) },
 			/*cos that loops every 128 "steps", instead of every pi steps*/"cosf": function (x) { return Math.cos(x / (128 / Math.PI)) },
 			/*tan that loops every 128 "steps", instead of every pi steps*/"tanf": function (x) { return Math.tan(x / (128 / Math.PI)) },
