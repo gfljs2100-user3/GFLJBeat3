@@ -807,7 +807,12 @@ async onclickLibraryHeader(headerElem) {
     searchSongInput.addEventListener('input', updateLibraryDisplay);
     searchAuthorInput.addEventListener('input', updateLibraryDisplay);
 
-    updateLibraryDisplay(); // Initial display
+    // Initial display without filtering
+    libraryHTML = '';
+    for (let i = 0, len = libraryArr.length; i < len; ++i) {
+        libraryHTML += `<div class="entry-top">${this.generateLibraryEntry(libraryArr[i])}</div>`;
+    }
+    containerElem.insertAdjacentHTML('beforeend', libraryHTML);
 }
 	oninputCounter(e) {
 		if(e.key === 'Enter') {
