@@ -807,6 +807,18 @@ async onclickLibraryHeader(headerElem) {
     searchSongInput.addEventListener('input', updateLibraryDisplay);
     searchAuthorInput.addEventListener('input', updateLibraryDisplay);
 
+    // Handle Enter key press for search inputs
+    searchSongInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            updateLibraryDisplay();
+        }
+    });
+    searchAuthorInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            updateLibraryDisplay();
+        }
+    });
+
     // Initial display without filtering
     libraryHTML = '';
     for (let i = 0, len = libraryArr.length; i < len; ++i) {
