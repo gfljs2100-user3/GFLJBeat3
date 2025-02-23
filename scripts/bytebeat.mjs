@@ -761,33 +761,54 @@ generateLibraryEntry({
 			'Original version shown. Click to view the minified version.';
 		buttonElem.textContent = isMinified ? '+' : '–';
 	}
-	async onclickLibraryHeader(headerElem) {
-		const containerElem = headerElem.nextElementSibling;
-		const state = containerElem.classList;
-		if(state.contains('loaded') || headerElem.parentNode.open) {
-			return;
-		}
-		state.add('loaded');
-		const waitElem = headerElem.querySelector('.loading-wait');
-		waitElem.classList.remove('hidden');
-		const response = await fetch(`./library/${ containerElem.id.replace('library-', '') }.gz`,
-			{ cache: 'no-cache' });
-		const { status } = response;
-		waitElem.classList.add('hidden');
-		if(status !== 200 && status !== 304) {
-			state.remove('loaded');
-			containerElem.innerHTML = `<div class="loading-error">Unable to load the library: ${
-				status } ${ response.statusText }</div>`;
-			return;
-		}
-		containerElem.innerHTML = '';
-		let libraryHTML = '';
-		const libraryArr = JSON.parse(ungzip(await response.arrayBuffer(), { to: 'string' }));
-		for(let i = 0, len = libraryArr.length; i < len; ++i) {
-			libraryHTML += `<div class="entry-top">${ this.generateLibraryEntry(libraryArr[i]) }</div>`;
-		}
-		containerElem.insertAdjacentHTML('beforeend', libraryHTML);
-	}
+async onclickLibraryHeader(headerElem) {
+    const containerElem = headerElem.nextElementSibling;
+    const state = containerElem.classList;
+    if (state.contains('loaded') || headerElem.parentNode.open) {
+        return;
+    }
+    state.add('loaded');
+    const waitElem = headerElem.querySelector('.loading-wait');
+    waitElem.classList.remove('hidden');
+    const response = await fetch(`./library/${containerElem.id.replace('library-', '')}.gz`, { cache: 'no-cache' });
+    const { status } = response;
+    waitElem.classList.add('hidden');
+    if (status !== 200 && status !== 304) {
+        state.remove('loaded');
+        containerElem.innerHTML = `<div class="loading-error">Unable to load the library: ${status} ${response.statusText}</div>`;
+        return;
+    }
+    containerElem.innerHTML = '';
+    let libraryHTML = '';
+    const libraryArr = JSON.parse(ungzip(await response.arrayBuffer(), { to: 'string' }));
+
+    // Add search inputs
+    containerElem.insertAdjacentHTML('beforebegin', `
+        <div class="library-search">
+            <input type="text" id="search-song" placeholder="Search songs">
+            <input type="text" id="search-author" placeholder="Search authors">
+        </div>
+    `);
+    const searchSongInput = document.getElementById('search-song');
+    const searchAuthorInput = document.getElementById('search-author');
+
+    const updateLibraryDisplay = () => {
+        const searchSong = searchSongInput.value.trim();
+        const searchAuthor = searchAuthorInput.value.trim();
+        const filteredLibrary = this.searchLibrary(libraryArr, searchSong, searchAuthor);
+        containerElem.innerHTML = '';
+        let libraryHTML = '';
+        for (let i = 0, len = filteredLibrary.length; i < len; ++i) {
+            libraryHTML += `<div class="entry-top">${this.generateLibraryEntry(filteredLibrary[i])}</div>`;
+        }
+        containerElem.insertAdjacentHTML('beforeend', libraryHTML);
+    };
+
+    searchSongInput.addEventListener('input', updateLibraryDisplay);
+    searchAuthorInput.addEventListener('input', updateLibraryDisplay);
+
+    updateLibraryDisplay(); // Initial display
+}
 	oninputCounter(e) {
 		if(e.key === 'Enter') {
 			this.controlTime.blur();
