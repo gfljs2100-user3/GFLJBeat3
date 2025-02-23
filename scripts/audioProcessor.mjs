@@ -295,7 +295,7 @@ class audioProcessor extends AudioWorkletProcessor {
 				this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = (Math.cbrt(funcValue)) & 255) / 127.5 - 1;
 				break;
 			case 'Log10mode':
-				this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = (Math.log10(funcValue) * 32) & 255) / 127.5 - 1;
+				this.getValues = (funcValue, ch) => (this.lastByteValue[ch] = (Math.log10(funcValue) * 106.301699) & 255) / 127.5 - 1;
 				break;
 			case 'Sinmode':
 				this.getValues = (funcValue, ch) => {
